@@ -9,7 +9,7 @@ module.exports = {
     },
     extends: [
         '@moso/eslint-config-basic',
-        'plugin:vue/vue-essential'
+        'plugin:vue/essential'
     ],
     plugins: [
         'vue'
