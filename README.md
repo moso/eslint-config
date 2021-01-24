@@ -1,1 +1,3 @@
-# eslint-config
+# @moso/eslint-config
+
+My personal eslint-config
