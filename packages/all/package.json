@@ -1,0 +1,29 @@
+{
+  "name": "@moso/eslint-config",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": {
+    "name": "Morten Sørensen",
+    "email": "morten@moso.io",
+    "url": "https://moso.io"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "peerDependencies": {
+    "eslint": ">=7.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@moso/eslint-config-nuxt": "^0.1.0",
+    "@moso/eslint-config/vue": "^0.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.18.0"
+  }
+}
