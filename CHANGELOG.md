@@ -5,11 +5,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 0.1.1 (2021-01-24)
 
-**Note:** Version bump only for package @moso/eslint-config
-
-
-
-
-
-**0.1.0**
-- Release
+**Note:** Version bump only for package @moso/eslint-config-monorepo
