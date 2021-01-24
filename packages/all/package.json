@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@moso/eslint-config-nuxt": "^0.1.0",
-    "@moso/eslint-config/vue": "^0.1.0"
+    "@moso/eslint-config-vue": "^0.1.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0"
