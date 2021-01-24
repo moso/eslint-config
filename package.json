@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config-monorepo",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": {
     "name": "Morten Sørensen",
     "email": "morten@moso.io",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "lint": "npx eslint --ext .js --fix .",
+    "lint": "npx eslint --ext .js --fix --ignore-path .gitignore .",
     "release": "lerna publish --conventional-commits"
   },
   "devDependencies": {
