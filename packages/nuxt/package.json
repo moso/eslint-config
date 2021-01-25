@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config-nuxt",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "",
   "main": "index.js",
   "keywords": [],
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@moso/eslint-config-basic": "^0.2.1",
+    "@moso/eslint-config-basic": "^0.2.2",
     "@nuxtjs/eslint-config": "5.0.0",
     "@nuxtjs/eslint-module": "3.0.2",
     "eslint-plugin-nuxt": "^2.0.0"
