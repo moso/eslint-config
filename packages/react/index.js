@@ -1,7 +1,7 @@
 module.exports = {
     extends: [
-        'plugin:react/recommended',
-        '@moso/eslint-config-basic'
+        '@moso/eslint-config-basic',
+        'plugin:react/recommended'
     ],
     parserOptions: {
         ecmaFeatures: {
