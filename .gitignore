@@ -78,3 +78,6 @@ dist
 .idea
 
 *.lerna_backup
+
+yarn.lock
+package-lock.json
