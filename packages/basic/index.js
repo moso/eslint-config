@@ -2,24 +2,18 @@ module.exports = {
     env: {
         es6: true,
         browser: true,
-        node: true,
+        node: true
     },
     extends: [
         'standard',
         'plugin:import/errors',
         'plugin:import/warnings'
     ],
-    plugins: [
-        'html',
-        'unicorn'
-    ],
+    plugins: ['html', 'unicorn'],
     settings: {
         'import/resolver': {
             node: {
-                extensions: [
-                    '.js',
-                    '.mjs'
-                ]
+                extensions: ['.js', '.mjs']
             }
         }
     },
@@ -32,133 +26,41 @@ module.exports = {
         'import/no-absolute-path': 'off',
 
         // Common
-        semi: [
-            2,
-            'never'
-        ],
-        curly: [
-            2,
-            'multi-or-nest',
-            'consistent'
-        ],
-        quotes: [
-            'error',
-            'single'
-        ],
+        semi: [2, 'never'],
+        curly: [2, 'multi-or-nest', 'consistent'],
+        quotes: ['error', 'single'],
         'no-unused-vars': 'warn',
         'no-param-reassign': 'off',
-        'array-bracket-spacing': [
-            'error',
-            'never'
-        ],
-        'brace-style': [
-            'error',
-            'stroustrup',
-            {
-                allowSingleLine: true
-            }
-        ],
-        'block-spacing': [
-            'error',
-            'always'
-        ],
+        'array-bracket-spacing': ['error', 'never'],
+        'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
+        'block-spacing': ['error', 'always'],
         camelcase: 'off',
-        'comma-spacing': [
-            'error',
-            {
-                before: false,
-                after: true
-            }
-        ],
-        'comma-style': [
-            'error',
-            'last'
-        ],
-        'comma-dangle': [
-            'error',
-            'always-multiline'
-        ],
+        'comma-spacing': ['error', { before: false, after: true }],
+        'comma-style': ['error', 'first'],
+        'comma-dangle': ['error', 'never'],
         'no-constant-condition': 'warn',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-        'no-cond-assign': [
-            'error',
-            'always'
-        ],
-        'func-call-spacing': [
-            'off',
-            'never'
-        ],
-        'key-spacing': [
-            'error',
-            {
-                beforeColon: false,
-                afterColon: true
-            }
-        ],
-        indent: [
-            'error',
-            2,
-            {
-                SwitchCase: 1,
-                VariableDeclarator: 1,
-                outerIIFEBody: 1
-            }
-        ],
-        'no-restricted-syntax': [
-            'error',
-            'DebuggerStatement',
-            'ForInStatement',
-            'LabeledStatement',
-            'WithStatement',
-        ],
-        'no-spaced-func': 'error',
-        'object-curly-spacing': [
-            'error',
-            'always'
-        ],
+        'no-cond-assign': ['error', 'always'],
+        'func-call-spacing': ['error', 'never'],
+        'key-spacing': ['error', { beforeColon: false, afterColon: true }],
+        indent: ['error', 4, { SwitchCase: 1, VariableDeclarator: 1, outerIIFEBody: 1 }],
+        'no-restricted-syntax': ['error', 'DebuggerStatement', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
+        'object-curly-spacing': ['error', 'always'],
         'no-return-await': 'off',
-        'space-before-function-paren': [
-            'error',
-            'never'
-        ],
+        'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
 
         // es6
         'no-var': 'error',
-        'prefer-const': [
-            'error',
-            {
-                destructuring: 'any',
-                ignoreReadBeforeAssign: true
-            }
-        ],
-        'prefer-arrow-callback': [
-            'error',
-            {
-                allowNamedFunctions: false,
-                allowUnboundThis: true
-            }
-        ],
-        'object-shorthand': [
-            'error',
-            'always',
-            {
-                ignoreConstructors: false,
-                avoidQuotes: true,
-            }
-        ],
+        'prefer-const': ['error', { destructuring: 'any', ignoreReadBeforeAssign: true }],
+        'prefer-arrow-callback': ['error', { allowNamedFunctions: false, allowUnboundThis: true }],
+        'object-shorthand': ['error', 'always', { ignoreConstructors: false, avoidQuotes: true }],
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
         'prefer-template': 'error',
         'generator-star-spacing': 'off',
         'template-curly-spacing': 'error',
-        'arrow-parens': [
-            'error',
-            'as-needed',
-            {
-                requireForBlockBody: true
-            }
-        ],
+        'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
 
         // best-practice
         'array-callback-return': 'error',
@@ -174,18 +76,9 @@ module.exports = {
         'vars-on-top': 'error',
         'require-await': 'off',
         'no-return-assign': 'off',
-        complexity: [
-            'off',
-            11
-        ],
-        eqeqeq: [
-            'error',
-            'allow-null'
-        ],
-        'operator-linebreak': [
-            2,
-            'before'
-        ],
+        complexity: ['off', 11],
+        eqeqeq: ['error', { null: 'always' }],
+        'operator-linebreak': [2, 'before'],
 
         // unicorns
         // Pass error message when throwing errors
@@ -211,6 +104,6 @@ module.exports = {
         // Enforce throwing type error when throwing error while checking typeof
         'unicorn/prefer-type-error': 'error',
         // Use new when throwing error
-        'unicorn/throw-new-error': 'error',
-    },
+        'unicorn/throw-new-error': 'error'
+    }
 }
