@@ -5,7 +5,7 @@ module.exports = {
         node: true
     },
     parserOptions: {
-        parser: 'babel-eslint',
+        parser: 'babel-eslint'
     },
     extends: [
         '@moso/eslint-config-basic',
@@ -14,9 +14,9 @@ module.exports = {
         'plugin:vue/essential'
     ],
     plugins: [
-        'vue',
+        'vue'
     ],
     rules: {
         //
-    },
+    }
 }
