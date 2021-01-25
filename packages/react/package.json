@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config-react",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "",
   "main": "index.js",
   "keywords": [],
@@ -21,7 +21,7 @@
     "typescript": ">=3.9"
   },
   "dependencies": {
-    "@moso/eslint-config-basic": "0.2.2",
+    "@moso/eslint-config-basic": "^0.2.3",
     "eslint-plugin-react": "^7.22.0"
   },
   "devDependencies": {
