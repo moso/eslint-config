@@ -5,7 +5,6 @@ module.exports = {
         node: true
     },
     extends: [
-        'standard',
         'plugin:import/errors',
         'plugin:import/warnings'
     ],
@@ -45,12 +44,12 @@ module.exports = {
         'no-return-await': 'off',
         'no-unused-vars': 'warn',
         'object-curly-spacing': ['error', 'always'],
-        quotes: ['error', 'single'],
+        quotes: ['error', 'single', { allowTemplateLiterals: true }],
         semi: [2, 'never'],
         'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
 
         // es6
-        'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
+        'arrow-parens': ['error', 'always'],
         'generator-star-spacing': 'off',
         'no-var': 'error',
         'object-shorthand': ['error', 'always', { ignoreConstructors: false, avoidQuotes: true }],
@@ -62,7 +61,6 @@ module.exports = {
         'template-curly-spacing': 'error',
 
         // best-practice
-        'array-callback-return': 'error',
         'block-scoped-var': 'error',
         complexity: ['off', 11],
         'consistent-return': 'off',
