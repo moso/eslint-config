@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config-vue",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "",
   "main": "index.js",
   "keywords": [],
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@moso/eslint-config-basic": "^0.2.4",
+    "@moso/eslint-config-basic": "^0.2.5",
     "eslint-plugin-vue": "^7.5.0"
   },
   "devDependencies": {
