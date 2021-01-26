@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config-fifa",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "",
   "main": "index.js",
   "keywords": [],
@@ -21,7 +21,7 @@
     "typescript": ">=3.9"
   },
   "dependencies": {
-    "@moso/eslint-config-react": "^0.2.3",
+    "@moso/eslint-config-react": "^0.2.4",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1"
   },
