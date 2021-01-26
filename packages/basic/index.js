@@ -26,7 +26,7 @@ module.exports = {
         // Common
         'array-bracket-spacing': ['error', 'never'],
         'block-spacing': ['error', 'always'],
-        'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
+        'brace-style': ['error', '1tbs', { allowSingleLine: true }],
         camelcase: 'off',
         'comma-dangle': ['error', 'never'],
         'comma-spacing': ['error', { before: false, after: true }],
@@ -39,6 +39,7 @@ module.exports = {
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'no-constant-condition': 'warn',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'no-mixed-spaces-and-tabs': 'error',
         'no-param-reassign': 'off',
         'no-restricted-syntax': ['error', 'DebuggerStatement', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
         'no-return-await': 'off',
