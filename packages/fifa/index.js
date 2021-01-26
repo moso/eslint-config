@@ -32,12 +32,13 @@ module.exports = {
         }
     },
     rules: {
-        // ES6
+        // ES6 overrides
         'comma-dangle': ['error', 'always-multiline'],
+        eqeqeq: ['error', 'smart'],
         'no-console': [2, { allow: ['warn', 'error'] }],
         'no-redeclare': 'off',
         'no-useless-constructor': 'off',
-        semi: [2, 'always'],
+        semi: ['error', 'always'],
 
         // React
         'react/display-name': 'off',
@@ -47,14 +48,14 @@ module.exports = {
         'react/react-in-jsx-scope': 'off',
 
         // JSX
-        'react/jsx-curly-newline': 'consistent',
-        'react/jsx-equals-spacing': [2, 'always'],
-        'react/jsx-indent': [4, 2, { indentLogicalExpressions: true }],
+        'react/jsx-curly-newline': ['error', { multiline: 'consistent', singleline: 'consistent' }],
+        'react/jsx-equals-spacing': [2, 'never'],
+        'react/jsx-indent': [2, 4, { indentLogicalExpressions: true }],
         'react/jsx-props-no-multi-spaces': 'error',
 
         // TS
         '@typescript-eslint/indent': ['error', 4],
-        '@typescript-eslint/member-delimiter-style': ['error', { multiline: { delimiter: 'none' } }],
+        '@typescript-eslint/member-delimiter-style': ['error', { multiline: { delimiter: 'semi', requireLast: true } }],
         '@typescript-eslint/no-redeclare': 'error',
         '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_', args: 'none', ignoreRestSiblings: true }],
         '@typescript-eslint/semi': ['error', 'always'],
