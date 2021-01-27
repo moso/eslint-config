@@ -36,7 +36,7 @@ module.exports = {
         'comma-dangle': ['error', 'always-multiline'],
         curly: 'off',
         eqeqeq: ['error', 'smart'],
-        'max-len': ['warn', { code: 120, ignoreComments: true, ignoreTrailingComments: true, ignoreUrls: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true }],
+        'max-len': ['warn', { code: 120, ignoreComments: true, ignoreTrailingComments: true, ignoreUrls: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true, ignorePattern: 'data:image/' }],
         'no-console': [2, { allow: ['warn', 'error'] }],
         'no-redeclare': 'off',
         'no-useless-constructor': 'off',
