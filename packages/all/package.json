@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "",
   "main": "index.js",
   "keywords": [],
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@moso/eslint-config-fifa": "^0.2.5",
+    "@moso/eslint-config-fifa": "^0.2.6",
     "@moso/eslint-config-nuxt": "^0.2.5",
     "@moso/eslint-config-react": "^0.2.5",
     "@moso/eslint-config-typescript": "^0.2.5",
