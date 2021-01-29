@@ -50,7 +50,7 @@ module.exports = {
         'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
 
         // es6
-        'arrow-parens': ['error', 'always'],
+        'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
         'generator-star-spacing': 'off',
         'no-var': 'error',
         'object-shorthand': ['error', 'always', { ignoreConstructors: false, avoidQuotes: true }],
@@ -74,9 +74,10 @@ module.exports = {
         'no-with': 'error',
         'no-void': 'error',
         'no-useless-escape': 'error',
+        'no-useless-rename': 'error',
         'operator-linebreak': [2, 'before'],
         'vars-on-top': 'error',
-        'require-await': 'off',
+        'require-await': 'error',
 
         // unicorns
         // Pass error message when throwing errors
