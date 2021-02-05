@@ -31,12 +31,12 @@ module.exports = {
         'comma-dangle': ['error', 'never'],
         'comma-spacing': ['error', { before: false, after: true }],
         'comma-style': ['error', 'last'],
-        curly: [2, 'multi-or-nest', 'consistent'],
+        curly: ['error'],
         'func-call-spacing': ['error', 'never'],
         indent: ['error', 4, { SwitchCase: 1, VariableDeclarator: 1, outerIIFEBody: 1 }],
         'key-spacing': ['error', { beforeColon: false, afterColon: true }],
         'no-cond-assign': ['error', 'always'],
-        'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
         'no-constant-condition': 'warn',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'no-mixed-spaces-and-tabs': 'error',
@@ -50,7 +50,7 @@ module.exports = {
         'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
 
         // es6
-        'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
+        'arrow-parens': ['error', 'always'],
         'generator-star-spacing': 'off',
         'no-var': 'error',
         'object-shorthand': ['error', 'always', { ignoreConstructors: false, avoidQuotes: true }],
@@ -59,7 +59,7 @@ module.exports = {
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
         'prefer-template': 'error',
-        'template-curly-spacing': 'error',
+        'template-curly-spacing': ['error', 'always'],
 
         // best-practice
         'block-scoped-var': 'error',
@@ -70,6 +70,7 @@ module.exports = {
         'no-case-declarations': 'error',
         'no-multi-spaces': 'error',
         'no-multi-str': 'error',
+        'no-redeclare': ['error', { builtinGlobals: true }],
         'no-return-assign': 'off',
         'no-with': 'error',
         'no-void': 'error',
