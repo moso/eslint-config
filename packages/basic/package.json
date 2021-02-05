@@ -23,7 +23,7 @@
     "eslint": ">=7.4.0"
   },
   "dependencies": {
-    "babel-eslint": "^10.1.0",
+    "@babel/eslint-parser": "^7.12.13",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-plugin-html": "^6.1.1",
     "eslint-plugin-import": "^2.22.1",
@@ -32,6 +32,6 @@
     "eslint-plugin-unicorn": "^27.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.18.0"
+    "eslint": "^7.19.0"
   }
 }
