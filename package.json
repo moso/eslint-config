@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@moso/eslint-config": "*",
-    "eslint": "^7.18.0",
+    "eslint": "^7.19.0",
     "lerna": "^3.22.1"
   }
 }
