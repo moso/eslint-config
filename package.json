@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config-monorepo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Morten Sørensen",
     "email": "morten@moso.io",
@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@moso/eslint-config": "*",
-    "eslint": "^7.19.0",
-    "lerna": "^3.22.1"
+    "eslint": "^7.32.0",
+    "lerna": "^4.0.0"
   }
 }
