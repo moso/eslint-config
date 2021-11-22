@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "description": " ",
   "main": "index.js",
   "keywords": [],
@@ -20,8 +20,8 @@
     "eslint": ">=8.0.0"
   },
   "dependencies": {
-    "@moso/eslint-config-nuxt": "^0.2.12",
-    "@moso/eslint-config-vue": "^0.2.12",
+    "@moso/eslint-config-nuxt": "^0.2.14",
+    "@moso/eslint-config-vue": "^0.2.14",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "eslint-config-standard": "^16.0.3",
