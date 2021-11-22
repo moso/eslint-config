@@ -1,20 +1,19 @@
 module.exports = {
-    root: true,
-    env: {
-        browser: true,
-        node: true
-    },
-    parserOptions: {
-        parser: 'babel-eslint'
-    },
+    overrides: [{
+        files: ['*.vue'],
+        parser: 'vue-eslint-parser',
+        parserOptions: {
+            parser: '@typescript-eslint/parser'
+        }
+    }],
     extends: [
-        '@moso/eslint-config-basic',
-        'plugin:vue/essential'
-    ],
-    plugins: [
-        'vue'
+        'plugin:vue/vue3-recommended',
+        '@moso/eslint-config-ts'
     ],
     rules: {
-        'vue/max-attributes-per-line': ['warn', { singleline: 5 }]
+        'vue/max-attributes-per-line': ['warn', { singleline: 5 }],
+        'vue/no-v-html': 'off',
+        'vue/require-prop-types': 'off',
+        'vue/require-default-prop': 'off'
     }
 }
