@@ -11,9 +11,7 @@ module.exports = {
     plugins: ['html', 'unicorn'],
     settings: {
         'import/resolver': {
-            node: {
-                extensions: ['.js', '.mjs']
-            }
+            node: { extensions: ['.js', '.mjs', '.ts', '.d.ts'] }
         }
     },
     rules: {
@@ -22,6 +20,7 @@ module.exports = {
         'import/order': 'error',
         'import/no-absolute-path': ['error', { esmodule: true, commonjs: true }],
         'import/no-mutable-exports': 'error',
+        'import/no-named-as-default': 0,
 
         // Common
         'array-bracket-spacing': ['error', 'never'],
@@ -31,7 +30,7 @@ module.exports = {
         'comma-dangle': ['error', 'never'],
         'comma-spacing': ['error', { before: false, after: true }],
         'comma-style': ['error', 'last'],
-        curly: ['error'],
+        curly: ['error', 'multi-or-nest', 'consistent'],
         'func-call-spacing': ['error', 'never'],
         indent: ['error', 4, { SwitchCase: 1, VariableDeclarator: 1, outerIIFEBody: 1 }],
         'key-spacing': ['error', { beforeColon: false, afterColon: true }],
@@ -44,6 +43,7 @@ module.exports = {
         'no-restricted-syntax': ['error', 'DebuggerStatement', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
         'no-return-await': 'off',
         'no-unused-vars': 'warn',
+        'no-use-before-define': ['error', { functions: false, classes: false, variables: true }],
         'object-curly-spacing': ['error', 'always'],
         quotes: ['error', 'single', { allowTemplateLiterals: true }],
         semi: [2, 'never'],
@@ -65,7 +65,7 @@ module.exports = {
         'block-scoped-var': 'error',
         complexity: ['off', 11],
         'consistent-return': 'off',
-        eqeqeq: ['error', 'always'],
+        eqeqeq: ['error', 'smart'],
         'no-alert': 'warn',
         'no-case-declarations': 'error',
         'no-multi-spaces': 'error',
