@@ -11,9 +11,11 @@ module.exports = {
         '@moso/eslint-config-ts'
     ],
     rules: {
+        "vue/html-indent": ["error", 4],
         'vue/max-attributes-per-line': ['warn', { singleline: 5 }],
         'vue/no-v-html': 'off',
         'vue/require-prop-types': 'off',
-        'vue/require-default-prop': 'off'
+        'vue/require-default-prop': 'off',
+        "vue/singleline-html-element-content-newline": "off"
     }
 }
