@@ -14,14 +14,15 @@
     "index.js"
   ],
   "peerDependencies": {
-    "eslint": ">=8.0.0"
+    "eslint": ">=8.1.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
     "@moso/eslint-config-ts": "^0.2.14",
-    "eslint-plugin-vue": "^8.1.1"
+    "eslint-plugin-vue": "^8.1.1",
+    "vue-eslint-parser": "^8.0.1"
   },
   "devDependencies": {
     "eslint": "^8.3.0"
