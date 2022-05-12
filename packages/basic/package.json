@@ -20,18 +20,18 @@
     "access": "public"
   },
   "peerDependencies": {
-    "eslint": ">=8.1.0"
+    "eslint": ">=8.x"
   },
   "dependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/eslint-parser": "^7.16.3",
+    "@babel/core": "^7.17.10",
+    "@babel/eslint-parser": "^7.17.0",
     "eslint-plugin-html": "^6.2.0",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.1",
-    "eslint-plugin-unicorn": "^39.0.0"
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-unicorn": "^42.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.3.0"
+    "eslint": ">=8.x"
   }
 }

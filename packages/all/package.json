@@ -17,22 +17,22 @@
     "access": "public"
   },
   "peerDependencies": {
-    "eslint": ">=8.1.0"
+    "eslint": ">=8.x"
   },
   "dependencies": {
-    "@moso/eslint-config-nuxt": "^0.2.15",
-    "@moso/eslint-config-vue": "^0.2.15",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "eslint-config-standard": "^16.0.3",
+    "@moso/eslint-config-nuxt": "^0.2.16",
+    "@moso/eslint-config-vue": "^0.2.16",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-html": "^6.2.0",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.1",
-    "eslint-plugin-unicorn": "^39.0.0",
-    "eslint-plugin-vue": "^8.1.1"
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-unicorn": "^42.0.0",
+    "eslint-plugin-vue": "^8.7.1"
   },
   "devDependencies": {
-    "eslint": "^8.3.0"
+    "eslint": ">=8.x"
   }
 }
