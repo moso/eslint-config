@@ -2,18 +2,170 @@ module.exports = {
     env: {
         es6: true,
         browser: true,
-        node: true
+        node: true,
     },
+    reportUnusedDisableDirectives: true,
     extends: [
-        'plugin:import/errors',
-        'plugin:import/warnings'
+        'plugin:import/recommended',
+        'plugin:eslint-comments/recommended',
+        'plugin:jsonc/recommended-with-jsonc',
+        'plugin:markdown/recommended',
     ],
-    plugins: ['html', 'unicorn'],
+    ignorePatterns: [
+        '*.min.*',
+        '*.d.ts',
+        'CHANGELOG.md',
+        'dist',
+        'LICENSE*',
+        'output',
+        'out',
+        'coverage',
+        'public',
+        'temp',
+        'package-lock.json',
+        'pnpm-lock.yaml',
+        'yarn.lock',
+        '__snapshots__',
+        '*.css',
+        '*.png',
+        '*.ico',
+        '*.toml',
+        '*.patch',
+        '*.txt',
+        '*.crt',
+        '*.key',
+        'Dockerfile',
+        '!.github',
+        '!.vscode',
+    ],
+    plugins: ['html', 'unicorn', 'unused-imports'],
     settings: {
         'import/resolver': {
-            node: { extensions: ['.js', '.mjs', '.ts', '.d.ts'] }
-        }
+            node: { extensions: ['.js', '.mjs'] },
+        },
     },
+    overrides: [
+        {
+            files: ['*.json', '*.json5', '*.jsonc'],
+            parser: 'jsonc-eslint-parser',
+            rules: {
+                'jsonc/array-bracket-spacing': ['error', 'never'],
+                'jsonc/comma-dangle': ['error', 'never'],
+                'jsonc/comma-style': ['error', 'last'],
+                'jsonc/indent': ['error', 2],
+                'jsonc/key-spacing': ['error', { beforeColon: false, afterColon: true }],
+                'jsonc/no-octal-escape': 'error',
+                'jsonc/object-curly-newline': ['error', { multiline: true, consistent: true }],
+                'jsonc/object-curly-spacing': ['error', 'always'],
+                'jsonc/object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
+            },
+        },
+        {
+            files: ['package.json'],
+            parser: 'jsonc-eslint-parser',
+            rules: {
+                'jsonc/sort-keys': [
+                    'error',
+                    {
+                        pathPattern: '^$',
+                        order: [
+                            'publisher',
+                            'name',
+                            'displayName',
+                            'type',
+                            'version',
+                            'private',
+                            'packageManager',
+                            'description',
+                            'keywords',
+                            'categories',
+                            'sideEffects',
+                            'exports',
+                            'main',
+                            'module',
+                            'unpkg',
+                            'jsdelivr',
+                            'types',
+                            'typesVersions',
+                            'bin',
+                            'icon',
+                            'files',
+                            'engines',
+                            'activationEvents',
+                            'contributes',
+                            'scripts',
+                            'peerDependencies',
+                            'peerDependenciesMeta',
+                            'dependencies',
+                            'optionalDependencies',
+                            'devDependencies',
+                            'pnpm',
+                            'author',
+                            'license',
+                            'funding',
+                            'homepage',
+                            'repository',
+                            'bugs',
+                            'overrides',
+                            'resolutions',
+                            'husky',
+                            'simple-git-hooks',
+                            'lint-staged',
+                            'eslintConfig',
+                        ],
+                    },
+                    {
+                        pathPattern: '^(?:dev|peer|optional|bundled)?[Dd]ependencies$',
+                        order: { type: 'asc' },
+                    },
+                    {
+                        pathPattern: '^exports.*$',
+                        order: [
+                            'types',
+                            'require',
+                            'import',
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            files: ['*.d.ts'],
+            rules: {
+                'import/no-duplicates': 'off',
+            },
+        },
+        {
+            files: ['*.js', '*.cjs', '*.jsx'],
+            rules: {
+                '@typescript-eslint/no-var-requires': 'off',
+                '@typescript-eslint/no-require-imports': 'off',
+            },
+        },
+        {
+            // Code blocks in markdown file
+            files: ['**/*.md/*.*'],
+            rules: {
+                '@typescript-eslint/no-redeclare': 'off',
+                '@typescript-eslint/no-unused-vars': 'off',
+                '@typescript-eslint/no-use-before-define': 'off',
+                '@typescript-eslint/no-var-requires': 'off',
+                '@typescript-eslint/comma-dangle': 'off',
+                '@typescript-eslint/consistent-type-imports': 'off',
+                '@typescript-eslint/no-namespace': 'off',
+                '@typescript-eslint/no-require-imports': 'off',
+                'import/no-unresolved': 'off',
+                'unused-imports/no-unused-imports': 'off',
+                'unused-imports/no-unused-vars': 'off',
+                'no-alert': 'off',
+                'no-console': 'off',
+                'no-restricted-imports': 'off',
+                'no-undef': 'off',
+                'no-unused-expressions': 'off',
+                'no-unused-vars': 'off',
+            },
+        },
+    ],
     rules: {
         // import
         'import/first': 'error',
@@ -21,6 +173,18 @@ module.exports = {
         'import/no-absolute-path': ['error', { esmodule: true, commonjs: true }],
         'import/no-mutable-exports': 'error',
         'import/no-named-as-default': 0,
+        'import/newline-after-import': ['error', { count: 1, considerComments: true }],
+
+        'sort-imports': [
+            'error',
+            {
+                ignoreCase: false,
+                ignoreDeclarationSort: true,
+                ignoreMemberSort: false,
+                memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
+                allowSeparatedGroups: false,
+            },
+        ],
 
         // Common
         'array-bracket-spacing': ['error', 'never'],
@@ -56,6 +220,7 @@ module.exports = {
         'object-shorthand': ['error', 'always', { ignoreConstructors: false, avoidQuotes: true }],
         'prefer-arrow-callback': ['error', { allowNamedFunctions: false, allowUnboundThis: true }],
         'prefer-const': ['error', { destructuring: 'any', ignoreReadBeforeAssign: true }],
+        'prefer-exponentiation-operator': 'error',
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
         'prefer-template': 'error',
@@ -76,7 +241,7 @@ module.exports = {
         'no-void': 'error',
         'no-useless-escape': 'error',
         'no-useless-rename': 'error',
-        'operator-linebreak': [2, 'before'],
+        'operator-linebreak': ['error', 'before'],
         'vars-on-top': 'error',
         'require-await': 'error',
 
@@ -104,6 +269,6 @@ module.exports = {
         // Enforce throwing type error when throwing error while checking typeof
         'unicorn/prefer-type-error': 'error',
         // Use new when throwing error
-        'unicorn/throw-new-error': 'error'
-    }
+        'unicorn/throw-new-error': 'error',
+    },
 }
