@@ -6,6 +6,7 @@ module.exports = {
     },
     reportUnusedDisableDirectives: true,
     extends: [
+        './standard',
         'plugin:import/recommended',
         'plugin:eslint-comments/recommended',
         'plugin:jsonc/recommended-with-jsonc',
@@ -143,7 +144,7 @@ module.exports = {
             },
         },
         {
-            // Code blocks in markdown file
+            // Needed for code blocks in markdown files
             files: ['**/*.md/*.*'],
             rules: {
                 '@typescript-eslint/no-redeclare': 'off',
@@ -167,7 +168,7 @@ module.exports = {
         },
     ],
     rules: {
-        // import
+        // Import
         'import/first': 'error',
         'import/order': 'error',
         'import/no-absolute-path': ['error', { esmodule: true, commonjs: true }],
@@ -213,7 +214,7 @@ module.exports = {
         semi: [2, 'never'],
         'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
 
-        // es6
+        // ES6
         'arrow-parens': ['error', 'always'],
         'generator-star-spacing': 'off',
         'no-var': 'error',
@@ -226,7 +227,7 @@ module.exports = {
         'prefer-template': 'error',
         'template-curly-spacing': ['error', 'always'],
 
-        // best-practice
+        // Best-practice
         'block-scoped-var': 'error',
         complexity: ['off', 11],
         'consistent-return': 'off',
