@@ -1,11 +1,11 @@
 {
   "name": "@moso/eslint-config-basic",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "",
   "keywords": [],
   "main": "index.js",
   "files": [
-    "index.js"
+    "*.js"
   ],
   "scripts": {
     "lint": "eslint . --config=index.js"
