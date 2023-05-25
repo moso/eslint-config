@@ -1,6 +1,6 @@
 {
   "name": "@moso/eslint-config",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Morten's ESLint config",
   "keywords": [],
   "main": "index.js",
