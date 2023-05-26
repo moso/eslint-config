@@ -1,8 +1,8 @@
-const fs = require('node:fs')
-const { join } = require('node:path')
-const basic = require('@moso/eslint-config-basic')
+const fs = require('node:fs');
+const { join } = require('node:path');
+const basic = require('@moso/eslint-config-basic');
 
-const tsconfig = process.env.ESLINT_TSCONFIG || 'tsconfig.eslint.json'
+const tsconfig = process.env.ESLINT_TSCONFIG || 'tsconfig.eslint.json';
 
 module.exports = {
     extends: [
@@ -25,12 +25,12 @@ module.exports = {
 
                 // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/configs/recommended-requiring-type-checking.ts
                 rules: {
-                    'no-throw-literal': 'off',
-                    '@typescript-eslint/no-throw-literal': 'error',
-                    'no-implied-eval': 'off',
-                    '@typescript-eslint/no-implied-eval': 'error',
                     'dot-notation': 'off',
                     '@typescript-eslint/dot-notation': ['error', { allowKeywords: true }],
+                    'no-implied-eval': 'off',
+                    '@typescript-eslint/no-implied-eval': 'error',
+                    'no-throw-literal': 'off',
+                    '@typescript-eslint/no-throw-literal': 'error',
                     '@typescript-eslint/no-floating-promises': 'error',
                     '@typescript-eslint/no-misused-promises': 'error',
                     '@typescript-eslint/await-thenable': 'error',
@@ -53,23 +53,43 @@ module.exports = {
         'import/named': 'off',
 
         // TypeScript
-        '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
-        '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', disallowTypeAnnotations: false }],
-        '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+        '@typescript-eslint/consistent-type-imports': 'off',
+        '@typescript-eslint/consistent-type-definitions': 'off',
         '@typescript-eslint/member-delimiter-style': ['error', { multiline: { delimiter: 'semi', requireLast: true } }],
         '@typescript-eslint/no-require-imports': 'error',
         '@typescript-eslint/prefer-ts-expect-error': 'error',
-        '@typescript-eslint/semi': ['error', 'never'],
         '@typescript-eslint/type-annotation-spacing': ['error', {}],
 
         // Override JS
-        'no-useless-constructor': 'off',
+        'brace-style': 'off',
+        '@typescript-eslint/brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
+        'comma-dangle': 'off',
+        '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
         indent: 'off',
         '@typescript-eslint/indent': ['error', 4],
-        'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_', args: 'none', ignoreRestSiblings: true }],
+        'no-invalid-this': 'off',
+        '@typescript-eslint-no-invalid-this': 'off',
         'no-redclare': 'off',
         '@typescript-eslint/no-redeclare': 'error',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_', args: 'none', ignoreRestSiblings: true }],
+        'no-use-before-define': 'off',
+        '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false, variables: true }],
+        'no-useless-constructor': 'off',
+        'object-curly-spacing': 'off',
+        '@typescript-eslint/object-curly-spacing': ['error', 'always'],
+        quotes: 'off',
+        '@typescript-eslint/quotes': ['error', 'single'],
+        semi: 'off',
+        '@typescript-eslint/semi': ['error', 'always'],
+        'space-before-blocks': 'off',
+        '@typescript-eslint/space-before-blocks': ['error', 'always'],
+        'space-before-function-paren': 'off',
+        '@typescript-eslint/space-before-function-paren': ['error', {
+            anonymous: 'always',
+            named: 'never',
+            asyncArrow: 'always',
+        }],
 
         // TypeScript off
         '@typescript-eslint/ban-ts-comment': 'off',
@@ -84,27 +104,6 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-parameter-properties': 'off',
-        '@typescript-eslint/no-use-before-define': 'off',
         '@typescript-eslint/no-var-requires': 'off',
-        'no-invalid-this': 'off',
-        '@typescript-eslint-no-invalid-this': 'off',
-        'no-use-before-define': 'off',
-        '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false, variables: true }],
-        'brace-style': 'off',
-        '@typescript-eslint/brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
-        'comma-dangle': 'off',
-        '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
-        'object-curly-spacing': 'off',
-        '@typescript-eslint/object-curly-spacing': ['error', 'always'],
-        'quotes': 'off',
-        '@typescript-eslint/quotes': ['error', 'single'],
-        'space-before-blocks': 'off',
-        '@typescript-eslint/space-before-blocks': ['error', 'always'],
-        'space-before-function-paren': 'off',
-        '@typescript-eslint/space-before-function-paren': ['error', {
-            anonymous: 'always',
-            named: 'never',
-            asyncArrow: 'always',
-        }],
     },
-}
+};

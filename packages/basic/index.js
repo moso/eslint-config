@@ -53,7 +53,7 @@ module.exports = {
                 'jsonc/array-bracket-spacing': ['error', 'never'],
                 'jsonc/comma-dangle': ['error', 'never'],
                 'jsonc/comma-style': ['error', 'last'],
-                'jsonc/indent': ['error', 2],
+                'jsonc/indent': 'off',
                 'jsonc/key-spacing': ['error', { beforeColon: false, afterColon: true }],
                 'jsonc/no-octal-escape': 'error',
                 'jsonc/object-curly-newline': ['error', { multiline: true, consistent: true }],
@@ -166,6 +166,12 @@ module.exports = {
                 'no-unused-vars': 'off',
             },
         },
+        {
+            files: ['*.ts', '*.tsx', '*.mts', '*.cts'],
+            rules: {
+                'no-void': ['error', { allowAsStatement: true }],
+            },
+        },
     ],
     rules: {
         // Import
@@ -174,18 +180,8 @@ module.exports = {
         'import/no-absolute-path': ['error', { esmodule: true, commonjs: true }],
         'import/no-mutable-exports': 'error',
         'import/no-named-as-default': 0,
+        'import/no-unresolved': 'off',
         'import/newline-after-import': ['error', { count: 1, considerComments: true }],
-
-        'sort-imports': [
-            'error',
-            {
-                ignoreCase: false,
-                ignoreDeclarationSort: true,
-                ignoreMemberSort: false,
-                memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-                allowSeparatedGroups: false,
-            },
-        ],
 
         // Common
         'array-bracket-spacing': ['error', 'never'],
@@ -211,7 +207,7 @@ module.exports = {
         'no-use-before-define': ['error', { functions: false, classes: false, variables: true }],
         'object-curly-spacing': ['error', 'always'],
         quotes: ['error', 'single', { allowTemplateLiterals: true }],
-        semi: [2, 'never'],
+        semi: ['error', 'always'],
         'space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
 
         // ES6
@@ -225,7 +221,6 @@ module.exports = {
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
         'prefer-template': 'error',
-        'template-curly-spacing': ['error', 'always'],
 
         // Best-practice
         'block-scoped-var': 'error',
