@@ -1,5 +1,5 @@
-const { isPackageInstalled } = require('local-pkg');
-const ts = isPackageInstalled('typescript');
+const { isPackageExists } = require('local-pkg');
+const ts = isPackageExists('typescript');
 
 module.exports = {
     overrides: [{
