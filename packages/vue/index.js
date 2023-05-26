@@ -1,3 +1,6 @@
+const { isPackageInstalled } = require('local-pkg');
+const ts = isPackageInstalled('typescript');
+
 module.exports = {
     overrides: [{
         files: ['*.vue'],
@@ -8,7 +11,7 @@ module.exports = {
     }],
     extends: [
         'plugin:vue/vue3-recommended',
-        '@moso/eslint-config-ts',
+        ts ? '@moso/eslint-config-ts' : '@moso/eslint-config-basic',
     ],
     rules: {
         'vue/html-indent': ['error', 4],
