@@ -1,11 +1,16 @@
-import moso from  './dist/index.js';
+import moso from  './src';
 
-export default await moso(
+export default moso(
     {
         vue: true,
         typescript: true,
-        ignores: ['fixtures', '_fixtures'],
 
+    },
+    {
+        ignores: [
+            'fixtures',
+            '_fixtures'
+        ],
     },
     {
         files: ['src/**/*.ts'],
