@@ -1,4 +1,5 @@
 import globals from 'globals';
+import { default as unusedImportsPlugin } from 'eslint-plugin-unused-imports'
 
 import { GLOB_SRC, GLOB_SRC_EXT } from '@/globs';
 import { interopDefault } from '@/utils';
@@ -96,7 +97,7 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'no-loss-of-precision': 'error',
                 'no-misleading-character-class': 'error',
                 'no-multi-str': 'error',
-                'no-new-symbol': 'error',
+                'no-new-native-nonconstructor': 'error',
                 'no-nonoctal-decimal-escape': 'error',
                 'no-obj-calls': 'error',
                 'no-octal': 'error',
@@ -124,7 +125,6 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                     'TSEnumDeclaration[const=true]',
                     'TSExportAssignment',
                 ],
-                'no-return-await': 'warn',
                 'no-self-assign': 'error',
                 'no-self-compare': 'error',
                 'no-sequences': 'error',
@@ -213,11 +213,10 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'unused-imports/no-unused-vars': [
                     'error',
                     {
-                        args: 'after-used',
-                        argsIgnorePattern: '^_',
-                        vars: 'all',
-                        varsIgnorePattern: '^_',
-                        ignoreRestSiblings: true
+                        'args': 'after-used',
+                        'argsIgnorePattern': '^_',
+                        'vars': 'all',
+                        'varsIgnorePattern': '^_',
                     },
                 ],
                 'use-isnan': [
