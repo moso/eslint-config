@@ -109,7 +109,7 @@ export const vue = async (options:
                 }],
                 'vue/component-name-in-template-casing': ['error', 'PascalCase'],
                 'vue/component-options-name-casing': ['error', 'PascalCase'],
-                // this is deprecated
+                'vue/component-tags-order': 0,
 
                 'vue/custom-event-name-casing': ['error', 'camelCase'],
                 'vue/define-macros-order': ['error', {
@@ -134,7 +134,6 @@ export const vue = async (options:
                     'WithStatement',
                 ],
                 'vue/no-restricted-v-bind': ['error', '/^v-/'],
-                'vue/no-setup-props-destructure': 0,
                 'vue/no-setup-props-reactivity-loss': 0,
                 'vue/no-sparse-arrays': 'error',
                 'vue/no-unused-refs': 'error',
@@ -163,17 +162,10 @@ export const vue = async (options:
                     'vue/array-bracket-spacing': ['error', 'never'],
                     'vue/arrow-spacing': ['error', { after: true, before: true }],
                     'vue/block-spacing': ['error', 'always'],
-                    'vue/block-tag-newline': ['error', {
-                        multiline: 'always',
-                        singleline: 'always',
-                    }],
                     'vue/brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
                     'vue/comma-dangle': ['error', 'always-multiline'],
                     'vue/comma-spacing': ['error', { after: true, before: false }],
                     'vue/comma-style': ['error', 'last'],
-                    'vue/component-tags-order': ['error', {
-                        order: ['script', 'template', 'style'],
-                    }],
                     'vue/html-comment-content-spacing': ['error', 'always', {
                         exceptions: ['-'],
                     }],
