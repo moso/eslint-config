@@ -37,32 +37,46 @@ export const typescript = async (options:
     const isTypeAware = !!tsconfigPath;
 
     const typeAwareRules: TypedFlatConfigItem['rules'] = {
-        '@stylistic/await-thenable': 'error',
-        '@stylistic/dot-notation': ['error', { allowKeywords: true }],
-        '@stylistic/no-floating-promises': 'error',
-        '@stylistic/no-for-in-array': 'error',
-        '@stylistic/no-implied-eval': 'error',
-        '@stylistic/no-misused-promises': 'error',
-        '@stylistic/no-throw-literal': 'error',
-        '@stylistic/no-unnecessary-type-assertion': 'error',
-        '@stylistic/no-unsafe-argument': 'error',
-        '@stylistic/no-unsafe-assignment': 'error',
-        '@stylistic/no-unsafe-call': 'error',
-        '@stylistic/no-unsafe-member-access': 'error',
-        '@stylistic/no-unsafe-return': 'error',
-        '@stylistic/restrict-plus-operands': 'error',
-        '@stylistic/restrict-template-expressions': 'error',
-        '@stylistic/unbound-method': 'error',
+        // JS off
+        'dot-notation': 'off',
+        'no-implied-eval': 'off',
+        'no-throw-literal': 'off',
+
+        // TypeScript
+        '@typescript-eslint/await-thenable': 'error',
+        '@typescript-eslint/dot-notation': ['error', { allowKeywords: true }],
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/explicit-member-accessibility': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-floating-promises': 'error',
+        '@typescript-eslint/no-for-in-array': 'error',
+        '@typescript-eslint/no-implied-eval': 'error',
+        '@typescript-eslint/no-misused-promises': 'error',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-parameter-properties': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
+        '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+        '@typescript-eslint/no-unsafe-argument': 'error',
+        '@typescript-eslint/no-unsafe-assignment': 'error',
+        '@typescript-eslint/no-unsafe-call': 'error',
+        '@typescript-eslint/no-unsafe-member-access': 'error',
+        '@typescript-eslint/no-unsafe-return': 'error',
+        '@typescript-eslint/only-throw-literal': 'error',
+        '@typescript-eslint/restrict-plus-operands': 'error',
+        '@typescript-eslint/restrict-template-expressions': 'error',
+        '@typescript-eslint/unbound-method': 'error',
     };
 
     const [
         antfuPlugin,
-        stylisticPlugin,
         tsParser,
+        tsPlugin,
     ] = await Promise.all([
         interopDefault(import('eslint-plugin-antfu')),
-        interopDefault(import('@stylistic/eslint-plugin')),
         interopDefault(import('@typescript-eslint/parser')),
+        interopDefault(import('@typescript-eslint/eslint-plugin')),
     ] as const);
 
     const makeParser = (typeAware: boolean, files: string[], ignores?: string[]): TypedFlatConfigItem => {
@@ -90,7 +104,7 @@ export const typescript = async (options:
             name: 'moso/typescript/setup',
             plugins: {
                 antfu: antfuPlugin,
-                '@stylistic': stylisticPlugin,
+                '@typescript-eslint': tsPlugin,
             },
         },
         ...isTypeAware
@@ -103,28 +117,56 @@ export const typescript = async (options:
             files,
             name: 'moso/typescript/rules',
             rules: {
-                '@stylistic/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
-                '@stylistic/ban-ts-ignore': 0,
-                '@stylistic/ban-types': ['error', { types: { Function: false } }],
-                '@stylistic/consistent-type-definitions': ['error', 'interface'],
-                '@stylistic/consistent-type-imports': ['error', { disallowTypeAnnotations: false, prefer: 'type-imports' }],
-                '@stylistic/method-signature-style': ['error', 'property'], // https://www.totaltypescript.com/method-shorthand-syntax-considered-harmful
-                '@stylistic/no-dupe-class-members': 'error',
-                '@stylistic/no-dynamic-delete': 0,
-                '@stylistic/no-explicit-any': 0,
-                '@stylistic/no-extraneous-class': 0,
-                '@stylistic/no-import-type-side-effects': 'error',
-                '@stylistic/no-invalid-void-type': 0,
-                '@stylistic/no-loss-of-precision': 'error',
-                '@stylistic/no-non-null-assertion': 0,
-                '@stylistic/no-redeclare': 'error',
-                '@stylistic/no-require-imports': 'error',
-                '@stylistic/no-unused-vars': 0,
-                '@stylistic/no-use-before-define': ['error', { classes: false, functions: false, variables: true }],
-                '@stylistic/no-useless-constructor': 0,
-                '@stylistic/prefer-ts-expect-error': 'error',
-                '@stylistic/triple-slash-reference': 0,
-                '@stylistic/unified-signatures': 0,
+                // JS off
+                'no-loss-of-precision': 'off',
+                'no-unused-vars': 'off',
+                'no-use-before-define': 'off',
+
+                // Typescript
+                '@typescript-eslint/ban-ts-comment': [
+                    'error',
+                    {
+                        'ts-ignore': 'allow-with-description',
+                    },
+                ],
+                '@typescript-eslint/ban-types': ['error', { types: { Function: false } }],
+                '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+                '@typescript-eslint/consistent-type-imports': [
+                    'error',
+                    {
+                        disallowTypeAnnotations: false,
+                        prefer: 'type-imports' ,
+                    },
+                ],
+                '@typescript-eslint/method-signature-style': ['error', 'property'],
+                '@typescript-eslint/no-dynamic-delete': 'off',
+                '@typescript-eslint/no-explicit-any': 'off',
+                '@typescript-eslint/no-extraneous-class': 'off',
+                '@typescript-eslint/no-import-type-side-effects': 'error',
+                '@typescript-eslint/no-invalid-void-type': 'off',
+                '@typescript-eslint/no-loss-of-precision': 'error',
+                '@typescript-eslint/no-non-null-assertion': 'off',
+                '@typescript-eslint/no-require-imports': 'error',
+                '@typescript-eslint/no-unused-vars': [
+                    'error',
+                    {
+                        argsIgnorePattern: '^_',
+                        args: 'none',
+                        ignoreRestSiblings: true,
+                    },
+                ],
+                '@typescript-eslint/no-use-before-define': [
+                    'error',
+                    {
+                        classes: false,
+                        functions: false,
+                        variables: true,
+                    },
+                ],
+                '@typescript-eslint/no-useless-constructor': 'off',
+                '@typescript-eslint/prefer-ts-expect-error': 'error',
+                '@typescript-eslint/triple-slash-reference': 'off',
+                '@typescript-eslint/unified-signatures': 'off',
 
                 ...overrides,
             },
@@ -143,25 +185,25 @@ export const typescript = async (options:
             files: ['**/*.d.ts'],
             name: 'moso/typescript/disables/dts',
             rules: {
-                'eslint-comments/no-unlimited-disable': 0,
-                'import/no-duplicates': 0,
-                'no-restricted-syntax': 0,
-                'unused-imports/no-unused-vars': 0,
+                'eslint-comments/no-unlimited-disable': 'off',
+                'import/no-duplicates': 'off',
+                'no-restricted-syntax': 'off',
+                'unused-imports/no-unused-vars': 'off',
             },
         },
         {
             files: ['**/*.{test,spec}.ts?(x)'],
             name: 'moso/typescript/disables/test',
             rules: {
-                'no-unused-expressions': 0,
+                'no-unused-expressions': 'off',
             },
         },
         {
             files: ['**/*.js', '**/*.cjs'],
             name: 'moso/typescript/disables/cjs',
             rules: {
-                '@stylistic/no-require-imports': 0,
-                '@stylistic/no-var-requires': 0,
+                '@stylistic/no-require-imports': 'off',
+                '@stylistic/no-var-requires': 'off',
             },
         },
     ];
