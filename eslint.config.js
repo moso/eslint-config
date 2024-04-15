@@ -2,6 +2,7 @@ import moso from  './src';
 
 export default moso(
     {
+        react: true,
         vue: true,
         typescript: true,
 
