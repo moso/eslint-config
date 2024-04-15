@@ -20,10 +20,12 @@ export const react = async(options: OptionsHasTypeScript & OptionsOverrides & Op
         reactPlugin,
         reactHooksPlugin,
         reactRefreshPlugin,
+        reactUseMemoPlugin,
     ] = await Promise.all([
         interopDefault(import('eslint-plugin-react')),
         interopDefault(import('eslint-plugin-react-hooks')),
         interopDefault(import('eslint-plugin-react-refresh')),
+        interopDefault(import('@arthurgeron/eslint-plugin-react-usememo')),
     ] as const);
 
     const isAllowConstantExport = ReactRefreshAllowConstantExportPackages.some(i => isPackageExists(i));
@@ -32,6 +34,7 @@ export const react = async(options: OptionsHasTypeScript & OptionsOverrides & Op
         {
             name: 'moso/react/setup',
             plugins: {
+                '@arthurgeron/react-usememo': reactUseMemoPlugin,
                 'react': reactPlugin,
                 'react-hooks': reactHooksPlugin,
                 'react-refresh': reactRefreshPlugin,
@@ -53,6 +56,11 @@ export const react = async(options: OptionsHasTypeScript & OptionsOverrides & Op
             },
             name: 'moso/react/rules',
             rules: {
+                ...reactPlugin.configs.recommended.rules,
+                ...reactHooksPlugin.configs.recommended.rules,
+
+                '@arthurgeron/react-usememo/require-usememo': [2],
+
                 'react-hooks/exhaustive-deps': 'warn',
                 'react-hooks/rules-of-hooks': 'error',
 
@@ -79,15 +87,15 @@ export const react = async(options: OptionsHasTypeScript & OptionsOverrides & Op
                 'react/no-string-refs': 'error',
                 'react/no-unescaped-entities': 'error',
                 'react/no-unknown-property': 'error',
-                'react/no-unsafe': 0,
+                'react/no-unsafe': 'off',
                 'react/prop-types': 'error',
-                'react/react-in-jsx-scope': 0,
+                'react/react-in-jsx-scope': 'off',
                 'react/require-render-return': 'error',
 
                 ...typescript
                 ? {
-                    'react/jsx-no-undef': 0,
-                    'react/prop-type': 0,
+                    'react/jsx-no-undef': 'off',
+                    'react/prop-type': 'off',
                     }
                 : {},
 

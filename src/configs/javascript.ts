@@ -54,6 +54,7 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 camelcase: 0,
                 'consistent-return': 'error',
                 'constructor-super': 'error',
+                curly: ['error', 'multi-or-nest', 'consistent'],
                 'dot-notation': 'warn',
                 eqeqeq: ['error', 'smart'],
                 'for-direction': 'error',
@@ -227,6 +228,7 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                     },
                 ],
                 'valid-typeof': ['error', { requireStringLiterals: true }],
+                'vars-on-top': 'error',
                 'yoda': ['error', 'never'],
 
                 ...overrides,
@@ -236,7 +238,7 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
             files: [`scripts/${GLOB_SRC}`, `cli.${GLOB_SRC_EXT}`],
             name: 'moso/script-overrides',
             rules: {
-                'no-console': 0,
+                'no-console': 'off',
             },
         },
     ];

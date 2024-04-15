@@ -25,11 +25,11 @@ export const imports = async (options: OptionsOverrides & OptionsStylistic = {})
             },
             rules: {
                 'import/first': 'error',
-                'import/no-duplicates': ['error', { esmodule: true, commonjs: true }],
+                'import/no-duplicates': 'error',
                 'import/no-mutable-exports': 'error',
-                'import/no-named-default': 0,
+                'import/no-named-default': 'off',
                 'import/no-self-import': 'error',
-                'import/no-unresolved': 0,
+                'import/no-unresolved': 'off',
                 'import/no-webpack-loader-syntax': 'error',
                 'import/order': 'error',
 
