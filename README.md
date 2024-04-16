@@ -344,6 +344,7 @@ This eslint-config takes inspiration from (and uses some of) [`@antfu/eslint-con
 - Opinionated rules
 - Enables Stylistic per default
 - Includes dependencies rather than asking you to install them
+- Deprecated Vue 2 support
 - Simplification in some areas
 - Less clutter
 - No dangerous plugin renaming
