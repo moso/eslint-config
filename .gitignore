@@ -77,15 +77,8 @@ dist
 # IDE
 .idea
 
-*.lerna_backup
-_fixtures
-
 .temp
 .history
 
-src/typegen.d.ts
 .eslint-config-inspector
 
-package-lock.json
-pnpm-lock.yaml
-bun.lockb
