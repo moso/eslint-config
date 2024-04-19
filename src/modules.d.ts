@@ -1,3 +1,4 @@
+// Modules that may or may not need types
 declare module '@antfu/eslint-plugin';
 declare module '@arthurgeron/eslint-plugin-react-usememo';
 declare module 'eslint-plugin-eslint-comments';
