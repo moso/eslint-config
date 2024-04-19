@@ -8,12 +8,6 @@ export default moso(
 
     },
     {
-        ignores: [
-            'fixtures',
-            '_fixtures'
-        ],
-    },
-    {
         files: ['src/**/*.ts'],
         rules: {
             'perfectionist/sort-objects': 'error',
