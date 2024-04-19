@@ -60,15 +60,44 @@ export const stylistic = async (options: StylisticConfig & OptionsOverrides = {}
                 '@stylistic/comma-style': ['error', 'last'],
                 '@stylistic/func-call-spacing': ['error', 'never'],
                 '@stylistic/generator-star-spacing': 0,
-                '@stylistic/indent': ['error', 4, { SwitchCase: 1, VariableDeclarator: 1, outerIIFEBody: 1 }],
-                '@stylistic/key-spacing': ['error', { beforeColon: false, afterColon: true }],
-                '@stylistic/member-delimiter-style': ['error', { multiline: { delimiter: 'semi', requireLast: true } }],
+                '@stylistic/indent': [
+                    'error',
+                    4,
+                    {
+                        SwitchCase: 1,
+                        VariableDeclarator: 1,
+                        outerIIFEBody: 1,
+                    }
+                ],
+                '@stylistic/key-spacing': [
+                    'error',
+                    {
+                        beforeColon: false,
+                        afterColon: true,
+                    }
+                ],
+                '@stylistic/member-delimiter-style': [
+                    'error',
+                    {
+                        multiline: {
+                            delimiter: 'semi',
+                            requireLast: true,
+                        }
+                    }
+                ],
                 '@stylistic/no-mixed-spaces-and-tabs': 'error',
                 '@stylistic/no-multi-spaces': 'error',
                 '@stylistic/operator-linebreak': ['error', 'before'],
                 '@stylistic/quotes': ['error', 'single', { allowTemplateLiterals: true }],
                 '@stylistic/semi': ['error', 'always'],
-                '@stylistic/space-before-function-paren': ['error', { anonymous: 'never', named: 'never', asyncArrow: 'always' }],
+                '@stylistic/space-before-function-paren': [
+                    'error',
+                    {
+                        anonymous: 'never',
+                        named: 'never',
+                        asyncArrow: 'always',
+                    }
+                ],
                 '@stylistic/type-annotation-spacing': ['error', {}],
                 '@stylistic/wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
 

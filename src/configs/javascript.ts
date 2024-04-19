@@ -1,5 +1,4 @@
 import globals from 'globals';
-import { default as unusedImportsPlugin } from 'eslint-plugin-unused-imports'
 
 import { GLOB_SRC, GLOB_SRC_EXT } from '@/globs';
 import { interopDefault } from '@/utils';

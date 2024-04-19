@@ -3,7 +3,12 @@ import { isPackageExists } from 'local-pkg';
 import { GLOB_JSX, GLOB_TSX } from '@/globs';
 import { interopDefault } from '@/utils';
 
-import type { OptionsFiles, OptionsHasTypeScript, OptionsOverrides, TypedFlatConfigItem } from '@/types';
+import type {
+    OptionsFiles,
+    OptionsHasTypeScript,
+    OptionsOverrides,
+    TypedFlatConfigItem,
+} from '@/types';
 
 const ReactRefreshAllowConstantExportPackages = [
     'vite',
@@ -64,10 +69,7 @@ export const react = async(options: OptionsHasTypeScript & OptionsOverrides & Op
                 'react-hooks/exhaustive-deps': 'warn',
                 'react-hooks/rules-of-hooks': 'error',
 
-                'react-refresh/only-export-components': [
-                    'warn',
-                    { allowConstantExport: isAllowConstantExport },
-                ],
+                'react-refresh/only-export-components': ['warn', { allowConstantExport: isAllowConstantExport }],
 
                 'react/display-name': 'error',
                 'react/jsx-key': 'error',

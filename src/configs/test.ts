@@ -1,7 +1,12 @@
 import { GLOB_TESTS } from '@/globs';
 import { interopDefault } from '@/utils';
 
-import type { OptionsFiles, OptionsIsInEditor, OptionsOverrides, TypedFlatConfigItem } from '@/types';
+import type {
+    OptionsFiles,
+    OptionsIsInEditor,
+    OptionsOverrides,
+    TypedFlatConfigItem,
+} from '@/types';
 
 export const test = async (options: OptionsFiles & OptionsIsInEditor & OptionsOverrides = {}): Promise<TypedFlatConfigItem[]> => {
     const {
