@@ -77,8 +77,10 @@ dist
 # IDE
 .idea
 
+*.lerna_backup
+
 .temp
 .history
 
+src/typegen.d.ts
 .eslint-config-inspector
-
