@@ -1,18 +1,12 @@
 {
     "compilerOptions": {
         "target": "ESNext",
+        "baseUrl": ".",
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "strict": true,
-        "strictNullChecks": true,
         "esModuleInterop": true,
-        "skipDefaultLibCheck": true,
-        "skipLibCheck": true,
-
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/*"]
-        },
+        "skipLibCheck": true
     },
-    "include": ["**/*.ts", "eslint.config.js"],
+    "include": ["**/*.ts", "src/configs/javascript.ts.old"]
 }
