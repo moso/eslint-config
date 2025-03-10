@@ -1,6 +1,6 @@
-import { interopDefault } from '@/utils';
+import { interopDefault } from '../utils';
 
-import type { OptionsOverrides, StylisticConfig, TypedFlatConfigItem } from '@/types';
+import type { OptionsOverrides, StylisticConfig, TypedFlatConfigItem } from '../types';
 
 export const StylisticConfigDefaults: StylisticConfig = {
     indent: 4,
@@ -9,10 +9,15 @@ export const StylisticConfigDefaults: StylisticConfig = {
     semi: true,
 };
 
-export const stylistic = async (options: StylisticConfig & OptionsOverrides = {}): Promise<TypedFlatConfigItem[]> => {
+export interface StylisticOptions extends StylisticConfig, OptionsOverrides {
+    lessOpinionated?: boolean;
+};
+
+export const stylistic = async (options: StylisticOptions = {}): Promise<TypedFlatConfigItem[]> => {
     const {
         indent,
         jsx,
+        lessOpinionated = false,
         overrides = {},
         quotes,
         semi,
@@ -30,7 +35,6 @@ export const stylistic = async (options: StylisticConfig & OptionsOverrides = {}
     ] as const);
 
     const config = stylisticPlugin.configs.customize({
-        flat: true,
         indent,
         jsx,
         quotes,
@@ -41,65 +45,101 @@ export const stylistic = async (options: StylisticConfig & OptionsOverrides = {}
         {
             name: 'moso/stylistic/rules',
             plugins: {
-                antfu: antfuPlugin,
                 '@stylistic': stylisticPlugin,
+                'antfu': antfuPlugin,
             },
             rules: {
                 ...config.rules,
 
                 'antfu/consistent-list-newline': 'error',
-                'antfu/if-newline': 'error',
-                'antfu/top-level-function': 'error',
+                '@stylistic/object-curly-newline': 'off',
 
-                '@stylistic/array-bracket-spacing': ['error', 'never'],
-                '@stylistic/arrow-parens': ['error', 'always'],
-                '@stylistic/block-spacing': ['error', 'always'],
-                '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: true }],
-                '@stylistic/comma-dangle': ['error', 'always-multiline'],
-                '@stylistic/comma-spacing': ['error', { before: false, after: true }],
-                '@stylistic/comma-style': ['error', 'last'],
-                '@stylistic/func-call-spacing': ['error', 'never'],
-                '@stylistic/generator-star-spacing': 0,
-                '@stylistic/indent': [
-                    'error',
-                    4,
-                    {
-                        SwitchCase: 1,
-                        VariableDeclarator: 1,
-                        outerIIFEBody: 1,
+                ...(lessOpinionated
+                    ? {
+                        curly: ['error', 'all'],
                     }
-                ],
-                '@stylistic/key-spacing': [
-                    'error',
-                    {
-                        beforeColon: false,
-                        afterColon: true,
+                    : {
+                        '@stylistic/array-bracket-spacing': ['error', 'never'],
+                        '@stylistic/arrow-parens': ['error', 'always'],
+                        '@stylistic/block-spacing': ['error', 'always'],
+                        '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: true }],
+                        '@stylistic/comma-dangle': ['error', 'always-multiline'],
+                        '@stylistic/comma-spacing': ['error', { before: false, after: true }],
+                        '@stylistic/comma-style': ['error', 'last'],
+                        '@stylistic/func-call-spacing': ['error', 'never'],
+                        '@stylistic/generator-star-spacing': 'off',
+                        '@stylistic/indent': [
+                            'error',
+                            4,
+                            {
+                                SwitchCase: 1,
+                                VariableDeclarator: 1,
+                                outerIIFEBody: 1,
+                            },
+                        ],
+                        '@stylistic/key-spacing': [
+                            'error',
+                            {
+                                beforeColon: false,
+                                afterColon: true,
+                            },
+                        ],
+                        '@stylistic/member-delimiter-style': [
+                            'error',
+                            {
+                                multiline: {
+                                    delimiter: 'semi',
+                                    requireLast: true,
+                                },
+                            },
+                        ],
+                        '@stylistic/no-confusing-arrow': ['error', { onlyOneSimpleParam: true }],
+                        '@stylistic/no-mixed-operators': [
+                            'error',
+                            {
+                                groups: [
+                                    ['&', '|', '^', '~', '<<', '>>', '>>>'],
+                                    ['&&', '||'],
+                                ],
+                            },
+                        ],
+                        '@stylistic/no-mixed-spaces-and-tabs': 'error',
+                        '@stylistic/no-multi-spaces': 'error',
+                        '@stylistic/no-tabs': 'error',
+                        '@stylistic/no-trailing-spaces': [
+                            'error',
+                            {
+                                skipBlankLines: true,
+                                ignoreComments: true,
+                            },
+                        ],
+                        '@stylistic/operator-linebreak': ['error', 'before'],
+                        '@stylistic/quote-props': ['error', 'consistent'],
+                        '@stylistic/quotes': ['error', 'single', { allowTemplateLiterals: true }],
+                        '@stylistic/rest-spread-spacing': ['error', 'never'],
+                        '@stylistic/semi': ['error', 'always'],
+                        '@stylistic/semi-spacing': 'error',
+                        '@stylistic/semi-style': ['error', 'last'],
+                        '@stylistic/space-before-blocks': 'error',
+                        '@stylistic/space-before-function-paren': [
+                            'error',
+                            {
+                                anonymous: 'never',
+                                named: 'never',
+                                asyncArrow: 'always',
+                            },
+                        ],
+                        '@stylistic/space-infix-ops': 'error',
+                        '@stylistic/space-unary-ops': 'error',
+                        '@stylistic/spaced-comment': ['error', 'always'],
+                        '@stylistic/switch-colon-spacing': 'error',
+                        '@stylistic/template-curly-spacing': 'error',
+                        '@stylistic/template-tag-spacing': ['error', 'always'],
+                        '@stylistic/wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
+                        '@stylistic/wrap-regex': 'error',
+                        '@stylistic/yield-star-spacing': ['error', 'before'],
                     }
-                ],
-                '@stylistic/member-delimiter-style': [
-                    'error',
-                    {
-                        multiline: {
-                            delimiter: 'semi',
-                            requireLast: true,
-                        }
-                    }
-                ],
-                '@stylistic/no-mixed-spaces-and-tabs': 'error',
-                '@stylistic/no-multi-spaces': 'error',
-                '@stylistic/operator-linebreak': ['error', 'before'],
-                '@stylistic/quotes': ['error', 'single', { allowTemplateLiterals: true }],
-                '@stylistic/semi': ['error', 'always'],
-                '@stylistic/space-before-function-paren': [
-                    'error',
-                    {
-                        anonymous: 'never',
-                        named: 'never',
-                        asyncArrow: 'always',
-                    }
-                ],
-                '@stylistic/type-annotation-spacing': ['error', {}],
-                '@stylistic/wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
+                ),
 
                 ...overrides,
             },
