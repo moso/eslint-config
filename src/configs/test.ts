@@ -1,14 +1,13 @@
-import { GLOB_TESTS } from '@/globs';
-import { interopDefault } from '@/utils';
+import { GLOB_TESTS } from '../globs';
+import { interopDefault } from '../utils';
 
-import type {
-    OptionsFiles,
-    OptionsIsInEditor,
-    OptionsOverrides,
-    TypedFlatConfigItem,
-} from '@/types';
+import type { OptionsFiles, OptionsIsInEditor, OptionsOverrides, TypedFlatConfigItem } from '../types';
 
-export const test = async (options: OptionsFiles & OptionsIsInEditor & OptionsOverrides = {}): Promise<TypedFlatConfigItem[]> => {
+export const test = async (options:
+    OptionsFiles &
+    OptionsIsInEditor &
+    OptionsOverrides = {},
+): Promise<TypedFlatConfigItem[]> => {
     const {
         files = GLOB_TESTS,
         isInEditor = false,
@@ -16,10 +15,10 @@ export const test = async (options: OptionsFiles & OptionsIsInEditor & OptionsOv
     } = options;
 
     const [
-        noOnlyTestsPlugin,
         vitestPlugin,
+        noOnlyTestsPlugin,
     ] = await Promise.all([
-        interopDefault(import('eslint-plugin-vitest')),
+        interopDefault(import('@vitest/eslint-plugin')),
         interopDefault(import('eslint-plugin-no-only-tests')),
     ] as const);
 
@@ -27,27 +26,28 @@ export const test = async (options: OptionsFiles & OptionsIsInEditor & OptionsOv
         {
             name: 'moso/test/setup',
             plugins: {
-                vitest: {
-                    ...vitestPlugin,
-                    rules: {
-                        ...vitestPlugin.rules,
-                        ...noOnlyTestsPlugin.rules,
-                    },
-                },
+                'vitest': vitestPlugin,
+                'no-only-tests': noOnlyTestsPlugin,
             },
         },
         {
             files,
             name: 'moso/test/rules',
             rules: {
-                'node/prefer-global/process': 'off',
-
                 'vitest/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
                 'vitest/no-identical-title': 'error',
                 'vitest/no-import-node-test': 'error',
-                'vitest/no-only-tests': isInEditor ? 'off' : 'error',
                 'vitest/prefer-hooks-in-order': 'error',
                 'vitest/prefer-lowercase-title': 'error',
+
+                'no-only-tests/no-only-tests': isInEditor ? 'warn' : 'error',
+
+                // Disables for tests
+                ...{
+                    'no-unused-expressions': 'off',
+                    'node/prefer-global/process': 'off',
+                    'typescript/explicit-function-return-type': 'off',
+                },
 
                 ...overrides,
             },
