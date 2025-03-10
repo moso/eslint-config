@@ -1,16 +1,15 @@
-import { interopDefault } from '@/utils';
+import { interopDefault } from '../utils';
 
-import type { OptionsOverrides, OptionsStylistic, TypedFlatConfigItem } from '@/types';
+import type { OptionsStylistic, TypedFlatConfigItem } from '../types';
 
-export const imports = async (options: OptionsOverrides & OptionsStylistic = {}): Promise<TypedFlatConfigItem[]> => {
+export const imports = async (options: OptionsStylistic = {}): Promise<TypedFlatConfigItem[]> => {
     const {
-        overrides = {},
         stylistic = true,
     } = options;
 
     const [
         antfuPlugin,
-        importPlugin,
+        importXPlugin,
     ] = await Promise.all([
         interopDefault(import('eslint-plugin-antfu')),
         interopDefault(import('eslint-plugin-import-x')),
@@ -20,26 +19,28 @@ export const imports = async (options: OptionsOverrides & OptionsStylistic = {})
         {
             name: 'moso/imports/rules',
             plugins: {
-                antfu: antfuPlugin,
-                import: importPlugin,
+                'antfu': antfuPlugin,
+                'import-x': importXPlugin,
             },
             rules: {
-                'import/first': 'error',
-                'import/no-duplicates': 'error',
-                'import/no-mutable-exports': 'error',
-                'import/no-named-default': 'off',
-                'import/no-self-import': 'error',
-                'import/no-unresolved': 'off',
-                'import/no-webpack-loader-syntax': 'error',
-                'import/order': 'error',
+                'antfu/import-dedupe': 'error',
+                'antfu/no-import-dist': 'error',
+                'antfu/no-import-node-modules-by-path': 'error',
+
+                'import-x/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+                'import-x/first': 'error',
+                'import-x/no-duplicates': 'error',
+                'import-x/no-mutable-exports': 'error',
+                'import-x/no-named-default': 'off',
+                'import-x/no-self-import': 'error',
+                'import-x/no-unresolved': 'off',
+                'import-x/no-webpack-loader-syntax': 'error',
 
                 ...stylistic
                     ? {
-                        'import/newline-after-import': ['error', { count: 1 }],
+                        'import-x/newline-after-import': ['error', { count: 1 }],
                     }
                     : {},
-
-                ...overrides,
             },
         },
     ];
