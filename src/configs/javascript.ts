@@ -1,37 +1,31 @@
 import globals from 'globals';
 
-import { GLOB_SRC, GLOB_SRC_EXT } from '@/globs';
-import { interopDefault } from '@/utils';
+import { interopDefault } from '../utils';
 
-import type { OptionsIsInEditor, OptionsOverrides, TypedFlatConfigItem } from '@/types';
+import type { OptionsIsInEditor, OptionsOverrides, TypedFlatConfigItem } from '../types';
 
-export const restrictedSyntaxJs = [
-    'ForInStatement',
-    'LabeledStatement',
-    'WithStatement',
-];
-
-export const javascript = async (options: OptionsIsInEditor & OptionsOverrides = {}): Promise<TypedFlatConfigItem[]> => {
+export const javascript = async (options:
+    OptionsIsInEditor &
+    OptionsOverrides = {},
+): Promise<TypedFlatConfigItem[]> => {
     const {
         isInEditor = false,
-        overrides = {}
+        overrides = {},
     } = options;
 
     const unusedImportsPlugin = await interopDefault(import('eslint-plugin-unused-imports'));
 
     return [
         {
-            name: 'moso/javascript/setup',
-            plugins: {
-                'unused-imports': unusedImportsPlugin,
-            },
-        },
-        {
             languageOptions: {
+                ecmaVersion: 2022,
                 globals: {
                     ...globals.browser,
                     ...globals.es2021,
                     ...globals.node,
+                    document: 'readonly',
+                    navigator: 'readonly',
+                    window: 'readonly',
                 },
                 parserOptions: {
                     ecmaFeatures: {
@@ -45,17 +39,24 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
             linterOptions: {
                 reportUnusedDisableDirectives: true,
             },
+            name: 'moso/javascript/setup',
+        },
+        {
             name: 'moso/javascript/rules',
+            plugins: {
+                'unused-imports': unusedImportsPlugin,
+            },
             rules: {
                 'accessor-pairs': ['error', { enforceForClassMembers: true, setWithoutGet: true }],
                 'array-callback-return': 'error',
                 'block-scoped-var': 'error',
-                camelcase: 0,
+                'camelcase': 'off',
                 'consistent-return': 'error',
                 'constructor-super': 'error',
-                curly: ['error', 'multi-or-nest', 'consistent'],
+                'curly': ['error', 'multi-or-nest', 'consistent'],
+                'default-case-last': 'error',
                 'dot-notation': 'warn',
-                eqeqeq: ['error', 'smart'],
+                'eqeqeq': ['error', 'smart'],
                 'for-direction': 'error',
                 'getter-return': 'error',
                 'new-cap': ['error', { capIsNew: false, newIsCap: true, properties: true }],
@@ -65,7 +66,7 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'no-case-declarations': 'error',
                 'no-class-assign': 'error',
                 'no-compare-neg-zero': 'error',
-                'no-cond-assign': 'error',
+                'no-cond-assign': ['error', 'always'],
                 'no-console': ['warn', { allow: ['warn', 'error'] }],
                 'no-const-assign': 'error',
                 'no-control-regex': 'error',
@@ -102,7 +103,7 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'no-obj-calls': 'error',
                 'no-octal': 'error',
                 'no-prototype-builtins': 'error',
-                'no-redeclare': 'error',
+                'no-redeclare': ['error', { builtinGlobals: true }],
                 'no-regex-spaces': 'error',
                 'no-restricted-globals': [
                     'error',
@@ -120,11 +121,13 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'no-restricted-syntax': [
                     'error',
                     'DebuggerStatement',
+                    'ForInStatement',
                     'LabeledStatement',
-                    'WithStatement',
                     'TSEnumDeclaration[const=true]',
                     'TSExportAssignment',
+                    'WithStatement',
                 ],
+                'no-return-assign': 'off',
                 'no-self-assign': 'error',
                 'no-self-compare': 'error',
                 'no-sequences': 'error',
@@ -170,60 +173,55 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'no-useless-escape': 'error',
                 'no-useless-rename': 'error',
                 'no-var': 'error',
-                'no-void': 'error',
                 'no-with': 'error',
                 'object-shorthand': [
                     'error',
                     'always',
                     {
                         avoidQuotes: true,
-                        ignoreConstructors: false
+                        ignoreConstructors: false,
                     },
                 ],
                 'one-var': ['error', { initialized: 'never' }],
                 'prefer-arrow-callback': [
                     'error',
                     {
-                        allowNamedFunctions:false,
-                        allowUnboundThis: true
+                        allowNamedFunctions: false,
+                        allowUnboundThis: true,
                     },
                 ],
-                'prefer-const': ['error', { destructuring: 'any', ignoreReadBeforeAssign: true }],
+                'prefer-const': [
+                    isInEditor ? 'warn' : 'error',
+                    {
+                        destructuring: 'any',
+                        ignoreReadBeforeAssign: true,
+                    },
+                ],
                 'prefer-exponentiation-operator': 'error',
                 'prefer-promise-reject-errors': 'error',
                 'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
                 'prefer-rest-params': 'error',
                 'prefer-spread': 'error',
                 'prefer-template': 'error',
-                'require-await': 'error',
-                'require-yield': 'error',
-                'sort-imports': [
-                    'error',
-                    {
-                        allowSeparatedGroups: false,
-                        ignoreCase: false,
-                        ignoreDeclarationSort: true,
-                        ignoreMemberSort: false,
-                        memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-                    },
-                ],
                 'symbol-description': 'error',
                 'unicode-bom': ['error', 'never'],
-                'unused-imports/no-unused-imports': isInEditor ? 0 : 'error',
+
+                'unused-imports/no-unused-imports': isInEditor ? 'warn' : 'error',
                 'unused-imports/no-unused-vars': [
                     'error',
                     {
-                        'args': 'after-used',
-                        'argsIgnorePattern': '^_',
-                        'vars': 'all',
-                        'varsIgnorePattern': '^_',
+                        args: 'after-used',
+                        argsIgnorePattern: '^_',
+                        ignoreRestSiblings: true,
+                        vars: 'all',
+                        varsIgnorePattern: '^_',
                     },
                 ],
                 'use-isnan': [
                     'error',
                     {
                         enforceForIndexOf: true,
-                        enforceForSwitchCase: true
+                        enforceForSwitchCase: true,
                     },
                 ],
                 'valid-typeof': ['error', { requireStringLiterals: true }],
@@ -231,13 +229,6 @@ export const javascript = async (options: OptionsIsInEditor & OptionsOverrides =
                 'yoda': ['error', 'never'],
 
                 ...overrides,
-            },
-        },
-        {
-            files: [`scripts/${GLOB_SRC}`, `cli.${GLOB_SRC_EXT}`],
-            name: 'moso/script-overrides',
-            rules: {
-                'no-console': 'off',
             },
         },
     ];
