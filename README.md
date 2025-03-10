@@ -1,47 +1,43 @@
-# @moso/eslint-config [![npm](https://img.shields.io/npm/v/@moso/eslint-config.svg)](https://npmjs.com/package/@moso/eslint-config)
+# @moso/eslint-config
 
-Flat ESLint config for JavaScript, TypeScript, Vue, and React.
+[![npm](https://img.shields.io/npm/v/@moso/eslint-config.svg)](https://npmjs.com/package/@moso/eslint-config)
 
-[Legacy Version](https://github.com/moso/eslint-config/tree/legacy)
+Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
+
+[Legacy Version](https://github.com/moso/eslint-config/tree/legacy).
 
 ## Features
 
-- Single quotes, semi enabled, dangling commas,
+- [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) with reasonable but opinionated defaults
+- Single quotes, semi enabled, sorted imports, dangling commas,
 - Aimed to be used without Prettier
-- Sorted imports, `package.json`, `tsconfig.json`...
-- Reasonable but opinionated defaults
-- Designed to work with TypeScript, JSX, and Vue out of the box
+- Designed to work with JSX, TypeScript, Vue, and React out of the box
 - [Stylistic](https://eslint.style) rules implemented by default
-- Lints for json, markdown, and yaml
-- [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new), compose easily!
-- Respects `.gitignore`
-
-Since [Stylistic](https://eslint.style) have taken over maintenance of `@typescript-eslint`'s rules, and ESLint [since v8.53.0](https://eslint.org/blog/2023/10/deprecating-formatting-rules) have soft-deprecated formatting rules, *and* since Stylistic's rules have merged the core ruleset into their main config, it makes more sense to use `@stylistic` whenever possible.
-
-However, this config is aimed at simplicity, so `@stylistic/`-rules will only be applied the formatting rules that were deprecated by ESLint when linting regular JavaScript, and then use `@stylistic/`-specific rules when applied to TypeScript.
+- Lints for json and yaml
+- Respects `.gitignore` by default
+- Requires ESLint v9.5.0+
 
 > [!NOTE]
 > Since v1.0.0, this config is rewritten for the new [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) format.
+>
+> ESLint v9.5.0+ is now required.
+
+> [!WARNING]
+> While I'm very appreciative with every single install of this config, please keep in mind that this config is still a **personal**, opinionated config. How I like things set up might not fit everyone, or every usecase.
+>
+> If you're using this config directly, I suggest you review the changes with every update. Or if you want more control over the very core of this config, feel free to fork it. Thanks!
 
 ## Usage
 
 ### Install
 
+> I like to use [Bun](https://bun.sh) because it's hella fast. Thus all the install instructions are with Bun. If you use something else, check the syntax with your favorite package manager.
+
 ```bash
-# npm
-npm i -D @moso/eslint-config
-
-# yarn
-yarn add -D @moso/eslint-config
-
-# pnpm
-pnpm i -D @moso/eslint-config
-
-# bun
-bun add -d @moso/eslint-config
+bun add -dev eslint @moso/eslint-config
 ```
 
-### Create config file
+Create `eslint.config.js` in the root of your project:
 
 ```js
 // eslint.config.js
@@ -50,7 +46,41 @@ import moso from '@moso/eslint-config';
 export default moso();
 ```
 
+<details>
+<summary>
+Combine with legacy config:
+</summary>
+
+If you still use some configs from the legacy `eslintrc` format, you can use the [`@eslint/eslintrc`](https://npmjs.com/package/@eslint/eslintrc) package to convert them to the flat config.
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+import { FlatCompat } from '@eslint/eslintrc';
+
+const compat = new FlatCompat()
+
+export default moso(
+    {
+        ignores: [],
+    },
+
+    // Legacy config
+    ...compat.config({
+        extends: [
+            'eslint:recommended',
+            // Other extends...
+        ],
+    })
+
+    // Other flat configs...
+);
+```
+
 > Note that `.eslintignore` no longer works in Flat config, see [customization](#customization) for more details.
+
+</details>
+
 
 ### Add script for package.json
 
@@ -58,14 +88,17 @@ For example:
 
 ```json
 {
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  }
+    "scripts": {
+        "lint": "eslint",
+        "lint:fix": "eslint --fix"
+    }
 }
 ```
 
 ## VS Code support (auto fix)
+
+<details>
+<summary>Details</summary>
 
 Install [VS Code ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
@@ -73,29 +106,27 @@ Add the following settings to your `.vscode/settings.json`:
 
 ```jsonc
 {
-  // Enable the ESlint flat config support
-  "eslint.experimental.useFlatConfig": true,
-
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
   "editor.formatOnSave": false,
 
   // Auto fix
   "editor.codeActionsOnSave": {
-   "source.fixAll.eslint": "explicit",
+    "source.fixAll.eslint": "explicit",
     "source.organizeImports": "never"
   },
 
     // You can silent specific rules in you IDE, but still auto fix them
   "eslint.rules.customizations": [
-    { "rule": "*-indent", "severity": "off" },
-    { "rule": "*-spacing", "severity": "off" },
-    { "rule": "*-spaces", "severity": "off" },
-    { "rule": "*-order", "severity": "off" },
-    { "rule": "*-dangle", "severity": "off" },
-    { "rule": "*-newline", "severity": "off" },
-    { "rule": "*quotes", "severity": "off" },
-    { "rule": "*semi", "severity": "off" }
+    { "rule": "@stylistic/*", "severity": "off", "fixable": true },
+    { "rule": "*-indent", "severity": "off", "fixable": true },
+    { "rule": "*-spacing", "severity": "off", "fixable": true },
+    { "rule": "*-spaces", "severity": "off", "fixable": true },
+    { "rule": "*-order", "severity": "off", "fixable": true },
+    { "rule": "*-dangle", "severity": "off", "fixable": true },
+    { "rule": "*-newline", "severity": "off", "fixable": true },
+    { "rule": "*quotes", "severity": "off", "fixable": true },
+    { "rule": "*semi", "severity": "off", "fixable": true }
   ],
 
   // Enable eslint for all supported languages
@@ -105,14 +136,14 @@ Add the following settings to your `.vscode/settings.json`:
     "typescript",
     "typescriptreact",
     "vue",
-    "html",
-    "markdown",
     "json",
     "jsonc",
     "yaml"
   ]
 }
 ```
+
+</details>
 
 ## Customization
 
@@ -162,7 +193,7 @@ export default moso({
 
 ### Rules overrides
 
-Certain rules will only be enabled for specific file types. Example, `vue/*` rules are only applied on `.vue`-files. If you want to override the rules, you need to specify the file extension:
+The `moso` configurator function accepts any number of custom config overrides. And certain rules will only be enabled for specific file types. Example, `vue/*` rules are only applied on `.vue`-files. If you want to override the rules, you need to specify the file extension:
 
 ```js
 // eslint.config.js
@@ -170,53 +201,27 @@ import moso from '@moso/eslint-config';
 
 export default moso(
     {
+        // First argument are configurations for moso's config
         vue: true,
-        typescript: true
+        typescript: true,
     },
     {
-        // Remember to specify the file glob here
+        // Second argument and beyond are ESLint Flat Configs
+        // You can have as many as you want here.
+
+        // Example of overriding vue/* rules on `.vue`-files using the Vue file glob:
         files: ['**/*.vue'],
         rules: {
             'vue/multi-word-component-names': ['error', { ignores: [] }],
         },
     },
     {
-        // Without the `files` array, you override general rules for all files
-        rules: {
-            '@stylistic/semi': ['error', 'never'],
-        },
+        rules: {},
     },
 );
 ```
 
-However, with options overrides in each integration, it's now much easier to do:
-
-```js
-// eslint.config.js
-import moso from '@moso/eslint-config';
-
-export default moso({
-    vue: {
-        overrides: {
-            'vue/multi-word-component-names': ['error', { ignores: [] }],
-        },
-    },
-    typescript: {
-        overrides: {
-            '@stylistic/comma-dangle': 'off',
-        },
-    },
-    yaml: {
-        overrides: {
-            // ...
-        },
-    },
-});
-```
-
-### Pipeline
-
-Since v1.0, the factory function also returns a pipeline object from [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils#pipe), which enables you to chain methods for more flexibility.
+Since v1.0.0, the configurator function returns a `FlatConfigComposer`-object from [antfu](https://github.com/antfu)'s [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils#composer), which gives you even more flexibility when composing the config, as you can `dot` your way through:
 
 ```js
 // eslint.config.js
@@ -227,48 +232,117 @@ export default moso()
         // Configs before the main config
     )
     .override(
-        // Overrides any named imports
+        // Override any named config
         'moso/javascript/rules',
         {
             rules: {
-                '@stylistic/semi': 'off',
+                'no-var': 'off',
             },
         },
+    )
+    // You can also remove rules entirely
+    .removeRules(
+        // ...
     );
 ```
 
+<details>
+<summary>Advanced example</summary>
+
+You can import fine-grained configs and compose them as you want. Don't do this unless you know exactly what you're doing.
+
+```js
+import {
+    combine,
+    comments,
+    ignores,
+    imports,
+    javascript,
+    jsdoc,
+    jsonc,
+    node,
+    sortPackageJson,
+    sortTsconfig,
+    stylistic,
+    typescript,
+    unicorn,
+    vue,
+    yaml,
+} from '@moso/eslint-config';
+
+export default combine(
+    ignores(),
+    javascript(/* options */),
+    comments(),
+    node(),
+    jsdoc(),
+    imports(),
+    unicorn(),
+    typescript(/* options */),
+    stylistic(),
+    vue(/* options */),
+    jsonc(),
+    yaml(),
+);
+```
+
+</details>
+
 ## Optional configs
 
-Most checks are in place to auto-detect configs and enable them, but should you want to enable these manually, this is how it's done:
+There are multiple configs that are deemed "optional". Most of them are set to `true` (enabled), some are `auto-detect`. An example of auto-detection, TypeScript, Vue, and React are set to `auto-detect`, as there are checks in those configs and enable them if their packages are present. But should you want to enable/disable these explicitly, or if my check doesn't auto-detect it, this is how it's done:
 
 ```js
 // eslint.config.js
 import moso from '@moso/eslint-config';
 
 export default moso({
+    // Enable TypeScript
+    typescript: true,
+
     // Enable Vue
     vue: true,
 
     // Enable React
     react: true,
-
-    // Enable TypeScript
-    typescript: true,
-
 });
 ```
+
+**Note**: Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need to support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
 
 ## Optional rules
 
 This config also provides some optional plugins/rules for extended usage.
 
-#### `perfectionist` (sorting)
+### Perfectionist
 
-The plugin [`eslint-plugin-perfectionist`](https://github.com/azat-io/eslint-plugin-perfectionist) allows you to sort object keys, imports, etc with auto fix.
+The plugin [`eslint-plugin-perfectionist`](https://perfectionist.dev) allows you to sort object keys, imports, types, enums and JSX props with auto fix. I love it, and encourage everyone to use it. It gives you a lot more consistency across projects and developers. The plugin is installed and enabled by default, but only rules for sorting imports are activated.
 
-The plugin is installed but not enabled by default.
+If you wish to override or extend it, you can by overriding the `perfectionist` integration, or adding to your own `rules`.
 
-It's recommended to opt-in on each file individually using [configuration comments](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments-1).
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso(
+    {
+        // Overriding the sort-imports
+        perfectionist: {
+            overrides: {
+                'perfectionist/sort-imports': 'off',
+            },
+        },
+    },
+    {
+        // Or adding your own rules
+        rules: {
+            'perfectionist/sort-enums': ['error', { type: 'natural', order: 'asc', locales: 'da-DK' }],
+        },
+    },
+);
+```
+
+However, you can also opt-in to a rule in each file individually using [configuration comments](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments-1).
 
 ```js
 /* eslint perfectionist/sort-objects: 'error' */
@@ -277,6 +351,34 @@ const objectWantedToSort = {
     b: 1,
     c: 3,
 };
+```
+
+**Note**: If you want to disable it, you can do it in two ways.
+
+#### Individually
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    // Disable Perfectionist
+    perfectionist: false,
+});
+```
+
+#### Part of `lessOpinionated`
+
+There's an option to actually make this config "less opinionated". This will also strip most of the [`@stylistic`](https://eslint.style) rules, but more about that at the [Less Opnionated](#i-want-it-less-opnionated)-section.
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    // Less opnionated
+    lessOpnionated: true,
+});
 ```
 
 ### Type-aware rules
@@ -296,9 +398,13 @@ export default moso({
 });
 ```
 
-### Editor specific disables
+### Editor specific non-fixes
 
-Some rules are disabled when inside your editor with ESLint integration. Example: [`unused-imports/no-unused-imports`](https://www.npmjs.com/package/eslint-plugin-unused-imports).
+Some rules are deemed as 'non-fixable' when inside your editor with ESLint integration:
+
+- [`prefer-const`](https://eslint.org/docs/rules/prefer-const)
+- [`unused-imports/no-unused-imports`](https://github.com/sweepline/eslint-plugin-unused-imports)
+- [`vitest/no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests)
 
 This is to prevent unused imports from getting removed by your editor when refactoring to get a better developer experience. However, the rules will still be applied when you run ESLint from your terminal. You can disable this behavior like so:
 
@@ -307,8 +413,32 @@ This is to prevent unused imports from getting removed by your editor when refac
 import moso from '@moso/eslint-config';
 
 export default moso({
-    isInEditor: false
-})
+    isInEditor: false,
+});
+```
+
+### Lint Staged
+
+Linting and auto-fixing before every commit is easy, you just add the following to your `package.json`:
+
+```json
+{
+    "simple-git-hooks": {
+        "pre-commit": "bunx lint-staged"
+    },
+    "lint-staged": {
+        "*": "eslint --fix"
+    }
+}
+```
+
+and then
+
+```bash
+bun add -dev lint-staged simple-git-hooks
+
+# to activate the hooks
+bunx simple-git-hooks
 ```
 
 ## View which rules are enabled
@@ -318,10 +448,23 @@ export default moso({
 To view it in action, navigate to the root of your project that contains your `eslint.config.js` and run:
 
 ```bash
-npx @eslint/config-inspector
+bunx @eslint/config-inspector
 ```
 
 ## FAQ
+
+### I want it less opnionated
+
+No problem. I've extracted the things that I've deemed *very opinionated* in each integration, and made a setting that helps you disable all of it in one go.
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    lessOpinionated: true,
+});
+```
 
 ### Prettier? dprint?
 
@@ -343,11 +486,12 @@ This eslint-config takes inspiration from (and uses some of) [`@antfu/eslint-con
 
 - Opinionated rules
 - Enables Stylistic per default
+- React detection, no need to enable it
 - Includes dependencies rather than asking you to install them
 - Deprecated Vue 2 support
 - Simplification in some areas
-- Less clutter
-- No dangerous plugin renaming
+- Less clutter, shipping with less "smart" features
+- No dangerous plugin renaming, except for `eslint-plugin-n` which is renamed to `node` for readability
 
 ## License
 
