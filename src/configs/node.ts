@@ -1,15 +1,15 @@
-import { interopDefault } from '@/utils';
+import { interopDefault } from '../utils';
 
-import type { TypedFlatConfigItem } from '@/types';
+import type { TypedFlatConfigItem } from '../types';
 
 export const node = async (): Promise<TypedFlatConfigItem[]> => {
-    const node = await interopDefault(import('eslint-plugin-n'));
+    const nodePlugin = await interopDefault(import('eslint-plugin-n'));
 
     return [
         {
             name: 'moso/node/rules',
             plugins: {
-                node,
+                node: nodePlugin,
             },
             rules: {
                 'node/handle-callback-err': ['error', '^(err|error)$'],
