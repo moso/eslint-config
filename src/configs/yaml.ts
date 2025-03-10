@@ -1,12 +1,12 @@
-import { GLOB_YAML } from '@/globs';
-import { interopDefault } from '@/utils';
+import { GLOB_YAML } from '../globs';
+import { interopDefault } from '../utils';
 
 import type {
     OptionsFiles,
     OptionsOverrides,
     OptionsStylistic,
     TypedFlatConfigItem,
-} from '@/types';
+} from '../types';
 
 export const yaml = async (options: OptionsOverrides & OptionsStylistic & OptionsFiles = {}): Promise<TypedFlatConfigItem[]> => {
     const {
@@ -32,7 +32,7 @@ export const yaml = async (options: OptionsOverrides & OptionsStylistic & Option
         {
             name: 'moso/yaml/setup',
             plugins: {
-                yaml: yamlPlugin,
+                yml: yamlPlugin,
             },
         },
         {
@@ -44,30 +44,30 @@ export const yaml = async (options: OptionsOverrides & OptionsStylistic & Option
             rules: {
                 '@stylistic/spaced-comment': 'off',
 
-                'yaml/block-mapping': 'error',
-                'yaml/block-sequence': 'error',
-                'yaml/no-empty-key': 'error',
-                'yaml/no-empty-sequence-entry': 'error',
-                'yaml/no-irregular-whitespace': 'error',
-                'yaml/plain-scalar': 'error',
+                'yml/block-mapping': 'error',
+                'yml/block-sequence': 'error',
+                'yml/no-empty-key': 'error',
+                'yml/no-empty-sequence-entry': 'error',
+                'yml/no-irregular-whitespace': 'error',
+                'yml/plain-scalar': 'error',
 
-                'yaml/vue-custom-block/no-parsing-error': 'error',
+                'yml/vue-custom-block/no-parsing-error': 'error',
 
                 ...stylistic
-                ? {
-                    'yaml/block-mapping-question-indicator-newline': 'error',
-                    'yaml/block-sequence-hyphen-indicator-newline': 'error',
-                    'yaml/flow-mapping-curly-newline': 'error',
-                    'yaml/flow-mapping-curly-spacing': 'error',
-                    'yaml/flow-sequence-bracket-newline': 'error',
-                    'yaml/flow-sequence-bracket-spacing': 'error',
-                    'yaml/indent': ['error', indent === 'tab' ? 2 : indent],
-                    'yaml/key-spacing': 'error',
-                    'yaml/no-tab-indent': 'error',
-                    'yaml/quotes': ['error', { avoidEscape: false, prefer: quotes }],
-                    'yaml/spaced-comment': 'error',
-                }
-                : {},
+                    ? {
+                        'yml/block-mapping-question-indicator-newline': 'error',
+                        'yml/block-sequence-hyphen-indicator-newline': 'error',
+                        'yml/flow-mapping-curly-newline': 'error',
+                        'yml/flow-mapping-curly-spacing': 'error',
+                        'yml/flow-sequence-bracket-newline': 'error',
+                        'yml/flow-sequence-bracket-spacing': 'error',
+                        'yml/indent': ['error', indent === 'tab' ? 2 : indent],
+                        'yml/key-spacing': 'error',
+                        'yml/no-tab-indent': 'error',
+                        'yml/quotes': ['error', { avoidEscape: true, prefer: quotes === 'backtick' ? 'single' : quotes }],
+                        'yml/spaced-comment': 'error',
+                    }
+                    : {},
 
                 ...overrides,
             },
