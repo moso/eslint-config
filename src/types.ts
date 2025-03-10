@@ -1,60 +1,18 @@
-import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore';
+import type { StylisticCustomizeOptions } from '@stylistic/eslint-plugin';
 import type { ParserOptions } from '@typescript-eslint/parser';
-import type { Options as VueBlocksOptions } from 'eslint-processor-vue-blocks';
 import type { Linter } from 'eslint';
-import type {
-    EslintCommentsRules,
-    EslintRules,
-    ImportRules,
-    JsoncRules,
-    MergeIntersection,
-    NRules,
-    Prefix,
-    RenamePrefix,
-    RuleConfig,
-    VitestRules,
-    VueRules,
-    YmlRules,
-} from '@antfu/eslint-define-config';
-import type { RuleOptions as JSDocRules } from '@eslint-types/jsdoc/types';
-import type { RuleOptions as TypeScriptRules } from '@eslint-types/typescript-eslint/types';
-import type { RuleOptions as UnicornRules } from '@eslint-types/unicorn/types';
-import type { Rules as AntfuRules } from 'eslint-plugin-antfu';
-import type { StylisticCustomizeOptions, UnprefixedRuleOptions as StylisticRules } from '@stylistic/eslint-plugin';
+import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore';
+import type { Options as VueBlocksOptions } from 'eslint-processor-vue-blocks';
 
-export type WrapRuleConfig<T extends { [key: string]: any }> = {
-    [K in keyof T]: T[K] extends RuleConfig ? T[K] : RuleConfig<T[K]>;
-};
+import type { ConfigNames, RuleOptions } from './typegen';
 
 export type Awaitable<T> = T | Promise<T>;
 
-export type Rules = WrapRuleConfig<
-    MergeIntersection<
-        RenamePrefix<TypeScriptRules, '@typescript-eslint/', 'ts/'> &
-        RenamePrefix<VitestRules, 'vitest/', 'test/'> &
-        RenamePrefix<YmlRules, 'yml/', 'yaml/'> &
-        RenamePrefix<NRules, 'n/', 'node/'> &
-        Prefix<StylisticRules, 'style/'> &
-        Prefix<AntfuRules, 'antfu/'> &
-        JSDocRules &
-        ImportRules &
-        EslintRules &
-        JsoncRules &
-        VueRules &
-        UnicornRules &
-        EslintCommentsRules &
-        {
-            'test/no-only-tests': RuleConfig<[]>
-        }
-    >
->;
+export type Rules = RuleOptions;
 
-export type TypedFlatConfigItem = Omit<Linter.FlatConfig, 'plugins'> & {
-    /**
-     * Custom name of each config item
-     */
-    name?: string;
+export type { ConfigNames };
 
+export type TypedFlatConfigItem = Omit<Linter.Config<Linter.RulesRecord & Rules>, 'plugins'> & {
     // Relax plugins type limitation, as most of the plugins did not have correct type info yet.
     /**
      * An object containing a name-value mapping of plugin names to plugin objects. When `files` is specified, these plugins are only available to the matching files.
@@ -63,7 +21,6 @@ export type TypedFlatConfigItem = Omit<Linter.FlatConfig, 'plugins'> & {
      */
     plugins?: Record<string, any>;
 };
-
 
 // export type UserConfigItem = FlatConfigItem | Linter.FlatConfig;
 
@@ -81,7 +38,7 @@ export interface OptionsVue extends OptionsOverrides {
      * @see https://github.com/antfu/eslint-processor-vue-blocks
      * @default true
      */
-    sfcBlocks?: boolean | VueBlocksOptions
+    sfcBlocks?: boolean | VueBlocksOptions;
 };
 
 export type OptionsTypeScript =
@@ -105,9 +62,16 @@ export interface OptionsTypeScriptParserOptions {
     parserOptions?: Partial<ParserOptions>;
 
     /**
-     * Glob patterns to match TypeScript files.
+     * Glob patterns for files that should be type-aware.
+     * @default ['**\/*.{ts,tsx}']
      */
     filesTypeAware?: string[];
+
+    /**
+     * Glob patterns for files that should not be type-aware.
+     * @default ['**\/*.md\/**']
+     */
+    ignoresTypeAware?: string[];
 };
 
 export interface OptionsTypeScriptWithTypes {
@@ -115,26 +79,41 @@ export interface OptionsTypeScriptWithTypes {
      * When this option is enabled, type-aware rules will be enabled.
      * @see https://typescript-eslint.io/linting/typed-linting/
      */
-    tsconfigPath?: string | string[];
+    tsconfigPath?: string;
+
+    /**
+     * Override type-aware rules.
+     */
+    overridesTypeAware?: TypedFlatConfigItem['rules'];
 };
 
 export interface OptionsHasTypeScript {
     typescript?: boolean;
 };
 
-export interface StylisticConfig extends Pick<StylisticCustomizeOptions, 'indent' | 'quotes' | 'jsx' | 'semi'> {};
-
 export interface OptionsStylistic {
     stylistic?: boolean | StylisticConfig;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface StylisticConfig extends Pick<StylisticCustomizeOptions, 'indent' | 'quotes' | 'jsx' | 'semi'> {};
 
 export interface OptionsOverrides {
     overrides?: TypedFlatConfigItem['rules'];
 };
 
+export interface OptionsUnicorn {
+    /**
+     * Include all rules recommended by `eslint-plugin-unicorn`
+     *
+     * @default false
+     */
+    allRecommended?: boolean;
+};
+
 export interface OptionsIsInEditor {
     isInEditor?: boolean;
-};
+}
 
 export interface OptionsConfig extends OptionsComponentExts {
     /**
@@ -146,6 +125,16 @@ export interface OptionsConfig extends OptionsComponentExts {
      * @default true
      */
     gitignore?: boolean | FlatGitignoreOptions;
+
+    /**
+     * Disable some opinionated rules.
+     *
+     * Including:
+     * - Perfectionist
+     *
+     * @default false
+     */
+    lessOpinionated?: boolean;
 
     /**
      * Core rules. Can't be disabled.
@@ -169,6 +158,13 @@ export interface OptionsConfig extends OptionsComponentExts {
      * @default true
      */
     jsx?: boolean;
+
+    /**
+     * Options for eslint-plugin-unicorn.
+     *
+     * @default true
+     */
+    unicorn?: boolean | OptionsUnicorn;
 
     /**
      * Enable test support.
@@ -200,6 +196,13 @@ export interface OptionsConfig extends OptionsComponentExts {
      */
     markdown?: boolean | OptionsOverrides;
 
+    /**
+     * Enable Perfectionist support.
+     *
+     * @see https://perfectionist.dev
+     * @default true
+     */
+    perfectionist?: boolean | OptionsOverrides;
 
     /**
      * Enable React support.
@@ -208,14 +211,12 @@ export interface OptionsConfig extends OptionsComponentExts {
      */
     react?: boolean | OptionsOverrides;
 
-
     /**
      * Enable stylistic rules.
      *
      * @default true
      */
-    stylistic?: boolean | (StylisticConfig & OptionsOverrides)
-
+    stylistic?: boolean | (StylisticConfig & OptionsOverrides);
 
     /**
      * Enable YAML support.
@@ -224,21 +225,11 @@ export interface OptionsConfig extends OptionsComponentExts {
      */
     yaml?: boolean;
 
-
     /**
      * Control to disable some rules in editors.
      * @default auto-detect based on the process.env
      */
     isInEditor?: boolean;
-
-
-    /**
-     * Automatically rename plugins in the config.
-     *
-     * @default true
-     */
-    autoRenamePlugins?: boolean;
-
 
     /**
      * Provide overrides for rules for each integration.
@@ -249,7 +240,8 @@ export interface OptionsConfig extends OptionsComponentExts {
         javascript?: TypedFlatConfigItem['rules'];
         jsonc?: TypedFlatConfigItem['rules'];
         markdown?: TypedFlatConfigItem['rules'];
-        react?: TypedFlatConfigItem["rules"];
+        perfectionist?: TypedFlatConfigItem['rules'];
+        react?: TypedFlatConfigItem['rules'];
         stylistic?: TypedFlatConfigItem['rules'];
         test?: TypedFlatConfigItem['rules'];
         typescript?: TypedFlatConfigItem['rules'];
