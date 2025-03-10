@@ -1,13 +1,11 @@
-import type { TypedFlatConfigItem } from '@/types';
+import type { TypedFlatConfigItem } from '../types';
 
 /**
  * Sort package.json
  *
  * Requires `jsonc` config
- *
- * @see https://github.com/antfu/eslint-config/blob/main/src/configs/sort.ts
  */
-export const sortPackageJson = async (): Promise<TypedFlatConfigItem[]> => {
+export const sortPackageJson = (): TypedFlatConfigItem[] => {
     return [
         {
             files: ['**/package.json'],
@@ -89,7 +87,6 @@ export const sortPackageJson = async (): Promise<TypedFlatConfigItem[]> => {
                     },
                     {
                         order: [
-                            // client hooks only
                             'pre-commit',
                             'prepare-commit-msg',
                             'commit-msg',
@@ -113,11 +110,9 @@ export const sortPackageJson = async (): Promise<TypedFlatConfigItem[]> => {
  * Sort tsconfig.json
  *
  * Requires `jsonc` config
- *
- * @see https://github.com/antfu/eslint-config/blob/main/src/configs/sort.ts
  */
 
-export const sortTsconfig = (): TypedFlatConfigItem[]  => {
+export const sortTsconfig = (): TypedFlatConfigItem[] => {
     return [
         {
             files: ['**/tsconfig.json', '**/tsconfig.*.json'],
@@ -138,14 +133,12 @@ export const sortTsconfig = (): TypedFlatConfigItem[]  => {
                     },
                     {
                         order: [
-                            /* Projects */
                             'incremental',
                             'composite',
                             'tsBuildInfoFile',
                             'disableSourceOfProjectReferenceRedirect',
                             'disableSolutionSearching',
                             'disableReferencedProjectLoad',
-                            /* Language and Environment */
                             'target',
                             'jsx',
                             'jsxFactory',
@@ -158,7 +151,6 @@ export const sortTsconfig = (): TypedFlatConfigItem[]  => {
                             'useDefineForClassFields',
                             'emitDecoratorMetadata',
                             'experimentalDecorators',
-                            /* Modules */
                             'baseUrl',
                             'rootDir',
                             'rootDirs',
@@ -176,11 +168,9 @@ export const sortTsconfig = (): TypedFlatConfigItem[]  => {
                             'allowArbitraryExtensions',
                             'allowImportingTsExtensions',
                             'allowUmdGlobalAccess',
-                            /* JavaScript Support */
                             'allowJs',
                             'checkJs',
                             'maxNodeModuleJsDepth',
-                            /* Type Checking */
                             'strict',
                             'strictBindCallApply',
                             'strictFunctionTypes',
@@ -200,7 +190,6 @@ export const sortTsconfig = (): TypedFlatConfigItem[]  => {
                             'noUnusedLocals',
                             'noUnusedParameters',
                             'useUnknownInCatchVariables',
-                            /* Emit */
                             'declaration',
                             'declarationDir',
                             'declarationMap',
@@ -224,14 +213,12 @@ export const sortTsconfig = (): TypedFlatConfigItem[]  => {
                             'sourceMap',
                             'sourceRoot',
                             'stripInternal',
-                            /* Interop Constraints */
                             'allowSyntheticDefaultImports',
                             'esModuleInterop',
                             'forceConsistentCasingInFileNames',
                             'isolatedModules',
                             'preserveSymlinks',
                             'verbatimModuleSyntax',
-                            /* Completeness */
                             'skipDefaultLibCheck',
                             'skipLibCheck',
                         ],
