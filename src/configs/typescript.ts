@@ -1,7 +1,7 @@
 import process from 'node:process';
 
-import { GLOB_SRC, GLOB_TS, GLOB_TSX } from '@/globs';
-import { interopDefault, toArray } from '@/utils';
+import { GLOB_MARKDOWN, GLOB_TS, GLOB_TSX } from '../globs';
+import { interopDefault } from '../utils';
 
 import type {
     OptionsComponentExts,
@@ -9,8 +9,8 @@ import type {
     OptionsOverrides,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
-    TypedFlatConfigItem
-} from '@/types';
+    TypedFlatConfigItem,
+} from '../types';
 
 export const typescript = async (options:
     OptionsFiles &
@@ -18,21 +18,24 @@ export const typescript = async (options:
     OptionsOverrides &
     OptionsTypeScriptWithTypes &
     OptionsTypeScriptParserOptions = {},
-): Promise<TypedFlatConfigItem[]>  => {
+): Promise<TypedFlatConfigItem[]> => {
     const {
         componentExts = [],
         overrides = {},
+        overridesTypeAware = {},
         parserOptions = {},
     } = options;
 
     const files = options.files ?? [
-        GLOB_SRC,
-        ...componentExts.map(ext => `**/*.${ext}`),
+        GLOB_TS,
+        GLOB_TSX,
+        ...componentExts.map((ext) => `**/*.${ext}`),
     ];
 
     const filesTypeAware = options.filesTypeAware ?? [GLOB_TS, GLOB_TSX];
+    const ignoresTypeAware = options.ignoresTypeAware ?? [`${GLOB_MARKDOWN}/**`];
     const tsconfigPath = options?.tsconfigPath
-        ? toArray(options.tsconfigPath)
+        ? options.tsconfigPath
         : undefined;
     const isTypeAware = !!tsconfigPath;
 
@@ -71,8 +74,8 @@ export const typescript = async (options:
 
     const [
         antfuPlugin,
-        tsParser,
-        tsPlugin,
+        typeScriptParser,
+        typeScriptPlugin,
     ] = await Promise.all([
         interopDefault(import('eslint-plugin-antfu')),
         interopDefault(import('@typescript-eslint/parser')),
@@ -84,14 +87,19 @@ export const typescript = async (options:
             files,
             ...ignores ? { ignores } : {},
             languageOptions: {
-                parser: tsParser,
+                parser: typeScriptParser,
                 parserOptions: {
-                    extraFileExtensions: componentExts.map(ext => `.${ext}`),
+                    extraFileExtensions: componentExts.map((ext) => `.${ext}`),
                     sourceType: 'module',
-                    ...typeAware ? {
-                        project: tsconfigPath,
-                        tsconfigRootDir: process.cwd(),
-                    } : {},
+                    ...typeAware
+                        ? {
+                            projectService: {
+                                allowDefaultProject: ['./*.js'],
+                                defaultProject: tsconfigPath,
+                            },
+                            tsconfigRootDir: process.cwd(),
+                        }
+                        : {},
                     ...parserOptions as any,
                 },
             },
@@ -103,24 +111,32 @@ export const typescript = async (options:
         {
             name: 'moso/typescript/setup',
             plugins: {
-                antfu: antfuPlugin,
-                '@typescript-eslint': tsPlugin,
+                'antfu': antfuPlugin,
+                '@typescript-eslint': typeScriptPlugin as any,
             },
         },
         ...isTypeAware
-        ? [
-            makeParser(true, filesTypeAware),
-            makeParser(false, files, filesTypeAware),
-        ]
-        : [makeParser(false, files)],
+            ? [
+                makeParser(false, files),
+                makeParser(true, filesTypeAware, ignoresTypeAware),
+            ]
+            : [
+                makeParser(false, files),
+            ],
         {
             files,
             name: 'moso/typescript/rules',
             rules: {
+                ...typeScriptPlugin.configs['eslint-recommended'].overrides![0].rules!,
+                ...typeScriptPlugin.configs.strict.rules!,
+
                 // JS off
                 'no-loss-of-precision': 'off',
                 'no-unused-vars': 'off',
                 'no-use-before-define': 'off',
+
+                // Stylistic
+                '@stylistic/type-annotation-spacing': 'error',
 
                 // Typescript
                 '@typescript-eslint/ban-ts-comment': [
@@ -129,13 +145,12 @@ export const typescript = async (options:
                         'ts-ignore': 'allow-with-description',
                     },
                 ],
-                '@typescript-eslint/ban-types': ['error', { types: { Function: false } }],
                 '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
                 '@typescript-eslint/consistent-type-imports': [
                     'error',
                     {
                         disallowTypeAnnotations: false,
-                        prefer: 'type-imports' ,
+                        prefer: 'type-imports',
                     },
                 ],
                 '@typescript-eslint/method-signature-style': ['error', 'property'],
@@ -144,7 +159,6 @@ export const typescript = async (options:
                 '@typescript-eslint/no-extraneous-class': 'off',
                 '@typescript-eslint/no-import-type-side-effects': 'error',
                 '@typescript-eslint/no-invalid-void-type': 'off',
-                '@typescript-eslint/no-loss-of-precision': 'error',
                 '@typescript-eslint/no-non-null-assertion': 'off',
                 '@typescript-eslint/no-require-imports': 'error',
                 '@typescript-eslint/no-unused-vars': [
@@ -164,7 +178,6 @@ export const typescript = async (options:
                     },
                 ],
                 '@typescript-eslint/no-useless-constructor': 'off',
-                '@typescript-eslint/prefer-ts-expect-error': 'error',
                 '@typescript-eslint/triple-slash-reference': 'off',
                 '@typescript-eslint/unified-signatures': 'off',
 
@@ -172,21 +185,22 @@ export const typescript = async (options:
             },
         },
         ...isTypeAware
-        ? [{
-            files: filesTypeAware,
-            name: 'moso/typescript/rules-type-aware',
-            rules: {
-                ...tsconfigPath ? typeAwareRules : {},
-                ...overrides,
-            },
-        }]
-        : [],
+            ? [{
+                files: filesTypeAware,
+                ignores: ignoresTypeAware,
+                name: 'moso/typescript/rules-type-aware',
+                rules: {
+                    ...typeAwareRules,
+                    ...overridesTypeAware,
+                },
+            }]
+            : [],
         {
             files: ['**/*.d.ts'],
             name: 'moso/typescript/disables/dts',
             rules: {
-                'eslint-comments/no-unlimited-disable': 'off',
-                'import/no-duplicates': 'off',
+                '@eslint-community/eslint-comments/no-unlimited-disable': 'off',
+                'import-x/no-duplicates': 'off',
                 'no-restricted-syntax': 'off',
                 'unused-imports/no-unused-vars': 'off',
             },
