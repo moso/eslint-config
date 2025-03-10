@@ -5,7 +5,6 @@ export default moso(
         react: true,
         typescript: true,
         vue: true,
-
     },
     {
         files: ['src/**/*.ts'],
