@@ -75,6 +75,7 @@ export const stylistic = async (options: StylisticOptions = {}): Promise<TypedFl
                                 SwitchCase: 1,
                                 VariableDeclarator: 1,
                                 outerIIFEBody: 1,
+                                MemberExpression: 'off',
                             },
                         ],
                         '@stylistic/key-spacing': [
