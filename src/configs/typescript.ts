@@ -58,7 +58,6 @@ export const typescript = async (options:
         '@typescript-eslint/no-implied-eval': 'error',
         '@typescript-eslint/no-misused-promises': 'error',
         '@typescript-eslint/no-non-null-assertion': 'off',
-        '@typescript-eslint/no-parameter-properties': 'off',
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/no-unnecessary-type-assertion': 'error',
         '@typescript-eslint/no-unsafe-argument': 'error',
@@ -66,7 +65,8 @@ export const typescript = async (options:
         '@typescript-eslint/no-unsafe-call': 'error',
         '@typescript-eslint/no-unsafe-member-access': 'error',
         '@typescript-eslint/no-unsafe-return': 'error',
-        '@typescript-eslint/only-throw-literal': 'error',
+        '@typescript-eslint/only-throw-error': 'error',
+        '@typescript-eslint/parameter-properties': 'off',
         '@typescript-eslint/restrict-plus-operands': 'error',
         '@typescript-eslint/restrict-template-expressions': 'error',
         '@typescript-eslint/unbound-method': 'error',
@@ -216,8 +216,7 @@ export const typescript = async (options:
             files: ['**/*.js', '**/*.cjs'],
             name: 'moso/typescript/disables/cjs',
             rules: {
-                '@stylistic/no-require-imports': 'off',
-                '@stylistic/no-var-requires': 'off',
+                '@typescript-eslint/no-require-imports': 'off',
             },
         },
     ];
