@@ -29,7 +29,7 @@ export const imports = async (options: OptionsStylistic = {}): Promise<TypedFlat
 
                 'import-x/consistent-type-specifier-style': ['error', 'prefer-top-level'],
                 'import-x/first': 'error',
-                'import-x/no-duplicates': 'error',
+                'import-x/no-duplicates': ['error', { 'prefer-inline': true }],
                 'import-x/no-mutable-exports': 'error',
                 'import-x/no-named-default': 'off',
                 'import-x/no-self-import': 'error',
