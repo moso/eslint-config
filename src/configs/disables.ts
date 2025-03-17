@@ -8,8 +8,8 @@ export const disables = (): TypedFlatConfigItem[] => {
             files: [`**/scripts/${GLOB_SRC}`],
             name: 'moso/disables/scripts',
             rules: {
-                'no-console': 'off',
                 '@typescript-eslint/explicit-function-return-type': 'off',
+                'no-console': 'off',
             },
         },
         {
@@ -31,8 +31,8 @@ export const disables = (): TypedFlatConfigItem[] => {
             files: ['**/*.d.?([cm])ts'],
             name: 'moso/disables/dts',
             rules: {
-                'eslint-comments/no-unlimited-disable': 'off',
-                'import/no-duplicates': 'off',
+                '@eslint-community/eslint-comments/no-unlimited-disable': 'off',
+                'import-x/no-duplicates': 'off',
                 'no-restricted-syntax': 'off',
                 'unused-imports/no-unused-vars': 'off',
             },
@@ -48,8 +48,8 @@ export const disables = (): TypedFlatConfigItem[] => {
             files: [`**/*.config.${GLOB_SRC_EXT}`, `**/*.config.*.${GLOB_SRC_EXT}`],
             name: 'moso/disables/config-files',
             rules: {
-                'no-console': 'off',
                 '@typescript-eslint/explicit-function-return-type': 'off',
+                'no-console': 'off',
             },
         },
     ];
