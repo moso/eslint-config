@@ -46,7 +46,7 @@ export const test = async (options:
                 ...{
                     'no-unused-expressions': 'off',
                     'node/prefer-global/process': 'off',
-                    'typescript/explicit-function-return-type': 'off',
+                    '@typescript-eslint/explicit-function-return-type': 'off',
                 },
 
                 ...overrides,
