@@ -199,7 +199,7 @@ export const moso = (
     if (isInEditor) {
         composer = composer.disableRulesFix([
             'unused-imports/no-unused-imports',
-            'vitest/no-only-tests',
+            'no-only-tests/no-only-tests',
             'prefer-const',
         ], {
             builtinRules: () => import(['eslint', 'use-at-your-own-risk'].join('/')).then((x) => x.builtinRules),
