@@ -102,6 +102,7 @@ export const javascript = async (options:
                 'no-nonoctal-decimal-escape': 'error',
                 'no-obj-calls': 'error',
                 'no-octal': 'error',
+                'no-param-reassign': 'error',
                 'no-prototype-builtins': 'error',
                 'no-redeclare': ['error', { builtinGlobals: true }],
                 'no-regex-spaces': 'error',
