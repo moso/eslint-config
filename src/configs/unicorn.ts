@@ -18,6 +18,7 @@ export const unicorn = async (options: OptionsUnicorn = {}): Promise<TypedFlatCo
                         'unicorn/consistent-empty-array-spread': 'error',
                         'unicorn/error-message': 'error',
                         'unicorn/escape-case': 'error',
+                        'unicorn/no-instanceof-builtins': 'error',
                         'unicorn/no-new-array': 'error',
                         'unicorn/no-new-buffer': 'error',
                         'unicorn/number-literal-case': 'error',
