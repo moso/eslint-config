@@ -116,7 +116,13 @@ export const vue = async (options:
                 'vue/dot-notation': ['error', { allowKeywords: true }],
                 'vue/eqeqeq': ['error', 'smart'],
                 'vue/html-indent': ['error', indent],
-                'vue/html-quotes': ['error', 'double'],
+                'vue/html-quotes': [
+                    'error',
+                    'double',
+                    {
+                        avoidEscape: true,
+                    },
+                ],
                 'vue/html-self-closing': 'off',
                 'vue/max-attributes-per-line': ['warn', { singleline: 5 }],
                 'vue/multi-word-component-names': 'off',
