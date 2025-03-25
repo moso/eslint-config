@@ -2,9 +2,9 @@ import { moso } from './src';
 
 export default moso(
     {
-        react: true,
+        react: false,
         typescript: true,
-        vue: true,
+        vue: false,
     },
     {
         files: ['src/**/*.ts'],
