@@ -53,6 +53,13 @@ const ReactPackages = [
 
 /**
  * Construct an array of ESLint flat config items.
+ *
+ * @param {OptionsConfig & TypedFlatConfigItem} options
+ * Options for generating the ESLint configurations
+ * @param {Awaitable<TypedFlatConfigItem | TypedFlatConfigItem[]>[]} userConfigs
+ * User configurations to be merged with the generated configurations
+ * @returns {Promise<TypedFlatConfigItem[]>}
+ * The merged ESLint configurations
  */
 export const moso = (
     options: OptionsConfig & Omit<TypedFlatConfigItem, 'files'> = {},
