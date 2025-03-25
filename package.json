@@ -1,7 +1,7 @@
 {
     "name": "@moso/eslint-config",
     "type": "module",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "packageManager": "bun@1.2.5",
     "description": "moso's shared ESLint config",
     "author": {
