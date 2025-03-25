@@ -8,7 +8,7 @@ import type { ConfigNames, RuleOptions } from './typegen';
 
 export type Awaitable<T> = T | Promise<T>;
 
-export type Rules = RuleOptions;
+export interface Rules extends RuleOptions {};
 
 export type { ConfigNames };
 
@@ -95,7 +95,6 @@ export interface OptionsStylistic {
     stylistic?: boolean | StylisticConfig;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StylisticConfig extends Pick<StylisticCustomizeOptions, 'indent' | 'quotes' | 'jsx' | 'semi'> {};
 
 export interface OptionsOverrides {
