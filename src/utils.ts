@@ -1,5 +1,7 @@
 import process from 'node:process';
 
+import type { Linter } from 'eslint';
+import type { RuleOptions } from './typegen';
 import type { Awaitable, OptionsConfig, TypedFlatConfigItem } from './types';
 
 export const parserPlain = {
@@ -50,7 +52,7 @@ export const resolveSubOptions = <K extends keyof OptionsConfig>(
 export const getOverrides = <K extends keyof OptionsConfig>(
     options: OptionsConfig,
     key: K,
-) => {
+): Partial<Linter.RulesRecord & RuleOptions> => {
     const sub = resolveSubOptions(options, key);
     return {
         ...(options.overrides as any)?.[key],
