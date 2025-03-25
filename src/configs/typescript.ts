@@ -12,15 +12,20 @@ import type {
     TypedFlatConfigItem,
 } from '../types';
 
+export interface TypeScriptOptions extends OptionsOverrides {
+    lessOpinionated?: boolean;
+};
+
 export const typescript = async (options:
     OptionsFiles &
     OptionsComponentExts &
-    OptionsOverrides &
+    TypeScriptOptions &
     OptionsTypeScriptWithTypes &
     OptionsTypeScriptParserOptions = {},
 ): Promise<TypedFlatConfigItem[]> => {
     const {
         componentExts = [],
+        lessOpinionated = false,
         overrides = {},
         overridesTypeAware = {},
         parserOptions = {},
@@ -64,20 +69,88 @@ export const typescript = async (options:
         '@typescript-eslint/no-unsafe-assignment': 'error',
         '@typescript-eslint/no-unsafe-call': 'error',
         '@typescript-eslint/no-unsafe-member-access': 'error',
-        '@typescript-eslint/no-unsafe-return': 'error',
         '@typescript-eslint/only-throw-error': 'error',
         '@typescript-eslint/parameter-properties': 'off',
         '@typescript-eslint/restrict-plus-operands': 'error',
         '@typescript-eslint/restrict-template-expressions': 'error',
         '@typescript-eslint/unbound-method': 'error',
+
+        ...(lessOpinionated
+            ? {}
+            : {
+                // Opinionated TypeScript
+                '@typescript-eslint/no-unsafe-return': 'error',
+                '@typescript-eslint/switch-exhaustiveness-check': [
+                    'error',
+                    {
+                        considerDefaultExhaustiveForUnions: true,
+                    },
+                ],
+
+                // Opinionated Functional
+                // @see https://github.com/eslint-functional/eslint-plugin-functional
+                'functional/no-mixed-types': 'error',
+                'functional/prefer-property-signatures': 'error',
+                'functional/readonly-type': 'error',
+                'functional/type-declaration-immutability': [
+                    'error',
+                    {
+                        rules: [
+                            {
+                                identifiers: 'I?Immutable.+',
+                                immutability: 'Immutable',
+                                comparator: 'AtLeast',
+                            },
+                            {
+                                identifiers: 'I?ReadonlyDeep.+',
+                                immutability: 'ReadonlyDeep',
+                                comparator: 'AtLeast',
+                            },
+                            {
+                                identifiers: 'I?Readonly.+',
+                                immutability: 'ReadonlyShallow',
+                                comparator: 'AtLeast',
+                                fixer: [
+                                    {
+                                        pattern: '^(Array|Map|Set)<(.+)>$',
+                                        replace: 'Readonly$1<$2>',
+                                    },
+                                    {
+                                        pattern: '^(.+)$',
+                                        replace: 'Readonly<$1>',
+                                    },
+                                ],
+                            },
+                            {
+                                identifiers: 'I?Mutable.+',
+                                immutability: 'Mutable',
+                                comparator: 'AtMost',
+                                fixer: [
+                                    {
+                                        pattern: '^Readonly(Array|Map|Set)<(.+)>$',
+                                        replace: '$1<$2>',
+                                    },
+                                    {
+                                        pattern: '^Readonly<(.+)>$',
+                                        replace: '$1',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            }
+        ),
     };
 
     const [
         antfuPlugin,
+        functionalPlugin,
         typeScriptParser,
         typeScriptPlugin,
     ] = await Promise.all([
         interopDefault(import('eslint-plugin-antfu')),
+        interopDefault(import('eslint-plugin-functional')),
         interopDefault(import('@typescript-eslint/parser')),
         interopDefault(import('@typescript-eslint/eslint-plugin')),
     ] as const);
@@ -94,13 +167,13 @@ export const typescript = async (options:
                     ...typeAware
                         ? {
                             projectService: {
-                                allowDefaultProject: ['./*.js'],
+                                allowDefaultProject: ['./*.js', './*.ts'],
                                 defaultProject: tsconfigPath,
                             },
                             tsconfigRootDir: process.cwd(),
                         }
                         : {},
-                    ...parserOptions as any,
+                    ...parserOptions,
                 },
             },
             name: `moso/typescript/${typeAware ? 'type-aware-parser' : 'parser'}`,
@@ -112,7 +185,8 @@ export const typescript = async (options:
             name: 'moso/typescript/setup',
             plugins: {
                 'antfu': antfuPlugin,
-                '@typescript-eslint': typeScriptPlugin as any,
+                'functional': functionalPlugin,
+                '@typescript-eslint': typeScriptPlugin,
             },
         },
         ...isTypeAware
@@ -131,9 +205,12 @@ export const typescript = async (options:
                 ...typeScriptPlugin.configs.strict.rules!,
 
                 // JS off
+                'no-dupe-class-members': 'off',
+                'no-redeclare': 'off',
                 'no-loss-of-precision': 'off',
                 'no-unused-vars': 'off',
                 'no-use-before-define': 'off',
+                'no-useless-constructor': 'off',
 
                 // Stylistic
                 '@stylistic/type-annotation-spacing': 'error',
@@ -145,7 +222,6 @@ export const typescript = async (options:
                         'ts-ignore': 'allow-with-description',
                     },
                 ],
-                '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
                 '@typescript-eslint/consistent-type-imports': [
                     'error',
                     {
@@ -155,12 +231,21 @@ export const typescript = async (options:
                 ],
                 '@typescript-eslint/method-signature-style': ['error', 'property'],
                 '@typescript-eslint/no-dynamic-delete': 'off',
+                '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'always' }],
                 '@typescript-eslint/no-explicit-any': 'off',
                 '@typescript-eslint/no-extraneous-class': 'off',
                 '@typescript-eslint/no-import-type-side-effects': 'error',
                 '@typescript-eslint/no-invalid-void-type': 'off',
                 '@typescript-eslint/no-non-null-assertion': 'off',
                 '@typescript-eslint/no-require-imports': 'error',
+                '@typescript-eslint/no-unused-expressions': [
+                    'error',
+                    {
+                        allowShortCircuit: true,
+                        allowTaggedTemplates: true,
+                        allowTernary: true,
+                    },
+                ],
                 '@typescript-eslint/no-unused-vars': [
                     'error',
                     {
