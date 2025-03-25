@@ -8,5 +8,5 @@
         "esModuleInterop": true,
         "skipLibCheck": true
     },
-    "include": ["**/*.ts", "src/configs/javascript.ts.old"]
+    "include": ["**/*.ts"]
 }
