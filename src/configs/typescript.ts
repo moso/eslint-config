@@ -167,7 +167,7 @@ export const typescript = async (options:
                     ...typeAware
                         ? {
                             projectService: {
-                                allowDefaultProject: ['./*.js', './*.ts'],
+                                allowDefaultProject: ['./*.js'],
                                 defaultProject: tsconfigPath,
                             },
                             tsconfigRootDir: process.cwd(),
