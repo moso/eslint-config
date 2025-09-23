@@ -1,107 +1,167 @@
+import assert from 'node:assert/strict';
+
 import { isPackageExists } from 'local-pkg';
 
-import { GLOB_MARKDOWN, GLOB_SRC, GLOB_TS, GLOB_TSX } from '../globs';
-import { interopDefault } from '../utils';
+import {
+    ensurePackages,
+    interopDefault,
+    loadPackages,
+    memoize,
+} from '../utils';
+
+import type { ESLint } from 'eslint';
 
 import type {
     OptionsFiles,
+    OptionsHasTypeScript,
+    OptionsLessOpinionated,
     OptionsOverrides,
+    OptionsReact,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
+    RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
 
-const ReactRefreshAllowConstantExportPackages = [
-    'vite',
-];
-
-const RemixPackages = [
-    '@remix-run/node',
-    '@remix-run/react',
-    '@remix-run/serve',
-    '@remix-run/dev',
-];
-
+const ReactRefreshAllowConstantExportPackages = ['vite'];
 const ReactRouterPackages = [
+    '@react-router/dev',
     '@react-router/node',
     '@react-router/react',
     '@react-router/serve',
-    '@react-router/dev',
+];
+const RemixPackages = [
+    '@remix-run/dev',
+    '@remix-run/node',
+    '@remix-run/react',
+    '@remix-run/serve',
 ];
 
-const NextJsPackages = [
-    'next',
-];
-
-export const react = async (options:
-    OptionsTypeScriptParserOptions &
-    OptionsTypeScriptWithTypes &
-    OptionsOverrides &
-    OptionsFiles = {},
+export const react = async (
+    options: Readonly<
+        OptionsLessOpinionated &
+        OptionsOverrides &
+        OptionsReact &
+        OptionsTypeScriptParserOptions &
+        OptionsTypeScriptWithTypes &
+        Required<
+            OptionsFiles &
+            OptionsHasTypeScript &
+            RequiredOptionsStylistic
+        >
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
-        files = [GLOB_SRC],
-        filesTypeAware = [GLOB_TS, GLOB_TSX],
-        ignoresTypeAware = [`${GLOB_MARKDOWN}/**`],
-        overrides = {},
-        tsconfigPath,
+        a11y,
+        additionalComponents = [{
+            name: 'Link',
+            as: 'a',
+            attributes: [
+                { name: 'to', as: 'href' },
+                { name: 'rel', as: 'rel' },
+            ],
+        }],
+        additionalHooks = 'useIsomorphicLayoutEffect',
+        additionalHooksWithType = {
+            useEffect: ['useAbortableEffect'],
+            useLayoutEffect: ['useIsomorphicLayoutEffect'],
+        },
+        files,
+        filesTypeAware,
+        lessOpinionated,
+        overrides,
+        overridesA11y,
+        overridesTypeAware,
+        parserOptions,
+        projectRoot,
+        stylistic,
+        typescript,
     } = options;
 
-    const isTypeAware = !!tsconfigPath;
+    await ensurePackages([
+        '@eslint-react/eslint-plugin',
+        'eslint-plugin-react-hooks',
+        'eslint-plugin-react-refresh',
+        'eslint-plugin-react-you-might-not-need-an-effect',
+    ]);
 
-    const typeAwareRules: TypedFlatConfigItem['rules'] = {
-        '@eslint-react/dom/no-unknown-property': 'off',
-        '@eslint-react/no-duplicate-jsx-props': 'off',
-        '@eslint-react/use-jsx-vars': 'off',
-        '@eslint-react/no-leaked-conditional-rendering': 'warn',
-    };
+    if (a11y) await ensurePackages(['@eslint-sukka/eslint-plugin-react-jsx-a11y']);
 
     const [
         reactPlugin,
         reactHooksPlugin,
         reactRefreshPlugin,
-    ] = await Promise.all([
-        interopDefault(import('@eslint-react/eslint-plugin')),
-        interopDefault(import('eslint-plugin-react-hooks')),
-        interopDefault(import('eslint-plugin-react-refresh')),
-    ] as const);
+        reactYouMightNotNeedAnEffect,
+    ] = (await loadPackages([
+        '@eslint-react/eslint-plugin',
+        'eslint-plugin-react-hooks',
+        'eslint-plugin-react-refresh',
+        'eslint-plugin-react-you-might-not-need-an-effect',
+    ])) as [
+        ESLint.Plugin,
+        ESLint.Plugin,
+        ESLint.Plugin,
+        (typeof import('eslint-plugin-react-you-might-not-need-an-effect'))['default'],
+    ];
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    const plugins = ((reactPlugin.configs?.all as any)?.plugins as Record<string, ESLint.Plugin> | undefined) ??
+        assert.fail('Failed to load React plugins.');
+
+    const isTypeAware = typeof projectRoot === 'string';
 
     const isAllowConstantExport = ReactRefreshAllowConstantExportPackages.some((x) => isPackageExists(x));
+    const isUsingAstro = isPackageExists('@astrojs/react');
+
     const isUsingRemix = RemixPackages.some((x) => isPackageExists(x));
     const isUsingReactRouter = ReactRouterPackages.some((x) => isPackageExists(x));
-    const isUsingNext = NextJsPackages.some((x) => isPackageExists(x));
 
-    const plugins = reactPlugin.configs.all.plugins;
+    const jsxA11yPlugin = a11y
+        ? (await loadPackages(['eslint-plugin-jsx-a11y'])) as [ESLint.Plugin]
+        : undefined;
+
+    const stylisticEnabled = stylistic !== false;
+
+    const typescriptParser = typescript ? (await interopDefault(import('@typescript-eslint/parser'))) : undefined;
 
     return [
         {
-            name: 'moso/react/setup',
-            plugins: {
-                '@eslint-react': plugins['@eslint-react'],
-                '@eslint-react/dom': plugins['@eslint-react/dom'],
-                '@eslint-react/hooks-extra': plugins['@eslint-react/hooks-extra'],
-                '@eslint-react/naming-convention': plugins['@eslint-react/naming-convention'],
-                '@eslint-react/web-api': plugins['@eslint-react/web-api'],
-                'react-hooks': reactHooksPlugin,
-                'react-refresh': reactRefreshPlugin,
-            },
-        },
-        {
+            name: 'moso/react',
             files,
+            plugins: {
+                '@eslint-react': memoize(plugins['@eslint-react'], '@eslint-react'),
+                '@eslint-react/dom': memoize(plugins['@eslint-react/dom'], '@eslint-react/dom'),
+                '@eslint-react/hooks-extra': memoize(plugins['@eslint-react/hooks-extra'], '@eslint-react/hooks-extra'),
+                '@eslint-react/naming-convention': memoize(plugins['@eslint-react/naming-convention'], '@eslint-react/naming-convention'),
+                '@eslint-react/web-api': memoize(plugins['@eslint-react/web-api'], '@eslint-react/web-api'),
+                'react-hooks': memoize(reactHooksPlugin, 'eslint-plugin-react-hooks'),
+                'react-refresh': memoize(reactRefreshPlugin, 'eslint-plugin-react-refresh'),
+                'react-you-might-not-need-an-effect': memoize(reactYouMightNotNeedAnEffect, 'eslint-plugin-react-you-might-not-need-an-effect'),
+            },
             languageOptions: {
+                parser: typescript ? typescriptParser : undefined,
                 parserOptions: {
                     ecmaFeatures: {
                         jsx: true,
                     },
+                    ...(typescript ? parserOptions : undefined),
                 },
                 sourceType: 'module',
             },
-            name: 'moso/react/rules',
+            settings: {
+                '@eslint-react': {
+                    additionalHooks: additionalHooksWithType,
+                    additionalComponents,
+                    version: 'detect',
+                },
+            },
             rules: {
-                // Recommended rules from @eslint-react/react-x
+                // Recommended rules from eslint-plugin-react-x, manually migrated
                 // @see https://eslint-react.xyz/docs/rules/overview#core-rules
-                '@eslint-react/jsx-no-duplicate-props': 'error',
-                '@eslint-react/jsx-no-undef': 'error',
+                '@eslint-react/jsx-key-before-spread': 'warn',
+                '@eslint-react/jsx-no-duplicate-props': 'warn',
+                '@eslint-react/jsx-uses-react': 'warn',
+                '@eslint-react/jsx-uses-vars': 'warn',
                 '@eslint-react/no-access-state-in-setstate': 'error',
                 '@eslint-react/no-array-index-key': 'warn',
                 '@eslint-react/no-children-count': 'warn',
@@ -118,12 +178,13 @@ export const react = async (options:
                 '@eslint-react/no-create-ref': 'error',
                 '@eslint-react/no-default-props': 'error',
                 '@eslint-react/no-direct-mutation-state': 'error',
-                '@eslint-react/no-duplicate-jsx-props': 'warn',
                 '@eslint-react/no-duplicate-key': 'warn',
                 '@eslint-react/no-forward-ref': 'warn',
                 '@eslint-react/no-implicit-key': 'warn',
                 '@eslint-react/no-missing-key': 'error',
+                '@eslint-react/no-misused-capture-owner-stack': 'error',
                 '@eslint-react/no-nested-component-definitions': 'error',
+                '@eslint-react/no-nested-lazy-component-declarations': 'warn',
                 '@eslint-react/no-prop-types': 'error',
                 '@eslint-react/no-redundant-should-component-update': 'error',
                 '@eslint-react/no-set-state-in-component-did-mount': 'warn',
@@ -139,10 +200,8 @@ export const react = async (options:
                 '@eslint-react/no-unused-state': 'warn',
                 '@eslint-react/no-use-context': 'warn',
                 '@eslint-react/no-useless-forward-ref': 'warn',
-                '@eslint-react/use-jsx-vars': 'warn',
 
-                // Recommended rules from @eslint-react/dom
-                // @see https://eslint-react.xyz/docs/rules/overview#dom-rules
+                // recommended rules from eslint-plugin-react-dom https://eslint-react.xyz/docs/rules/overview#dom-rules
                 '@eslint-react/dom/no-dangerously-set-innerhtml': 'warn',
                 '@eslint-react/dom/no-dangerously-set-innerhtml-with-children': 'error',
                 '@eslint-react/dom/no-find-dom-node': 'error',
@@ -159,89 +218,204 @@ export const react = async (options:
                 '@eslint-react/dom/no-use-form-state': 'error',
                 '@eslint-react/dom/no-void-elements-with-children': 'error',
 
-                // Recommended rules for eslint-plugin-react-hooks
-                // @see https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks/src/rules
-                'react-hooks/exhaustive-deps': 'warn',
+                // eslint-plugin-react-naming-convention
+                '@eslint-react/naming-convention/context-name': 'warn',
+
+                // eslint-plugin-react-hooks
+                'react-hooks/exhaustive-deps': ['error', { additionalHooks }],
                 'react-hooks/rules-of-hooks': 'error',
 
-                // Recommended rules for eslint-plugin-react-hooks-extra
-                // @see https://eslint-react.xyz/docs/rules/overview#hooks-extra-rules
+                // recommended rules from eslint-plugin-react-hooks-extra https://eslint-react.xyz/docs/rules/overview#hooks-extra-rules
                 '@eslint-react/hooks-extra/no-direct-set-state-in-use-effect': 'warn',
-                '@eslint-react/hooks-extra/no-useless-custom-hooks': 'warn',
+                '@eslint-react/hooks-extra/no-unnecessary-use-prefix': 'warn',
                 '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization': 'warn',
 
-                // Recommended rules from @eslint-react/web-api
-                // @see https://eslint-react.xyz/docs/rules/overview#web-api-rules
-                '@eslint-react/web-api/no-leaked-event-listener': 'warn',
-                '@eslint-react/web-api/no-leaked-interval': 'warn',
-                '@eslint-react/web-api/no-leaked-resize-observer': 'warn',
-                '@eslint-react/web-api/no-leaked-timeout': 'warn',
-
-                // Preconfigured rules from eslint-plugin-react-refresh
-                // @see https://github.com/ArnaudBarre/eslint-plugin-react-refresh/tree/main/src
+                // eslint-plugin-react-refresh
                 'react-refresh/only-export-components': [
                     'warn',
                     {
                         allowConstantExport: isAllowConstantExport,
                         allowExportNames: [
-                            ...(isUsingNext
+                            ...(isUsingRemix
                                 ? [
-                                    'dynamic',
-                                    'dynamicParams',
-                                    'revalidate',
-                                    'fetchCache',
-                                    'runtime',
-                                    'preferredRegion',
-                                    'maxDuration',
-                                    'config',
-                                    'generateStaticParams',
-                                    'metadata',
-                                    'generateMetadata',
-                                    'viewport',
-                                    'generateViewport',
-                                ]
-                                : []
-                            ),
-
-                            ...(isUsingRemix || isUsingReactRouter
-                                ? [
-                                    'meta',
-                                    'links',
-                                    'headers',
-                                    'loader',
                                     'action',
+                                    'headers',
+                                    'links',
+                                    'loader',
+                                    'meta',
                                 ]
-                                : []
-                            ),
+                                : []),
+                            ...(isUsingReactRouter
+                                ? [
+                                    'action',
+                                    'clientAction',
+                                    'clientloader',
+                                    'handle',
+                                    'headers',
+                                    'links',
+                                    'loader',
+                                    'meta',
+                                    'shouldRevalidate',
+                                    'ErrorBoundary',
+                                    'HydrateFallback',
+                                ]
+                                : []),
                         ],
                     },
                 ],
 
-                // @moso's rules
-                '@eslint-react/naming-convention/context-name': 'warn',
-                '@eslint-react/naming-convention/use-state': 'warn',
+                // recommended rules from eslint-plugin-react-web-api https://eslint-react.xyz/docs/rules/overview#web-api-rules
+                '@eslint-react/web-api/no-leaked-event-listener': 'warn',
+                '@eslint-react/web-api/no-leaked-interval': 'warn',
+                '@eslint-react/web-api/no-leaked-resize-observer': 'warn',
+                '@eslint-react/web-api/no-leaked-timeout': 'warn',
 
-                '@eslint-react/ensure-forward-ref-using-ref': 'warn',
-                '@eslint-react/no-nested-components': 'error',
-                '@eslint-react/prefer-destructuring-assignment': 'warn',
-                '@eslint-react/prefer-shorthand-boolean': 'warn',
-                '@eslint-react/prefer-shorthand-fragment': 'warn',
+                ...(!lessOpinionated && {
+                    '@eslint-react/no-leaked-conditional-rendering': 'error',
+                    '@eslint-react/no-nested-components': 'error',
+                    '@eslint-react/no-unstable-context-value': 'error',
+                    '@eslint-react/no-unstable-default-props': 'error',
+                    '@eslint-react/no-useless-fragment': 'error',
+                    '@eslint-react/prefer-shorthand-fragment': 'error',
+
+                    '@eslint-react/dom/no-children-in-void-dom-elements': 'error',
+
+                    '@eslint-react/naming-convention/component-name': [
+                        isUsingAstro ? 'off' : 'error',
+                        {
+                            rule: 'PascalCase',
+                        },
+                    ],
+                    '@eslint-react/naming-convention/filename': [
+                        isUsingAstro ? 'off' : 'error',
+                        {
+                            rule: 'kebab-case',
+                        },
+                    ],
+                    '@eslint-react/naming-convention/filename-extension': [
+                        isUsingAstro ? 'off' : 'error',
+                        {
+                            allow: 'as-needed',
+                        },
+                    ],
+                    '@eslint-react/naming-convention/use-state': 'error',
+
+                    'react-you-might-not-need-an-effect/no-chain-state-updates': 'warn',
+                    'react-you-might-not-need-an-effect/no-derived-state': 'warn',
+                    'react-you-might-not-need-an-effect/no-empty-effect': 'warn',
+                    'react-you-might-not-need-an-effect/no-event-handler': 'warn',
+                    'react-you-might-not-need-an-effect/no-initialize-state': 'warn',
+                    'react-you-might-not-need-an-effect/no-manage-parent': 'warn',
+                    'react-you-might-not-need-an-effect/no-pass-data-to-parent': 'warn',
+                    'react-you-might-not-need-an-effect/no-pass-live-state-to-parent': 'warn',
+                    'react-you-might-not-need-an-effect/no-reset-all-state-on-prop-change': 'warn',
+
+                    ...(stylisticEnabled && {
+                        '@stylistic/jsx-closing-bracket-location': ['error', 'line-aligned'],
+                        '@stylistic/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
+                        '@stylistic/jsx-first-prop-new-line': ['error', 'multiline-multiprop'],
+                        '@stylistic/jsx-pascal-case': ['error', { allowAllCaps: true, ignore: [] }],
+                        '@stylistic/jsx-self-closing-comp': 'error',
+                        '@stylistic/jsx-tag-spacing': [
+                            'error',
+                            {
+                                afterOpening: 'never',
+                                closingSlash: 'never',
+                                beforeClosing: 'never',
+                                beforeSelfClosing: 'always',
+                            },
+                        ],
+                        '@stylistic/jsx-wrap-multilines': [
+                            'error',
+                            {
+                                arrow: 'parens-new-line',
+                                assignment: 'parens-new-line',
+                                condition: 'ignore',
+                                declaration: 'parens-new-line',
+                                logical: 'ignore',
+                                prop: 'ignore',
+                                return: 'parens-new-line',
+                            },
+                        ],
+                        '@stylistic/no-multi-spaces': 'error',
+                    }),
+                }),
 
                 ...overrides,
             },
         },
 
-        ...isTypeAware
+        ...((isTypeAware
+            ? [{
+                name: 'moso/react/rules-type-aware',
+                files: filesTypeAware,
+                rules: {
+                    // recommended typescript rules
+                    '@eslint-react/dom/no-unknown-property': 'off',
+                    '@eslint-react/jsx-no-duplicate-props': 'off',
+                    '@eslint-react/jsx-uses-react': 'off',
+                    '@eslint-react/jsx-uses-vars': 'off',
+
+                    // recommended typescript checked rules
+                    '@eslint-react/no-leaked-conditional-rendering': 'warn',
+                    // '@eslint-react/prefer-read-only-props': 'warn',
+
+                    '@typescript-eslint/class-methods-use-this': [
+                        'error',
+                        {
+                            exceptMethods: [
+                                'componentDidCatch',
+                                'componentDidMount',
+                                'componentDidUpdate',
+                                'componentWillMount',
+                                'componentWillReceiveProps',
+                                'componentWillUnmount',
+                                'componentWillUpdate',
+                                'getChildContext',
+                                'getDefaultProps',
+                                'getInitialState',
+                                'getSnapshotBeforeUpdate',
+                                'render',
+                                'shouldComponentUpdate',
+                                'UNSAFE_componentWillMount',
+                                'UNSAFE_componentWillReceiveProps',
+                                'UNSAFE_componentWillUpdate',
+                            ],
+                            ignoreClassesThatImplementAnInterface: 'public-fields',
+                        },
+                    ],
+
+                    ...overridesTypeAware,
+                },
+            }]
+            : []) satisfies TypedFlatConfigItem[]
+        ),
+
+        ...((a11y
             ? [
                 {
-                    files: filesTypeAware,
-                    ignores: ignoresTypeAware,
-                    name: 'moso/react/type-aware-rules',
+                    name: 'moso/react/a11y',
+                    plugins: {
+                        'jsx-a11y': memoize(jsxA11yPlugin as ESLint.Plugin, 'eslint-plugin-jsx-a11y'),
+                    },
                     rules: {
-                        ...typeAwareRules,
+                        // minimal rules, inspired by sukka
+                        'jsx-a11y/alt-text': ['warn', { elements: ['img'], img: ['Image'] }],
+                        'jsx-a11y/aria-props': 'warn',
+                        'jsx-a11y/aria-proptypes': 'warn',
+                        'jsx-a11y/aria-role': 'warn',
+                        'jsx-a11y/aria-unsupported-elements': 'warn',
+                        'jsx-a11y/iframe-has-title': 'warn',
+                        'jsx-a11y/no-access-key': 'warn',
+                        'jsx-a11y/role-has-required-aria-props': 'warn',
+                        'jsx-a11y/role-supports-aria-props': 'warn',
+                        'jsx-a11y/tabindex-no-positive': 'warn',
+
+                        ...overridesA11y,
                     },
                 },
             ]
-            : [],
+            : []) satisfies TypedFlatConfigItem[]
+        ),
     ];
 };
