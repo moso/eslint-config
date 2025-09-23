@@ -2,21 +2,25 @@ import { moso } from './src';
 
 export default moso(
     {
-        react: false,
-        typescript: true,
-        vue: false,
+        astro: true,
+        functional: 'lite',
+        jsdoc: true,
+        jsonc: true,
+        mode: 'none',
+        nextjs: true,
+        projectRoot: import.meta.dirname,
+        react: true,
+        toml: true,
+        vue: true,
+        yaml: true,
+    },
+    {
+        // ignores: ['src/rules/*.ts'],
     },
     {
         files: ['src/**/*.ts'],
         rules: {
-            'perfectionist/sort-objects': [
-                'error',
-                {
-                    type: 'unsorted',
-                    order: 'asc',
-                    fallbackSort: { type: 'unsorted' },
-                },
-            ],
+            'perfectionist/sort-exports': 'off',
         },
     },
 );
