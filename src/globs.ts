@@ -6,32 +6,58 @@ export const GLOB_JSX = '**/*.?([cm])jsx';
 
 export const GLOB_TS = '**/*.?([cm])ts';
 export const GLOB_TSX = '**/*.?([cm])tsx';
+export const GLOB_DTS = '**/?(.)*.d.?([cm])ts';
+
+export const GLOB_ROOT_JS = './?(.)*.?([cm])js';
+export const GLOB_ROOT_JSX = './?(.)*.?([cm])jsx';
+
+export const GLOB_ROOT_TS = './?(.)*.?([cm])ts';
+export const GLOB_ROOT_TSX = './?(.)*.?([cm])tsx';
+export const GLOB_ROOT_DTS = './?(.)*.d.?([cm])ts';
+
+export const GLOB_MJS = '';
+export const GLOB_MTS = '';
+
+export const GLOB_CJS = '';
+export const GLOB_CTS = '';
+
+export const GLOB_STYLE = '**/?(.)*.{c,le,sc,pc,postc}ss';
+export const GLOB_CSS = '**/?(.)*.css';
+export const GLOB_POSTCSS = '**/?(.)*.{p,post}css';
+export const GLOB_LESS = '**/?(.)*.less';
+export const GLOB_SCSS = '**/?(.)*.scss';
 
 export const GLOB_JSON = '**/*.json';
 export const GLOB_JSON5 = '**/*.json5';
 export const GLOB_JSONC = '**/*.jsonc';
 
+export const GLOB_ASTRO = '**/*.astro';
+export const GLOB_ASTRO_TS = '**/*.astro/*.ts';
 export const GLOB_HTML = '**/*.htm?(l)';
 export const GLOB_MARKDOWN = '**/*.md';
 export const GLOB_MARKDOWN_CODE = `${GLOB_MARKDOWN}/${GLOB_SRC}`;
 export const GLOB_MARKDOWN_IN_MARKDOWN = '**/*.md/*.md';
+export const GLOB_TOML = '**/*.toml';
 export const GLOB_VUE = '**/*.vue';
 export const GLOB_YAML = '**/*.y?(a)ml';
 
 export const GLOB_TESTS = [
-    `**/__tests__/**/*.${GLOB_SRC_EXT}`,
-    `**/*.spec.${GLOB_SRC_EXT}`,
-    `**/*.test.${GLOB_SRC_EXT}`,
-    `**/*.bench.${GLOB_SRC_EXT}`,
-    `**/*.benchmark.${GLOB_SRC_EXT}`,
+    `**/__tests__/**/?(.)*.${GLOB_SRC_EXT}`,
+    `**/?(.)*.spec.${GLOB_SRC_EXT}`,
+    `**/?(.)*.test.${GLOB_SRC_EXT}`,
+    `**/?(.)*.bench.${GLOB_SRC_EXT}`,
+    `**/?(.)*.benchmark.${GLOB_SRC_EXT}`,
 ];
 
 export const GLOB_ALL_SRC = [
+    GLOB_SRC,
+    GLOB_STYLE,
     GLOB_JSON,
     GLOB_JSON5,
     GLOB_HTML,
     GLOB_MARKDOWN,
     GLOB_SRC,
+    GLOB_STYLE,
     GLOB_VUE,
     GLOB_YAML,
 ];
@@ -39,6 +65,7 @@ export const GLOB_ALL_SRC = [
 export const GLOB_EXCLUDE = [
     '**/node_modules',
     '**/dist',
+    '**/lib',
     '**/package-lock.json',
     '**/yarn.lock',
     '**/pnpm-lock.yaml',
@@ -68,6 +95,10 @@ export const GLOB_EXCLUDE = [
     '**/*.min.*',
     '**/LICENSE*',
     '**/__snapshots__',
+    '**/auto-import?(s).ts',
     '**/auto-import?(s).d.ts',
+    '**/components.ts',
     '**/components.d.ts',
+    '**/typegen.ts',
+    '**/typegen.d.ts',
 ];
