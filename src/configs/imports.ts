@@ -1,47 +1,85 @@
-import { interopDefault } from '../utils';
+import {
+    GLOB_DTS,
+    GLOB_TS,
+    GLOB_TSX,
+} from '../globs';
 
-import type { OptionsStylistic, TypedFlatConfigItem } from '../types';
+import mosoPlugin from '../rules';
+import { loadPackages, memoize } from '../utils';
 
-export const imports = async (options: OptionsStylistic = {}): Promise<TypedFlatConfigItem[]> => {
+import type { ESLint } from 'eslint';
+
+import type {
+    OptionsHasTypeScript,
+    OptionsOverrides,
+    OptionsTypeScriptParserOptions,
+    RequiredOptionsStylistic,
+    TypedFlatConfigItem,
+} from '../types';
+
+export const imports = async (
+    options: Readonly<
+        OptionsHasTypeScript &
+        OptionsOverrides &
+        OptionsTypeScriptParserOptions &
+        Required<RequiredOptionsStylistic>
+    >,
+): Promise<TypedFlatConfigItem[]> => {
     const {
-        stylistic = true,
+        overrides,
+        stylistic,
+        typescript,
     } = options;
 
-    const [
-        antfuPlugin,
-        importXPlugin,
-    ] = await Promise.all([
-        interopDefault(import('eslint-plugin-antfu')),
-        interopDefault(import('eslint-plugin-import-x')),
-    ] as const);
+    const [importLite] = (await loadPackages(['eslint-plugin-import-lite'])) as [ESLint.Plugin];
+
+    const stylisticEnabled = stylistic !== false;
 
     return [
         {
-            name: 'moso/imports/rules',
+            name: 'moso/imports',
             plugins: {
-                'antfu': antfuPlugin,
-                'import-x': importXPlugin,
+                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
+                'import-lite': memoize(importLite, 'eslint-plugin-import-lite'),
             },
             rules: {
-                'antfu/import-dedupe': 'error',
-                'antfu/no-import-dist': 'error',
-                'antfu/no-import-node-modules-by-path': 'error',
+                '@moso/no-import-duplicates': 'error',
+                '@moso/no-import-from-dist': 'error',
+                '@moso/no-import-node-modules-by-path': 'error',
 
-                'import-x/consistent-type-specifier-style': ['error', 'prefer-top-level'],
-                'import-x/first': 'error',
-                'import-x/no-duplicates': ['error', { 'prefer-inline': true }],
-                'import-x/no-mutable-exports': 'error',
-                'import-x/no-named-default': 'off',
-                'import-x/no-self-import': 'error',
-                'import-x/no-unresolved': 'off',
-                'import-x/no-webpack-loader-syntax': 'error',
+                'import-lite/consistent-type-specifier-style': 'error',
+                'import-lite/first': 'error',
+                'import-lite/no-duplicates': 'error',
+                'import-lite/no-mutable-exports': 'error',
+                'import-lite/no-named-default': 'error',
 
-                ...stylistic
-                    ? {
-                        'import-x/newline-after-import': ['error', { count: 1 }],
-                    }
-                    : {},
+                ...(stylisticEnabled && {
+                    'import-lite/newline-after-import': ['error', { considerComments: false }],
+                }),
+
+                ...overrides,
             },
         },
+        ...((typescript
+            ? [
+                {
+                    name: 'moso/imports/typescript',
+                    files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
+                    rules: {
+                        '@typescript-eslint/no-import-type-side-effects': 'error',
+                        '@typescript-eslint/consistent-type-imports': [
+                            stylisticEnabled ? 'error' : 'off',
+                            {
+                                disallowTypeAnnotations: false,
+                                fixStyle: 'inline-type-imports',
+                                prefer: 'type-imports',
+
+                            },
+                        ],
+                    },
+                },
+            ]
+            : []) satisfies TypedFlatConfigItem[]
+        ),
     ];
 };
