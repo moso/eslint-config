@@ -1,15 +1,19 @@
-import type { TypedFlatConfigItem } from '../types';
+import type { OptionsOverrides, TypedFlatConfigItem } from '../types';
 
 /**
  * Sort package.json
  *
  * Requires `jsonc` config
  */
-export const sortPackageJson = (): TypedFlatConfigItem[] => {
+export const sortPackageJson = (
+    options: Readonly<OptionsOverrides> = {},
+): TypedFlatConfigItem[] => {
+    const { overrides } = options;
+
     return [
         {
-            files: ['**/package.json'],
             name: 'moso/sort/package-json',
+            files: ['**/package.json'],
             rules: {
                 'jsonc/sort-array-values': [
                     'error',
@@ -40,6 +44,7 @@ export const sortPackageJson = (): TypedFlatConfigItem[] => {
                             'keywords',
                             'categories',
                             'sideEffects',
+                            'imports',
                             'exports',
                             'main',
                             'module',
@@ -102,6 +107,8 @@ export const sortPackageJson = (): TypedFlatConfigItem[] => {
                         pathPattern: '^(?:gitHooks|husky|simple-git-hooks)$',
                     },
                 ],
+
+                ...overrides,
             },
         },
     ];
@@ -112,12 +119,15 @@ export const sortPackageJson = (): TypedFlatConfigItem[] => {
  *
  * Requires `jsonc` config
  */
+export const sortTsconfig = (
+    options: Readonly<OptionsOverrides> = {},
+): TypedFlatConfigItem[] => {
+    const { overrides } = options;
 
-export const sortTsconfig = (): TypedFlatConfigItem[] => {
     return [
         {
-            files: ['**/tsconfig.json', '**/tsconfig.*.json'],
             name: 'moso/sort/tsconfig-json',
+            files: ['**/tsconfig.json', '**/tsconfig.*.json'],
             rules: {
                 'jsonc/sort-keys': [
                     'error',
@@ -228,6 +238,8 @@ export const sortTsconfig = (): TypedFlatConfigItem[] => {
                         pathPattern: '^compilerOptions$',
                     },
                 ],
+
+                ...overrides,
             },
         },
     ];
