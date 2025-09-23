@@ -1,53 +1,85 @@
-import { GLOB_TESTS } from '../globs';
-import { interopDefault } from '../utils';
+import mosoPlugin from '../rules';
+import {
+    interopDefault,
+    loadPackages,
+    memoize,
+} from '../utils';
 
-import type { OptionsFiles, OptionsIsInEditor, OptionsOverrides, TypedFlatConfigItem } from '../types';
+import type { ESLint } from 'eslint';
 
-export const test = async (options:
-    OptionsFiles &
-    OptionsIsInEditor &
-    OptionsOverrides = {},
+import type {
+    OptionsFiles,
+    OptionsOverrides,
+    TypedFlatConfigItem,
+} from '../types';
+
+export const test = async (
+    options: Readonly<OptionsOverrides & Required<OptionsFiles>>,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files = GLOB_TESTS,
-        isInEditor = false,
-        overrides = {},
-    } = options;
+    const { files, overrides } = options;
 
-    const [
-        vitestPlugin,
-        noOnlyTestsPlugin,
-    ] = await Promise.all([
-        interopDefault(import('@vitest/eslint-plugin')),
-        interopDefault(import('eslint-plugin-no-only-tests')),
-    ] as const);
+    const [noOnlyTestsPlugin, vitestPlugin] = (await loadPackages([
+        'eslint-plugin-no-only-tests',
+        '@vitest/eslint-plugin',
+    ])) as [ESLint.Plugin, ESLint.Plugin];
+
+    const functionalPlugin = (await interopDefault(import('eslint-plugin-functional')));
 
     return [
         {
             name: 'moso/test/setup',
             plugins: {
-                'vitest': vitestPlugin,
-                'no-only-tests': noOnlyTestsPlugin,
+                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
+                'test': {
+                    ...vitestPlugin,
+                    rules: {
+                        ...vitestPlugin.rules,
+                        ...noOnlyTestsPlugin.rules,
+                    },
+                },
+            },
+            settings: {
+                vitest: {
+                    typecheck: true,
+                },
             },
         },
         {
-            files,
             name: 'moso/test/rules',
+            files,
             rules: {
-                'vitest/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
-                'vitest/no-identical-title': 'error',
-                'vitest/no-import-node-test': 'error',
-                'vitest/prefer-hooks-in-order': 'error',
-                'vitest/prefer-lowercase-title': 'error',
+                ...functionalPlugin.configs.off.rules,
 
-                'no-only-tests/no-only-tests': isInEditor ? 'warn' : 'error',
+                '@moso/no-top-level-await': 'off',
 
-                // Disables for tests
-                ...{
-                    'no-unused-expressions': 'off',
-                    'node/prefer-global/process': 'off',
-                    '@typescript-eslint/explicit-function-return-type': 'off',
-                },
+                'jsdoc/require-jsdoc': 'off',
+
+                'node/no-sync': 'off',
+                'node/prefer-global/process': 'off',
+
+                'regexp/no-super-linear-backtracking': 'off',
+
+                'unicorn/consistent-function-scoping': 'off',
+                'unicorn/prefer-module': 'off',
+
+                '@typescript-eslint/consistent-type-definitions': 'off',
+                '@typescript-eslint/no-unsafe-argument': 'off',
+                '@typescript-eslint/no-unsafe-assignment': 'off',
+                '@typescript-eslint/no-unsafe-call': 'off',
+                '@typescript-eslint/no-unsafe-member-access': 'off',
+                '@typescript-eslint/no-unsafe-return': 'off',
+                '@typescript-eslint/no-unused-expressions': 'off',
+                '@typescript-eslint/no-unused-vars': 'off',
+                '@typescript-eslint/strict-boolean-expressions': 'off',
+
+                'test/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
+                'test/no-identical-title': 'error',
+                'test/no-import-node-test': 'error',
+                'test/prefer-hooks-in-order': 'error',
+                'test/prefer-lowercase-title': 'error',
+                'test/valid-expect': 'off',
+
+                'test/no-only-tests': 'error',
 
                 ...overrides,
             },
