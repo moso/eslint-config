@@ -1,43 +1,42 @@
-import { GLOB_JSON, GLOB_JSON5, GLOB_JSONC } from '../globs';
-import { interopDefault } from '../utils';
+import { loadPackages, memoize } from '../utils';
+
+import type { ESLint, Linter } from 'eslint';
 
 import type {
     OptionsFiles,
     OptionsOverrides,
-    OptionsStylistic,
+    RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
 
-export const jsonc = async (options: OptionsFiles & OptionsStylistic & OptionsOverrides = {}): Promise<TypedFlatConfigItem[]> => {
+export const jsonc = async (
+    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+): Promise<TypedFlatConfigItem[]> => {
     const {
-        files = [GLOB_JSON, GLOB_JSON5, GLOB_JSONC],
-        overrides = {},
-        stylistic = true,
+        files,
+        overrides,
+        stylistic,
     } = options;
 
     const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
-    const [
-        jsoncPlugin,
-        jsoncParser,
-    ] = await Promise.all([
-        interopDefault(import('eslint-plugin-jsonc')),
-        interopDefault(import('jsonc-eslint-parser')),
-    ] as const);
+    const [jsoncPlugin, jsoncParser] = (await loadPackages([
+        'eslint-plugin-jsonc',
+        'jsonc-eslint-parser',
+    ])) as [ESLint.Plugin, Linter.Parser];
+
+    const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
     return [
         {
-            name: 'moso/jsonc/setup',
-            plugins: {
-                jsonc: jsoncPlugin as any,
-            },
-        },
-        {
+            name: 'moso/jsonc',
             files,
-            languageOptions: {
-                parser: jsoncParser,
+            plugins: {
+                'jsonc': memoize(jsoncPlugin, 'eslint-plugin-jsonc'),
             },
-            name: 'moso/jsonc/rules',
+            languageOptions: {
+                parser: memoize(jsoncParser, 'jsonc-eslint-parser'),
+            },
             rules: {
                 'jsonc/no-bigint-literals': 'error',
                 'jsonc/no-binary-expression': 'error',
@@ -66,20 +65,16 @@ export const jsonc = async (options: OptionsFiles & OptionsStylistic & OptionsOv
                 'jsonc/valid-json-number': 'error',
                 'jsonc/vue-custom-block/no-parsing-error': 'error',
 
-                ...stylistic
-                    ? {
-                        'jsonc/array-bracket-spacing': ['error', 'never'],
-                        'jsonc/comma-dangle': ['error', 'never'],
-                        'jsonc/comma-style': ['error', 'last'],
-                        'jsonc/indent': ['error', indent],
-                        'jsonc/key-spacing': ['error', { afterColon: true, beforeColon: false }],
-                        'jsonc/object-curly-newline': ['error', { consistent: true, multiline: true }],
-                        'jsonc/object-curly-spacing': ['error', 'always'],
-                        'jsonc/object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
-                        'jsonc/quote-props': 'error',
-                        'jsonc/quotes': 'error',
-                    }
-                    : {},
+                'jsonc/array-bracket-spacing': [stylisticEnabled, 'never'],
+                'jsonc/comma-dangle': [stylisticEnabled, 'never'],
+                'jsonc/comma-style': [stylisticEnabled, 'last'],
+                'jsonc/indent': [stylisticEnabled, indent],
+                'jsonc/key-spacing': [stylisticEnabled, { afterColon: true, beforeColon: false }],
+                'jsonc/object-curly-newline': [stylisticEnabled, { consistent: true, multiline: true }],
+                'jsonc/object-curly-spacing': [stylisticEnabled, 'always'],
+                'jsonc/object-property-newline': [stylisticEnabled, { allowMultiplePropertiesPerLine: true }],
+                'jsonc/quote-props': stylisticEnabled,
+                'jsonc/quotes': stylisticEnabled,
 
                 ...overrides,
             },
