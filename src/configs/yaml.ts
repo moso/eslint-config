@@ -1,44 +1,43 @@
-import { GLOB_YAML } from '../globs';
-import { interopDefault } from '../utils';
+import { loadPackages, memoize } from '../utils';
+
+import type { ESLint, Linter } from 'eslint';
 
 import type {
     OptionsFiles,
     OptionsOverrides,
-    OptionsStylistic,
+    RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
 
-export const yaml = async (options: OptionsOverrides & OptionsStylistic & OptionsFiles = {}): Promise<TypedFlatConfigItem[]> => {
+export const yaml = async (
+    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+): Promise<TypedFlatConfigItem[]> => {
     const {
-        files = [GLOB_YAML],
-        overrides = {},
-        stylistic = true,
+        files,
+        overrides,
+        stylistic,
     } = options;
 
-    const {
-        indent = 2,
-        quotes = 'single',
-    } = typeof stylistic === 'boolean' ? {} : stylistic;
+    const { quotes = 'single' } = typeof stylistic === 'boolean' ? {} : stylistic;
 
-    const [
-        yamlPlugin,
-        yamlParser,
-    ] = await Promise.all([
-        interopDefault(import('eslint-plugin-yml')),
-        interopDefault(import('yaml-eslint-parser')),
-    ] as const);
+    const stylisticEnabled = stylistic === false ? 'off' : 'error';
+
+    const [yamlPlugin, yamlParser] = (await loadPackages([
+        'eslint-plugin-yml',
+        'yaml-eslint-parser',
+    ])) as [ESLint.Plugin, Linter.Parser];
 
     return [
         {
             name: 'moso/yaml/setup',
             plugins: {
-                yml: yamlPlugin,
+                'yml': memoize(yamlPlugin, 'eslint-plugin-yml'),
             },
         },
         {
             files,
             languageOptions: {
-                parser: yamlParser,
+                parser: memoize(yamlParser, 'yaml-eslint-parser'),
             },
             name: 'moso/yaml/rules',
             rules: {
@@ -53,21 +52,17 @@ export const yaml = async (options: OptionsOverrides & OptionsStylistic & Option
 
                 'yml/vue-custom-block/no-parsing-error': 'error',
 
-                ...stylistic
-                    ? {
-                        'yml/block-mapping-question-indicator-newline': 'error',
-                        'yml/block-sequence-hyphen-indicator-newline': 'error',
-                        'yml/flow-mapping-curly-newline': 'error',
-                        'yml/flow-mapping-curly-spacing': 'error',
-                        'yml/flow-sequence-bracket-newline': 'error',
-                        'yml/flow-sequence-bracket-spacing': 'error',
-                        'yml/indent': ['error', indent === 'tab' ? 2 : indent],
-                        'yml/key-spacing': 'error',
-                        'yml/no-tab-indent': 'error',
-                        'yml/quotes': ['error', { avoidEscape: true, prefer: quotes === 'backtick' ? 'single' : quotes }],
-                        'yml/spaced-comment': 'error',
-                    }
-                    : {},
+                'yml/block-mapping-question-indicator-newline': stylisticEnabled,
+                'yml/block-sequence-hyphen-indicator-newline': stylisticEnabled,
+                'yml/flow-mapping-curly-newline': stylisticEnabled,
+                'yml/flow-mapping-curly-spacing': stylisticEnabled,
+                'yml/flow-sequence-bracket-newline': stylisticEnabled,
+                'yml/flow-sequence-bracket-spacing': stylisticEnabled,
+                'yml/indent': [stylisticEnabled, 2],
+                'yml/key-spacing': stylisticEnabled,
+                'yml/no-tab-indent': stylisticEnabled,
+                'yml/quotes': [stylisticEnabled, { avoidEscape: true, prefer: quotes === 'backtick' ? 'single' : quotes }],
+                'yml/spaced-comment': stylisticEnabled,
 
                 ...overrides,
             },
