@@ -1,9 +1,8 @@
-import { moso } from './configurator';
-
 export * from './configs';
-export * from './configurator';
+export * from './factory';
 export * from './globs';
-export * from './types';
 export * from './utils';
 
-export default moso;
+export type * from './types';
+
+export { moso as default } from './factory';
