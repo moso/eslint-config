@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+*.js linguist-detectable=false
+*.mjs linguist-detectable=false
+*.cjs linguist-detectable=false
+
+**/tsconfig.json linguist-language=jsonc
+/.vscode/*.json linguist-language=jsonc
