@@ -85,8 +85,6 @@ export const react = async (
         'eslint-plugin-react-you-might-not-need-an-effect',
     ]);
 
-    if (a11y) await ensurePackages(['@eslint-sukka/eslint-plugin-react-jsx-a11y']);
-
     const [
         reactPlugin,
         reactHooksPlugin,
@@ -115,6 +113,8 @@ export const react = async (
 
     const isUsingRemix = RemixPackages.some((x) => isPackageExists(x));
     const isUsingReactRouter = ReactRouterPackages.some((x) => isPackageExists(x));
+
+    if (a11y) await ensurePackages(['eslint-plugin-jsx-a11y']);
 
     const jsxA11yPlugin = a11y
         ? (await loadPackages(['eslint-plugin-jsx-a11y'])) as [ESLint.Plugin]
@@ -158,7 +158,7 @@ export const react = async (
             rules: {
                 // Recommended rules from eslint-plugin-react-x, manually migrated
                 // @see https://eslint-react.xyz/docs/rules/overview#core-rules
-                '@eslint-react/jsx-key-before-spread': 'warn',
+                '@eslint-react/jsx-no-comment-textnodes': 'warn',
                 '@eslint-react/jsx-no-duplicate-props': 'warn',
                 '@eslint-react/jsx-uses-react': 'warn',
                 '@eslint-react/jsx-uses-vars': 'warn',
@@ -170,7 +170,6 @@ export const react = async (
                 '@eslint-react/no-children-only': 'warn',
                 '@eslint-react/no-children-to-array': 'warn',
                 '@eslint-react/no-clone-element': 'warn',
-                '@eslint-react/no-comment-textnodes': 'warn',
                 '@eslint-react/no-component-will-mount': 'error',
                 '@eslint-react/no-component-will-receive-props': 'error',
                 '@eslint-react/no-component-will-update': 'error',
@@ -191,6 +190,7 @@ export const react = async (
                 '@eslint-react/no-set-state-in-component-did-update': 'warn',
                 '@eslint-react/no-set-state-in-component-will-update': 'warn',
                 '@eslint-react/no-string-refs': 'error',
+                '@eslint-react/no-unnecessary-use-prefix': 'warn',
                 '@eslint-react/no-unsafe-component-will-mount': 'warn',
                 '@eslint-react/no-unsafe-component-will-receive-props': 'warn',
                 '@eslint-react/no-unsafe-component-will-update': 'warn',
@@ -200,8 +200,10 @@ export const react = async (
                 '@eslint-react/no-unused-state': 'warn',
                 '@eslint-react/no-use-context': 'warn',
                 '@eslint-react/no-useless-forward-ref': 'warn',
+                '@eslint-react/prefer-use-state-lazy-initialization': 'warn',
 
-                // recommended rules from eslint-plugin-react-dom https://eslint-react.xyz/docs/rules/overview#dom-rules
+                // Recommended rules from eslint-plugin-react-dom, manually migrated
+                // @see https://eslint-react.xyz/docs/rules/overview#dom-rules
                 '@eslint-react/dom/no-dangerously-set-innerhtml': 'warn',
                 '@eslint-react/dom/no-dangerously-set-innerhtml-with-children': 'error',
                 '@eslint-react/dom/no-find-dom-node': 'error',
@@ -213,24 +215,28 @@ export const react = async (
                 '@eslint-react/dom/no-render': 'error',
                 '@eslint-react/dom/no-render-return-value': 'error',
                 '@eslint-react/dom/no-script-url': 'warn',
+                '@eslint-react/dom/no-string-style-prop': 'error',
                 '@eslint-react/dom/no-unsafe-iframe-sandbox': 'warn',
                 '@eslint-react/dom/no-unsafe-target-blank': 'warn',
                 '@eslint-react/dom/no-use-form-state': 'error',
                 '@eslint-react/dom/no-void-elements-with-children': 'error',
 
-                // eslint-plugin-react-naming-convention
+                // Recommended rules from eslint-plugin-react-naming-convention, manually migrated
+                // @see https://eslint-react.xyz/docs/rules/overview#naming-convention-rules
                 '@eslint-react/naming-convention/context-name': 'warn',
+                '@eslint-react/naming-convention/use-state': 'error',
 
-                // eslint-plugin-react-hooks
+                // Recommended rules from eslint-plugin-react-hooks, manually migrated
+                // @see https://react.dev/reference/eslint-plugin-react-hooks
                 'react-hooks/exhaustive-deps': ['error', { additionalHooks }],
                 'react-hooks/rules-of-hooks': 'error',
 
-                // recommended rules from eslint-plugin-react-hooks-extra https://eslint-react.xyz/docs/rules/overview#hooks-extra-rules
+                // Recommended rules from eslint-plugin-react-hooks-extra, manually migrated
+                // @see https://eslint-react.xyz/docs/rules/overview#hooks-extra-rules
                 '@eslint-react/hooks-extra/no-direct-set-state-in-use-effect': 'warn',
-                '@eslint-react/hooks-extra/no-unnecessary-use-prefix': 'warn',
-                '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization': 'warn',
 
-                // eslint-plugin-react-refresh
+                // Recommended rules from eslint-plugin-react-refresh, manually migrated
+                // @see https://github.com/ArnaudBarre/eslint-plugin-react-refresh
                 'react-refresh/only-export-components': [
                     'warn',
                     {
@@ -264,21 +270,24 @@ export const react = async (
                     },
                 ],
 
-                // recommended rules from eslint-plugin-react-web-api https://eslint-react.xyz/docs/rules/overview#web-api-rules
+                // Recommended rules from eslint-plugin-react-web-api, manually migrated
+                // @see https://eslint-react.xyz/docs/rules/overview#web-api-rules
                 '@eslint-react/web-api/no-leaked-event-listener': 'warn',
                 '@eslint-react/web-api/no-leaked-interval': 'warn',
                 '@eslint-react/web-api/no-leaked-resize-observer': 'warn',
                 '@eslint-react/web-api/no-leaked-timeout': 'warn',
 
                 ...(!lessOpinionated && {
+                    '@eslint-react/jsx-shorthand-fragment': 'error',
+                    '@eslint-react/jsx-key-before-spread': 'error',
                     '@eslint-react/no-leaked-conditional-rendering': 'error',
-                    '@eslint-react/no-nested-components': 'error',
+                    '@eslint-react/no-unnecessary-use-callback': 'error',
+                    '@eslint-react/no-unnecessary-use-memo': 'error',
                     '@eslint-react/no-unstable-context-value': 'error',
                     '@eslint-react/no-unstable-default-props': 'error',
                     '@eslint-react/no-useless-fragment': 'error',
-                    '@eslint-react/prefer-shorthand-fragment': 'error',
 
-                    '@eslint-react/dom/no-children-in-void-dom-elements': 'error',
+                    '@eslint-react/dom/no-void-elements-with-children': 'error',
 
                     '@eslint-react/naming-convention/component-name': [
                         isUsingAstro ? 'off' : 'error',
@@ -298,8 +307,10 @@ export const react = async (
                             allow: 'as-needed',
                         },
                     ],
-                    '@eslint-react/naming-convention/use-state': 'error',
 
+                    // Recommended rules from eslint-plugin-react-you-might-not-need-an-effect, manually migrated
+                    // @see https://react.dev/learn/you-might-not-need-an-effect
+                    'react-you-might-not-need-an-effect/no-adjust-state-on-prop-change': 'warn',
                     'react-you-might-not-need-an-effect/no-chain-state-updates': 'warn',
                     'react-you-might-not-need-an-effect/no-derived-state': 'warn',
                     'react-you-might-not-need-an-effect/no-empty-effect': 'warn',
@@ -350,13 +361,11 @@ export const react = async (
                 name: 'moso/react/rules-type-aware',
                 files: filesTypeAware,
                 rules: {
-                    // recommended typescript rules
                     '@eslint-react/dom/no-unknown-property': 'off',
                     '@eslint-react/jsx-no-duplicate-props': 'off',
                     '@eslint-react/jsx-uses-react': 'off',
                     '@eslint-react/jsx-uses-vars': 'off',
 
-                    // recommended typescript checked rules
                     '@eslint-react/no-leaked-conditional-rendering': 'warn',
                     // '@eslint-react/prefer-read-only-props': 'warn',
 
@@ -399,7 +408,8 @@ export const react = async (
                         'jsx-a11y': memoize(jsxA11yPlugin as ESLint.Plugin, 'eslint-plugin-jsx-a11y'),
                     },
                     rules: {
-                        // minimal rules, inspired by sukka
+                        // Minimal rules, inspired by SukkaW
+                        // @see https://github.com/SukkaW/eslint-config-sukka/tree/master/packages/eslint-plugin-react-jsx-a11y
                         'jsx-a11y/alt-text': ['warn', { elements: ['img'], img: ['Image'] }],
                         'jsx-a11y/aria-props': 'warn',
                         'jsx-a11y/aria-proptypes': 'warn',
