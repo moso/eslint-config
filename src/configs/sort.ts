@@ -83,6 +83,14 @@ export const sortPackageJson = (
                         pathPattern: '^(?:resolutions|overrides|pnpm.overrides)$',
                     },
                     {
+                        order: { type: 'asc' },
+                        pathPattern: '^workspaces\\.catalog$',
+                    },
+                    {
+                        order: { type: 'asc' },
+                        pathPattern: '^workspaces\\.catalogs\\.[^.]+$',
+                    },
+                    {
                         order: [
                             'types',
                             'import',
