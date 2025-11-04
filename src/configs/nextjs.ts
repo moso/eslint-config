@@ -20,11 +20,19 @@ export const nextjs = async (
 
     const nextjsPlugin = (await interopDefault(import('@next/eslint-plugin-next')));
 
+    const getRules = (name: keyof typeof nextjsPlugin.configs): Record<string, unknown> => {
+        const { rules } = nextjsPlugin.configs[name];
+        // eslint-disable-next-line functional/no-throw-statements
+        if (!rules) throw new Error(`[@moso/eslint-config] Failed to find config ${name} in @next/eslint-plugin-next`);
+
+        return normalizeRules(rules);
+    };
+
     return [
         {
             name: 'moso/nextjs/setup',
             plugins: {
-                '@next/next': memoize(normalizeRules(nextjsPlugin), '@next/eslint-plugin-next'),
+                '@next/next': memoize(nextjsPlugin, '@next/eslint-plugin-next'),
             },
         },
         {
@@ -44,8 +52,8 @@ export const nextjs = async (
                 },
             },
             rules: {
-                ...normalizeRules(nextjsPlugin.configs.recommended.rules),
-                ...normalizeRules(nextjsPlugin.configs['core-web-vitals'].rules),
+                ...getRules('recommended'),
+                ...getRules('core-web-vitals'),
 
                 'react-refresh/only-export-components': [
                     'warn',
