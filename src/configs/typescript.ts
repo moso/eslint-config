@@ -57,10 +57,19 @@ export const typescript = async (
 
     await ensurePackages(['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser']);
 
-    const [tsEslintPlugin, tsEslintParser] = (await loadPackages([
+    const [
+        enforceErasableSyntaxOnlyPlugin,
+        tsEslintPlugin,
+        tsEslintParser,
+    ] = (await loadPackages([
+        'eslint-plugin-erasable-syntax-only',
         '@typescript-eslint/eslint-plugin',
         '@typescript-eslint/parser',
-    ])) as [ESLint.Plugin, Linter.Parser];
+    ])) as [
+        ESLint.Plugin,
+        ESLint.Plugin,
+        Linter.Parser,
+    ];
 
     const isTypeAware = typeof projectRoot === 'string';
 
@@ -98,6 +107,7 @@ export const typescript = async (
             name: 'moso/typescript/setup',
             plugins: {
                 '@typescript-eslint': memoize(tsEslintPlugin, '@typescript-eslint/eslint-plugin'),
+                'erasable-syntax-only': memoize(enforceErasableSyntaxOnlyPlugin, 'eslint-plugin-erasable-syntax-only'),
             },
         },
         ...((isTypeAware
@@ -382,6 +392,11 @@ export const typescript = async (
 
                         '@moso/no-force-cast-via-top-type': 'error',
                         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+
+                        'erasable-syntax-only/enums': 'error',
+                        'erasable-syntax-only/import-aliases': 'error',
+                        'erasable-syntax-only/namespaces': 'error',
+                        'erasable-syntax-only/parameter-properties': 'error',
                     }
                 ),
 
