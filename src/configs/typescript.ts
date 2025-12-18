@@ -40,7 +40,7 @@ export const typescript = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
-        componentExts = [],
+        componentExts,
         disableTypeAwareRules,
         files,
         filesTypeAware,
