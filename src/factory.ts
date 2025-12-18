@@ -298,7 +298,13 @@ export async function moso(
         );
     }
 
-    if (jsxOptions) mut_configs.push(jsx());
+    if (jsxOptions) {
+        mut_configs.push(
+            jsx({
+                files: [GLOB_JSX, GLOB_TSX],
+            }),
+        );
+    }
 
     if (nextjsOptions !== false) {
         mut_configs.push(
