@@ -1,19 +1,17 @@
-import type { OptionsFiles, TypedFlatConfigItem } from '../types';
+import { GLOB_JSX, GLOB_TSX } from '../globs';
 
-export const jsx = (options: Readonly<Required<OptionsFiles>>): TypedFlatConfigItem[] => {
-    const { files } = options;
+import type { TypedFlatConfigItem } from '../types';
 
-    return [
-        {
-            name: 'moso/jsx',
-            files,
-            languageOptions: {
-                parserOptions: {
-                    ecmaFeatures: {
-                        jsx: true,
-                    },
+export const jsx = (): TypedFlatConfigItem[] => [
+    {
+        name: 'moso/jsx',
+        files: [GLOB_JSX, GLOB_TSX],
+        languageOptions: {
+            parserOptions: {
+                ecmaFeatures: {
+                    jsx: true,
                 },
             },
         },
-    ];
-};
+    },
+];
