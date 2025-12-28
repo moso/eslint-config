@@ -316,9 +316,9 @@ export const react = async (
                     'react-you-might-not-need-an-effect/no-empty-effect': 'warn',
                     'react-you-might-not-need-an-effect/no-event-handler': 'warn',
                     'react-you-might-not-need-an-effect/no-initialize-state': 'warn',
-                    'react-you-might-not-need-an-effect/no-manage-parent': 'warn',
                     'react-you-might-not-need-an-effect/no-pass-data-to-parent': 'warn',
                     'react-you-might-not-need-an-effect/no-pass-live-state-to-parent': 'warn',
+                    'react-you-might-not-need-an-effect/no-pass-ref-to-parent': 'warn',
                     'react-you-might-not-need-an-effect/no-reset-all-state-on-prop-change': 'warn',
 
                     ...(stylisticEnabled && {
