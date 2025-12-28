@@ -179,7 +179,7 @@ export type LanguageOptions = {
      *
      * @default true
      */
-    jsx?: boolean;
+    jsx?: boolean | (OptionsA11y & OptionsOverrides);
 
     /**
      * Enable TOML support.
