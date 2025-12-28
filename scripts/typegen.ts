@@ -82,7 +82,14 @@ const configs = (await combine(
         overrides: undefined,
         stylistic: false,
     }),
-    jsx(),
+    jsx({
+        a11y: false,
+        files: [],
+        lessOpinionated: undefined,
+        overrides: undefined,
+        overridesA11y: undefined,
+        stylistic: false,
+    }),
     nextjs({
         files: [],
         overrides: undefined,

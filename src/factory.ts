@@ -48,7 +48,6 @@ import {
     GLOB_VUE,
     GLOB_YAML,
 } from './globs';
-
 import {
     checkFilePath,
     getOverrides,
@@ -151,10 +150,13 @@ export async function moso(
         : typeof options.stylistic === 'object'
             ? {
                 ...StylisticConfigDefaults,
-                jsx: jsxOptions,
+                jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
                 ...options.stylistic,
             }
-            : StylisticConfigDefaults;
+            : {
+                ...StylisticConfigDefaults,
+                jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
+            };
 
     const {
         filesTypeAware,
@@ -298,7 +300,17 @@ export async function moso(
         );
     }
 
-    if (jsxOptions) mut_configs.push(jsx());
+    if (jsxOptions !== false) {
+        mut_configs.push(
+            jsx({
+                files: [GLOB_JSX, GLOB_TSX],
+                lessOpinionated: options.lessOpinionated,
+                overrides: getOverrides(options, 'jsx'),
+                stylistic: stylisticOptions,
+                ...resolveSubOptions(options, 'jsx'),
+            }),
+        );
+    }
 
     if (nextjsOptions !== false) {
         mut_configs.push(
