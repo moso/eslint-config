@@ -6,8 +6,11 @@ import {
     GLOB_JSX,
     GLOB_TESTS,
 } from '../globs';
-
-import { ensurePackages, loadPackages, memoize } from '../utils';
+import {
+    ensurePackages,
+    loadPackages,
+    memoize,
+} from '../utils';
 
 import type { ESLint, Linter } from 'eslint';
 

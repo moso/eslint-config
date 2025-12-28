@@ -1,6 +1,5 @@
 /* eslint-disable @moso/no-force-cast-via-top-type, @typescript-eslint/naming-convention */
 import version from '../../package.json' with { type: 'json' };
-
 import noBidi from './no-bidi/no-bidi';
 import noForceCastViaTopType from './no-force-cast-via-top-type/no-force-cast-via-top-type';
 import noImportDuplicates from './no-import-duplicates/no-import-duplicates';

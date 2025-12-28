@@ -3,9 +3,7 @@ import { AST_NODE_TYPES, AST_TOKEN_TYPES } from '@typescript-eslint/utils';
 import { isIdentifier } from '@typescript-eslint/utils/ast-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
-
 import type { RuleListener } from '@typescript-eslint/utils/eslint-utils';
-
 import type {
     ReportFixFunction,
     RuleContext,

@@ -3,7 +3,6 @@ import {
     GLOB_TS,
     GLOB_TSX,
 } from '../globs';
-
 import mosoPlugin from '../rules';
 import { loadPackages, memoize } from '../utils';
 
