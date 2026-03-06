@@ -199,6 +199,24 @@ export const isIdentifierFunction = (node?: TSESTree.Node) => {
     );
 };
 
+export const makeProgramListener = (
+    pattern: RegExp,
+    onReport: (node: TSESTree.Token, kind: string) => void,
+): RuleListener => ({
+    Program: (program: TSESTree.Program) => {
+        (program.tokens ?? []).reduce((acc, token) => {
+            const value = getValue(token);
+            if (value !== false && pattern.test(value)) onReport(token, 'code');
+            return acc;
+        }, []);
+
+        (program.comments ?? []).reduce((acc, comment) => {
+            if (pattern.test(comment.value)) onReport(comment, 'comment');
+            return acc;
+        }, []);
+    },
+});
+
 const mut_warned = new Set<string>();
 
 export const warnOnce = (message: string): void => {
