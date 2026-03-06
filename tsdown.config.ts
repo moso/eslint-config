@@ -2,6 +2,8 @@ import { defineConfig } from 'tsdown';
 
 export default defineConfig({
     entry: ['src/index.ts'],
-    shims: true,
+    exports: true,
     format: ['esm'],
+    shims: true,
+    inlineOnly: false,
 });
