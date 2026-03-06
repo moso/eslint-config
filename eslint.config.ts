@@ -4,7 +4,7 @@ export default moso(
     {
         astro: true,
         functional: 'lite',
-        jsdoc: true,
+        jsdoc: false,
         jsonc: true,
         mode: 'none',
         nextjs: true,
