@@ -7,19 +7,17 @@ import {
 import type { ESLint } from 'eslint';
 
 import type {
-    OptionsA11y,
     OptionsFiles,
+    OptionsJSX,
     OptionsLessOpinionated,
-    OptionsOverrides,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
 
 export const jsx = async (
     options: Readonly<
-        OptionsA11y &
+        OptionsJSX &
         OptionsLessOpinionated &
-        OptionsOverrides &
         Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
