@@ -1,7 +1,11 @@
 import fs from 'node:fs/promises';
-import process from 'node:process';
+
 import { flatConfigsToRulesDTS } from 'eslint-typegen/core';
 
+import { full } from '../src/presets';
+import { moso } from '../src/factory';
+
+/*
 import {
     astro,
     comments,
@@ -192,6 +196,9 @@ const configs = (await combine(
         stylistic: false,
     }),
 )) as Linter.Config[];
+*/
+
+const configs = await moso(full);
 
 const configNames = configs.map((x) => x.name).filter(Boolean) as string[];
 
