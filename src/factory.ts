@@ -1,5 +1,5 @@
+import { FlatConfigComposer } from 'eslint-flat-config-utils';
 import { isPackageExists } from 'local-pkg';
-
 import {
     astro,
     comments,
@@ -52,10 +52,9 @@ import {
     checkFilePath,
     getOverrides,
     isInEditorEnv,
-    loadPackages,
+    // loadPackages,
     resolveSubOptions,
 } from './utils';
-
 import type { Linter } from 'eslint';
 import type {
     Awaitable,
@@ -67,6 +66,23 @@ import type {
     ProjectMode,
     TypedFlatConfigItem,
 } from './types';
+
+const AstroPackages = [
+    'astro',
+    '@astrojs/preact',
+    '@astrojs/react',
+    '@astrojs/vue',
+];
+
+const FlatConfigProps = [
+    'languageOptions',
+    'linterOptions',
+    'name',
+    'processor',
+    'plugins',
+    'rules',
+    'settings',
+] satisfies Array<keyof TypedFlatConfigItem>;
 
 const NextJSPackages = ['next'];
 
@@ -87,35 +103,34 @@ const VuePackages = [
 /**
  * Construct an array of ESLint flat config items.
  *
- * @param {OptionsConfig & TypedFlatConfigItem} options - Options for generating the ESLint configurations.
- * @param {ReadonlyArray<Awaitable<Linter.Config[] | TypedFlatConfigItem | TypedFlatConfigItem[]>>} userConfigs - User configurations to be merged with the generated configurations
- * @returns {Promise<TypedFlatConfigItem[]>} - The merged ESLint configurations
+ * @param options - Options for generating the ESLint configurations.
+ * @param userConfigs - User configurations to be merged with the generated configurations
+ * @returns - The merged ESLint configurations
  */
 export async function moso(
     options: Omit<TypedFlatConfigItem, 'files'> & OptionsConfig,
     ...userConfigs: ReadonlyArray<Awaitable<Linter.Config[] | TypedFlatConfigItem | TypedFlatConfigItem[]>>
-): Promise<TypedFlatConfigItem[]> {
+): Promise<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>> {
+    /*
     const [FlatConfigComposer] = await loadPackages(['eslint-flat-config-utils']).then(
         ([a]) => [(a as typeof import('eslint-flat-config-utils')).FlatConfigComposer] as const,
     );
+    */
 
     const {
-        astro: astroOptions = false,
+        astro: astroOptions = AstroPackages.some((x) => isPackageExists(x)),
         componentExts = [],
-        ignores: ignoreOptions,
+        ignores: ignoreOptions = [],
         ignoresFiles: ignoresFilesOptions = ['.gitignore'],
         isInEditor = isInEditorEnv(),
-        jsdoc: jsdocOptions = false,
-        jsonc: jsoncOptions = false,
+        jsdoc: jsdocOptions = true,
+        jsonc: jsoncOptions = true,
         jsx: jsxOptions = true,
         nextjs: nextjsOptions = NextJSPackages.some((x) => isPackageExists(x)),
         projectRoot,
         react: reactOptions = ReactPackages.some((x) => isPackageExists(x)),
-        test: testOptions = true,
-        toml: tomlOptions = false,
         typescript: typescriptOptions = isPackageExists('typescript'),
         vue: vueOptions = VuePackages.some((x) => isPackageExists(x)),
-        yaml: yamlOptions = false,
     } = options;
 
     if ('files' in options)
@@ -123,7 +138,7 @@ export async function moso(
 
     const validatedProjectRoot = typeof projectRoot === 'string' ? await checkFilePath(projectRoot) : undefined;
 
-    const ignoreConfigOptions = Boolean(validatedProjectRoot);
+    // const ignoreConfigOptions = Boolean(validatedProjectRoot);
 
     const functionalEnforcement = typeof options.functional === 'string'
         ? options.functional
@@ -210,6 +225,11 @@ export async function moso(
         comments({
             overrides: getOverrides(options, 'comments'),
         }),
+        ignores({
+            ignores: ignoreOptions,
+            ignoreFiles: ignoresFilesOptions,
+            projectRoot: validatedProjectRoot,
+        }),
         imports({
             ...typescriptConfigOptions,
             overrides: getOverrides(options, 'imports'),
@@ -265,16 +285,6 @@ export async function moso(
                 mode: modeOptions,
                 overrides: getOverrides(options, 'functional'),
                 stylistic: stylisticOptions,
-            }),
-        );
-    }
-
-    if (ignoreConfigOptions) {
-        mut_configs.push(
-            ignores({
-                ignores: ignoreOptions ?? [],
-                ignoreFiles: ignoresFilesOptions,
-                projectRoot: validatedProjectRoot,
             }),
         );
     }
@@ -354,24 +364,25 @@ export async function moso(
     if (stylisticOptions !== false) {
         mut_configs.push(
             stylistic({
+                ...stylisticOptions,
                 lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'stylistic'),
-                stylistic: stylisticOptions,
                 typescript: hasTypeScript,
             }),
         );
     }
 
-    if (testOptions !== false) {
+    if (options.test !== false) {
         mut_configs.push(
             test({
                 files: GLOB_TESTS,
+                isInEditor,
                 overrides: getOverrides(options, 'test'),
             }),
         );
     }
 
-    if (tomlOptions !== false) {
+    if (options.toml !== false) {
         mut_configs.push(
             toml({
                 files: [GLOB_TOML],
@@ -419,7 +430,7 @@ export async function moso(
         );
     }
 
-    if (yamlOptions) {
+    if (options.yaml !== false) {
         mut_configs.push(
             yaml({
                 files: [GLOB_YAML],
@@ -430,6 +441,14 @@ export async function moso(
     }
 
     mut_configs.push(disables());
+
+    const fusedConfig = FlatConfigProps.reduce<TypedFlatConfigItem>((acc, key) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+        if (key in options) acc[key] = options[key] as any;
+        return acc;
+    }, {});
+
+    if (Object.keys(fusedConfig).length) mut_configs.push([fusedConfig]);
 
     let mut_composer = new FlatConfigComposer<TypedFlatConfigItem, ConfigNames>().append(...mut_configs, ...userConfigs);
 
