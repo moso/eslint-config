@@ -15,7 +15,6 @@ import type {
     OptionsFiles,
     OptionsHasTypeScript,
     OptionsLessOpinionated,
-    OptionsOverrides,
     OptionsReact,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
@@ -40,7 +39,6 @@ const RemixPackages = [
 export const react = async (
     options: Readonly<
         OptionsLessOpinionated &
-        OptionsOverrides &
         OptionsReact &
         OptionsTypeScriptParserOptions &
         OptionsTypeScriptWithTypes &
@@ -158,6 +156,7 @@ export const react = async (
             rules: {
                 // Recommended rules from eslint-plugin-react-x, manually migrated
                 // @see https://eslint-react.xyz/docs/rules/overview#core-rules
+                '@eslint-react/jsx-key-before-spread': 'warn',
                 '@eslint-react/jsx-no-comment-textnodes': 'warn',
                 '@eslint-react/jsx-no-duplicate-props': 'warn',
                 '@eslint-react/jsx-uses-react': 'warn',
@@ -177,11 +176,9 @@ export const react = async (
                 '@eslint-react/no-create-ref': 'error',
                 '@eslint-react/no-default-props': 'error',
                 '@eslint-react/no-direct-mutation-state': 'error',
-                '@eslint-react/no-duplicate-key': 'warn',
                 '@eslint-react/no-forward-ref': 'warn',
                 '@eslint-react/no-implicit-key': 'warn',
                 '@eslint-react/no-missing-key': 'error',
-                '@eslint-react/no-misused-capture-owner-stack': 'error',
                 '@eslint-react/no-nested-component-definitions': 'error',
                 '@eslint-react/no-nested-lazy-component-declarations': 'warn',
                 '@eslint-react/no-prop-types': 'error',
@@ -194,10 +191,6 @@ export const react = async (
                 '@eslint-react/no-unsafe-component-will-mount': 'warn',
                 '@eslint-react/no-unsafe-component-will-receive-props': 'warn',
                 '@eslint-react/no-unsafe-component-will-update': 'warn',
-                '@eslint-react/no-unstable-context-value': 'warn',
-                '@eslint-react/no-unstable-default-props': 'warn',
-                '@eslint-react/no-unused-class-component-members': 'warn',
-                '@eslint-react/no-unused-state': 'warn',
                 '@eslint-react/no-use-context': 'warn',
                 '@eslint-react/no-useless-forward-ref': 'warn',
                 '@eslint-react/prefer-use-state-lazy-initialization': 'warn',
@@ -209,21 +202,18 @@ export const react = async (
                 '@eslint-react/dom/no-find-dom-node': 'error',
                 '@eslint-react/dom/no-flush-sync': 'error',
                 '@eslint-react/dom/no-hydrate': 'error',
-                '@eslint-react/dom/no-missing-button-type': 'warn',
-                '@eslint-react/dom/no-missing-iframe-sandbox': 'warn',
                 '@eslint-react/dom/no-namespace': 'error',
                 '@eslint-react/dom/no-render': 'error',
                 '@eslint-react/dom/no-render-return-value': 'error',
                 '@eslint-react/dom/no-script-url': 'warn',
                 '@eslint-react/dom/no-string-style-prop': 'error',
-                '@eslint-react/dom/no-unsafe-iframe-sandbox': 'warn',
-                '@eslint-react/dom/no-unsafe-target-blank': 'warn',
                 '@eslint-react/dom/no-use-form-state': 'error',
                 '@eslint-react/dom/no-void-elements-with-children': 'error',
 
                 // Recommended rules from eslint-plugin-react-naming-convention, manually migrated
                 // @see https://eslint-react.xyz/docs/rules/overview#naming-convention-rules
                 '@eslint-react/naming-convention/context-name': 'warn',
+                '@eslint-react/naming-convention/ref-name': 'warn',
                 '@eslint-react/naming-convention/use-state': 'error',
 
                 // Recommended rules from eslint-plugin-react-hooks, manually migrated
@@ -278,13 +268,19 @@ export const react = async (
                 '@eslint-react/web-api/no-leaked-timeout': 'warn',
 
                 ...(!lessOpinionated && {
+                    // Recommended strict rules from each plugin, manually curated/migrated
                     '@eslint-react/jsx-shorthand-fragment': 'error',
                     '@eslint-react/jsx-key-before-spread': 'error',
+                    '@eslint-react/no-duplicate-key': 'warn',
                     '@eslint-react/no-leaked-conditional-rendering': 'error',
+                    '@eslint-react/no-misused-capture-owner-stack': 'error',
+                    '@eslint-react/no-unnecessary-key': 'error',
                     '@eslint-react/no-unnecessary-use-callback': 'error',
                     '@eslint-react/no-unnecessary-use-memo': 'error',
                     '@eslint-react/no-unstable-context-value': 'error',
                     '@eslint-react/no-unstable-default-props': 'error',
+                    '@eslint-react/no-unused-class-component-members': 'warn',
+                    '@eslint-react/no-unused-state': 'warn',
                     '@eslint-react/no-useless-fragment': 'error',
 
                     '@eslint-react/dom/no-void-elements-with-children': 'error',
@@ -361,12 +357,13 @@ export const react = async (
                 name: 'moso/react/rules-type-aware',
                 files: filesTypeAware,
                 rules: {
-                    '@eslint-react/dom/no-unknown-property': 'off',
                     '@eslint-react/jsx-no-duplicate-props': 'off',
                     '@eslint-react/jsx-uses-react': 'off',
                     '@eslint-react/jsx-uses-vars': 'off',
+                    '@eslint-react/no-leaked-conditional-rendering': 'error',
 
-                    '@eslint-react/no-leaked-conditional-rendering': 'warn',
+                    '@eslint-react/dom/no-unknown-property': 'off',
+
                     // '@eslint-react/prefer-read-only-props': 'warn',
 
                     '@typescript-eslint/class-methods-use-this': [
@@ -393,6 +390,15 @@ export const react = async (
                             ignoreClassesThatImplementAnInterface: 'public-fields',
                         },
                     ],
+
+                    ...(!lessOpinionated && {
+                        '@eslint-react/no-unused-props': 'warn',
+
+                        '@eslint-react/dom/no-missing-button-type': 'warn',
+                        '@eslint-react/dom/no-missing-iframe-sandbox': 'warn',
+                        '@eslint-react/dom/no-unsafe-iframe-sandbox': 'warn',
+                        '@eslint-react/dom/no-unsafe-target-blank': 'warn',
+                    }),
 
                     ...overridesTypeAware,
                 },
