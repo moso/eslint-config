@@ -8,7 +8,7 @@ const isTopType = (node: TSESTree.Node) =>
     node.type === AST_NODE_TYPES.TSAnyKeyword || node.type === AST_NODE_TYPES.TSUnknownKeyword;
 
 const isTypeReference = (node: TSESTree.Node | undefined) =>
-    node && node.type === AST_NODE_TYPES.TSAsExpression && node.typeAnnotation.type === AST_NODE_TYPES.TSTypeReference;
+    node?.type === AST_NODE_TYPES.TSAsExpression && node.typeAnnotation.type === AST_NODE_TYPES.TSTypeReference;
 
 export default createRule({
     name: 'no-force-cast-via-top-type',

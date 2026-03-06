@@ -1,11 +1,10 @@
 import {
     createRule,
     getFixer,
-    getValue,
+    makeProgramListener,
 } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
-import type { RuleListener } from '@typescript-eslint/utils/ts-eslint';
 
 const combinePattern = (...patterns: ReadonlyArray<RegExp | string>) => {
     const source = patterns
@@ -14,28 +13,10 @@ const combinePattern = (...patterns: ReadonlyArray<RegExp | string>) => {
     return new RegExp(`[${source}]`, 'u');
 };
 
-const makeProgramListener = (
-    pattern: RegExp,
-    onReport: (node: TSESTree.Token, kind: string) => void,
-): RuleListener => ({
-    Program: (program: TSESTree.Program) => {
-        (program.tokens ?? []).reduce((acc, token) => {
-            const value = getValue(token);
-            if (value !== false && pattern.test(value)) onReport(token, 'code');
-            return acc;
-        }, []);
-
-        (program.comments ?? []).reduce((acc, comment) => {
-            if (pattern.test(comment.value)) onReport(comment, 'comment');
-            return acc;
-        }, []);
-    },
-});
-
 // Generated using
 // https://github.com/hediet/vscode-unicode-data
 // https://npm.io/regexgen
-const invisiblePattern = combinePattern(
+const INVISIBLE_PATTERN = combinePattern(
     /\u00AD\u034F\u061C\u17B4\u17B5\uFEFF\uFFFC/u,
     /\u180B-\u180E/u,
     /\u200B-\u200F/u,
@@ -63,14 +44,12 @@ export default createRule({
             noInvisibleCharacter: 'Illegal character detected.',
         },
     },
-    create: (context) => makeProgramListener(invisiblePattern, (node: TSESTree.Token) => {
-        const matcher = new RegExp(invisiblePattern.source, 'gu');
-        const fix = getFixer(node, matcher);
-
+    create: (context) => makeProgramListener(INVISIBLE_PATTERN, (node: TSESTree.Token) => {
+        const matcher = new RegExp(INVISIBLE_PATTERN.source, 'gu');
         context.report({
             node,
             messageId: 'noInvisibleCharacter',
-            fix,
+            fix: getFixer(node, matcher),
         });
     }),
 });
