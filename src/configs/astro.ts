@@ -72,6 +72,7 @@ export const astro = async (
                 // Astro uses top level await for e.g. data fetching
                 // https://docs.astro.build/en/guides/data-fetching/#fetch-in-astro
                 '@moso/no-top-level-await': 'off',
+                'node/no-top-level-await': 'off',
 
                 // Recommended rules
                 'astro/missing-client-only-directive-value': 'error',
