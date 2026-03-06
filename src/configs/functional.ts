@@ -33,7 +33,7 @@ export const functional = async (
         (typeof import('eslint-plugin-functional'))['default'],
     ];
 
-    const stylisticEnabled = typeof stylistic === 'object';
+    const stylisticEnabled = stylistic !== false;
 
     const strictRules = {
         'functional/functional-parameters': 'error',
