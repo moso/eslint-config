@@ -3,6 +3,7 @@ import type { StylisticCustomizeOptions } from '@stylistic/eslint-plugin';
 import type { ParserOptions } from '@typescript-eslint/parser';
 import type { TSESLint } from '@typescript-eslint/utils';
 import type { ESLint, Linter } from 'eslint';
+import type { ConfigWithExtends } from 'eslint-flat-config-utils';
 import type { Options as VueBlocksOptions } from 'eslint-processor-vue-blocks';
 
 import type { RuleOptions as Rules } from './typegen';
@@ -82,9 +83,15 @@ export type ConfigOptions = {
 
 export type CoreOptions = {
     /**
-     * Ignores.
-     */
-    ignores?: OptionsIgnores;
+   * Extend the global ignores.
+   *
+   * Passing an array to extends the ignores.
+   * Passing a function to modify the default ignores.
+   *
+   * @default []
+   */
+    // ignores?: OptionsIgnores | string[];
+    ignores?: string[];
 
     /**
      * Files that contain ignore patterns.
@@ -128,7 +135,7 @@ export type FrameworkOptions = {
     /**
      * Enable Astro support.
      *
-     * @default false
+     * @default auto-detect based on the dependencies
      */
     astro?: boolean | OptionsOverrides;
 
@@ -141,22 +148,24 @@ export type FrameworkOptions = {
 
     /**
      * Enforce NodeJS best practice.
+     *
+     * @default true
      */
-    node?: boolean | (OptionsNode & OptionsOverrides);
+    node?: boolean | OptionsNode;
 
     /**
      * Enable React support.
      *
      * @default auto-detect based on the dependencies
      */
-    react?: boolean | (OptionsOverrides & OptionsReact);
+    react?: boolean | OptionsReact;
 
     /**
      * Enable Vue support.
      *
      * @default auto-detect based on the dependencies
      */
-    vue?: boolean | (OptionsOverrides & OptionsVue);
+    vue?: boolean | OptionsVue;
 };
 
 export type LanguageOptions = {
@@ -168,28 +177,30 @@ export type LanguageOptions = {
     /**
      * Enable JSON/JSON5/JSONC support.
      *
-     * @default false
+     * @default true
      */
-    jsonc?: PluginConfig;
+    jsonc?: boolean | OptionsOverrides;
 
     /**
      * Enable JSX related rules.
      *
-     * Currently only stylistic rules are included.
+     * Pass an object to enable JSX accessibility
      *
      * @default true
      */
-    jsx?: boolean | (OptionsA11y & OptionsOverrides);
+    jsx?: boolean | OptionsJSX;
 
     /**
      * Enable TOML support.
      *
-     * @default false
+     * @default true
      */
     toml?: boolean | OptionsOverrides;
 
     /**
      * Enable TypeScript support.
+     *
+     * Pass an object to enable TypeScript language server support.
      *
      * @default auto-detect based on the dependencies
      */
@@ -200,19 +211,7 @@ export type LanguageOptions = {
      *
      * @default true
      */
-    yaml?: boolean;
-};
-
-export type OptionsA11y = {
-    /**
-     * Enable accessibility support.
-     */
-    a11y?: boolean;
-
-    /**
-     * Overrides for accessibility rules.
-     */
-    overridesA11y?: TypedFlatConfigItem['rules'];
+    yaml?: boolean | OptionsOverrides;
 };
 
 export type OptionsComponentExts = {
@@ -272,9 +271,11 @@ export type OptionsIgnoreFiles = {
     ignoreFiles: GlobPatterns;
 };
 
-export type OptionsIgnores = NonNullable<Linter.Config['ignores']> | {
-    extend: boolean;
-    files: NonNullable<Linter.Config['ignores']>;
+export type OptionsIgnores =
+    | NonNullable<Linter.Config['ignores']>
+    | {
+        extend: boolean;
+        files: NonNullable<Linter.Config['ignores']>;
 };
 
 export type OptionsIsInEditor = {
@@ -293,6 +294,22 @@ export type OptionsIsInEditor = {
     isInEditor?: boolean;
 };
 
+export type OptionsJSX = OptionsOverrides & {
+    /**
+     * Enable accessibility support via JSX accessibility plugin.
+     * Helps checking for a11y issues in `.jsx` and `.tsx`-files when enabled.
+     *
+     * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     * @default false
+     */
+    a11y?: boolean;
+
+    /**
+     * Overrides for accessibility rules.
+     */
+    overridesA11y?: TypedFlatConfigItem['rules'];
+};
+
 export type OptionsLessOpinionated = {
     /**
      * Disables heavily opinionated rules.
@@ -309,7 +326,7 @@ export type OptionsMode = {
     mode: 'application' | 'library' | 'none';
 };
 
-export type OptionsNode = {
+export type OptionsNode = OptionsOverrides & {
     files?: GlobPatterns;
     hasReact?: boolean;
     hasTypeScript?: boolean;
@@ -321,7 +338,7 @@ export type OptionsOverrides = {
     overrides?: TypedFlatConfigItem['rules'];
 };
 
-export type OptionsPerfectionist = {
+export type OptionsPerfectionist = OptionsOverrides & {
     perfectionist?: boolean;
 };
 
@@ -329,11 +346,29 @@ export type OptionsProjectRoot = {
     projectRoot?: FilePath;
 };
 
-export type OptionsReact = OptionsA11y & {
+export type OptionsReact = OptionsOverrides & {
+    /**
+     * Enable accessibility support via JSX accessibility plugin.
+     * Helps checking for a11y issues in `.jsx` and `.tsx`-files when enabled.
+     *
+     * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     * @default false
+     */
+    a11y?: boolean;
+
+    /**
+     *
+     */
     additionalComponents?: ReadonlyArray<ReactAdditionalComponents>;
     additionalHooks?: string;
     additionalHooksWithType?: Record<string, ReadonlyArray<string>>;
     nextjs?: boolean;
+
+    /**
+     * Overrides for accessibility rules.
+     */
+    overridesA11y?: TypedFlatConfigItem['rules'];
+
     reactRefresh?: {
         allowConstantExport?: boolean;
     };
@@ -347,6 +382,17 @@ export type OptionsStylistic = {
 export type OptionsTypeScript = ((OptionsOverrides & OptionsTypeScriptParserOptions)
     | (OptionsOverrides & OptionsTypeScriptWithTypes));
 
+export type OptionsTypeScriptErasableOnly = {
+    /**
+     * Enable erasable syntax only rules.
+     * This can be disabled individually, or through `lessOpinionated: false`
+     *
+     * @see https://github.com/JoshuaKGoldberg/eslint-plugin-erasable-syntax-only
+     * @default true
+     */
+    erasableOnly?: boolean;
+};
+
 export type OptionsTypeScriptParserOptions = {
     /**
      * Glob patterns for files that should be type-aware.
@@ -354,6 +400,13 @@ export type OptionsTypeScriptParserOptions = {
      * @default ['**\/*.{dts,ts,tsx}']
      */
     filesTypeAware?: GlobPatterns;
+
+    /**
+     * Glob patterns for files that should not be type aware.
+     *
+     * @default ['**\/*.md\/**', '**\/*.astro/*.ts']
+     */
+    // ignoresTypeAware?: GlobPatterns | undefined;
 
     /**
      * Additional parser options for TypeScript.
@@ -393,7 +446,21 @@ export type OptionsTypeScriptWithTypes = {
     useDefaultDefaultProject?: boolean;
 };
 
-export type OptionsVue = OptionsA11y & {
+export type OptionsVue = OptionsOverrides & {
+    /**
+     * Enable accessibility support via Vue accessibility plugin.
+     * Helps checking for a11y issues in `.vue`-files when enabled.
+     *
+     * @see https://vue-a11y.github.io/eslint-plugin-vuejs-accessibility
+     * @default false
+     */
+    a11y?: boolean;
+
+    /**
+     * Overrides for accessibility rules.
+     */
+    overridesA11y?: TypedFlatConfigItem['rules'];
+
     /**
      * Create virtual files for Vue SFC blocks to enable linting.
      *
@@ -424,8 +491,8 @@ export type StyleOptions = {
      * Default activation depends on `lessOpinionated`. Can also be turned on or off explicitly.
      *
      * @example 'none', 'lite', 'recommended', or 'strict'
-     *
      * @see https://github.com/eslint-functional/eslint-plugin-functional
+     * @default 'lite'
      */
     functional?: boolean | FunctionalEnforcement | (OptionsFunctional & OptionsOverrides);
 
@@ -435,19 +502,25 @@ export type StyleOptions = {
      * @see https://perfectionist.dev
      * @default true
      */
-    perfectionist?: boolean;
+    perfectionist?: boolean | OptionsOverrides;
 
     /**
      * Enable stylistic rules.
      *
      * @see https://eslint.style
+     * @default true
      */
     stylistic?: boolean | (OptionsOverrides & StylisticConfig);
 };
 
-export type StylisticConfig = Pick<StylisticCustomizeOptions, 'indent' | 'jsx' | 'quotes' | 'semi'>;
+export type StylisticConfig = Omit<Pick<StylisticCustomizeOptions, 'experimental' | 'indent' | 'jsx' | 'quotes' | 'semi'>, 'indent'> & {
+    indent?: 'tab' | number;
+};
 
-export type TypedFlatConfigItem = Omit<Linter.Config, 'name' | 'plugins' | 'rules'> & {
+export type TypedFlatConfigItem = Omit<(ConfigWithExtends | Linter.Config), 'plugins' | 'rules'> & {
+    /**
+     * Custom config name of each item
+     */
     name?: string;
 
     /**
