@@ -11,6 +11,7 @@ import type {
 } from '../types';
 
 export const StylisticConfigDefaults: Required<StylisticConfig> = {
+    experimental: false,
     indent: 4,
     jsx: true,
     quotes: 'single',
@@ -21,30 +22,36 @@ export const stylistic = async (
     options: Readonly<
         OptionsLessOpinionated &
         OptionsOverrides &
-        Required<OptionsHasTypeScript & { stylistic: Required<StylisticConfig> }>
+        Required<
+            OptionsHasTypeScript &
+            StylisticConfig
+        >
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        experimental,
+        indent,
+        jsx,
         lessOpinionated,
+        quotes,
         overrides,
-        stylistic: {
-            indent,
-            jsx,
-            quotes,
-            semi,
-        },
+        semi,
         typescript,
-    } = options;
+    } = {
+        ...options,
+        ...StylisticConfigDefaults,
+    };
 
     const [stylisticPlugin] = (await loadPackages(['@stylistic/eslint-plugin'])) as [typeof import('@stylistic/eslint-plugin')['default']];
 
     const config = stylisticPlugin.configs.customize({
+        experimental,
         indent,
         jsx,
         quotes,
         semi,
         severity: 'error',
-    } as StylisticCustomizeOptions);
+    } as StylisticCustomizeOptions) as TypedFlatConfigItem;
 
     return [
         {
