@@ -1,4 +1,3 @@
-import inlineElements from 'eslint-plugin-vue/lib/utils/inline-non-void-elements.json' with { type: 'json' };
 import { isPackageExists } from 'local-pkg';
 
 import { GLOB_SRC_EXT } from '../globs';
@@ -7,6 +6,7 @@ import {
     interopDefault,
     loadPackages,
     memoize,
+    vueInlineElements,
 } from '../utils';
 
 import type { ESLint, Linter } from 'eslint';
@@ -15,10 +15,10 @@ import type {
     OptionsFiles,
     OptionsHasTypeScript,
     OptionsOverrides,
-    OptionsStylistic,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
     OptionsVue,
+    RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
 
@@ -38,8 +38,8 @@ export const vue = async (
         Required<
             OptionsFiles &
             OptionsHasTypeScript &
-            OptionsStylistic &
-            OptionsTypeScriptParserOptions
+            OptionsTypeScriptParserOptions &
+            RequiredOptionsStylistic
         >
     >,
 ): Promise<TypedFlatConfigItem[]> => {
@@ -263,7 +263,7 @@ export const vue = async (
                                 'router-link',
                                 'textarea',
                                 'u-link',
-                                ...inlineElements,
+                                ...vueInlineElements,
                             ],
                             ignoreWhenEmpty: true,
                         },
@@ -289,7 +289,7 @@ export const vue = async (
                                 'router-link',
                                 'textarea',
                                 'u-link',
-                                ...inlineElements,
+                                ...vueInlineElements,
                             ],
                             ignoreWhenEmpty: true,
                             ignoreWhenNoAttributes: true,
@@ -388,7 +388,7 @@ export const vue = async (
                 rules: {
                     // eslint-disable-next-line @moso/prefer-reduce-over-chaining
                     ...vueA11yPlugin.configs['flat/recommended']
-                        .map((config) => config.rules ?? {})
+                        .map((config) => ('rules' in config ? config.rules : undefined) ?? {})
                         .reduce((acc, rules) => Object.assign(acc, rules), {}),
 
                     ...overridesA11y,
