@@ -4,12 +4,12 @@ import type { ESLint } from 'eslint';
 
 import type {
     OptionsLessOpinionated,
-    OptionsOverrides,
+    OptionsPerfectionist,
     TypedFlatConfigItem,
 } from '../types';
 
 export const perfectionist = async (
-    options: Readonly<OptionsLessOpinionated & OptionsOverrides>,
+    options: Readonly<OptionsLessOpinionated & OptionsPerfectionist>,
 ): Promise<TypedFlatConfigItem[]> => {
     const { lessOpinionated, overrides } = options;
 
@@ -23,8 +23,6 @@ export const perfectionist = async (
             },
             rules: {
                 ...(!lessOpinionated && {
-                    '@stylistic/jsx-sort-props': 'off',
-
                     'perfectionist/sort-array-includes': [
                         'error',
                         {
