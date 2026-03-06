@@ -132,3 +132,46 @@ export const memoize = <T>(fn: NonNullable<T>, key?: string): T => {
 };
 
 export const toArray = <T>(value: T | T[]): T[] => (Array.isArray(value) ? value : [value]);
+
+export const vueInlineElements: ReadonlyArray<string> = [
+    // Manually migrated from eslint-plugin-vue
+    // @see https://github.com/vuejs/eslint-plugin-vue/blob/master/lib/utils/inline-non-void-elements.json
+    'a',
+    'abbr',
+    'audio',
+    'b',
+    'bdi',
+    'bdo',
+    'canvas',
+    'cite',
+    'code',
+    'data',
+    'del',
+    'dfn',
+    'em',
+    'i',
+    'iframe',
+    'ins',
+    'kbd',
+    'label',
+    'map',
+    'mark',
+    'noscript',
+    'object',
+    'output',
+    'picture',
+    'q',
+    'ruby',
+    's',
+    'samp',
+    'small',
+    'span',
+    'strong',
+    'sub',
+    'sup',
+    'svg',
+    'time',
+    'u',
+    'var',
+    'video',
+];
