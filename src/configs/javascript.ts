@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+
 import globals from 'globals';
 
 import mosoPlugin from '../rules';
@@ -56,7 +58,7 @@ export const javascript = async (
                 ecmaVersion: 'latest',
                 globals: {
                     ...globals.browser,
-                    ...globals.es2025,
+                    ...globals.es2026,
                     ...globals.node,
                     document: 'readonly',
                     navigator: 'readonly',
@@ -73,26 +75,54 @@ export const javascript = async (
                 reportUnusedDisableDirectives: true,
             },
             plugins: {
-                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
-                'de-morgan': memoize(deMorganPlugin, 'eslint-plugin-de-morgan'),
+                '@eslint/js': memoize(eslintJs, '@eslint/js'),
                 'unused-imports': memoize(unusedImportsPlugin, 'eslint-plugin-unused-imports'),
             },
             rules: {
-                ...eslintJs.configs.recommended.rules,
+                // ESLint's recommended rules for JavaScript
+                // @see https://eslint.org/docs/latest/rules
+                ...(assert.ok(!Array.isArray(eslintJs.configs.recommended)),
+                eslintJs.configs.recommended.rules),
 
+                // Problems
+                'array-callback-return': ['error', { allowImplicit: true }],
+                'getter-return': ['error', { allowImplicit: true }],
+                'no-await-in-loop': 'error',
+                'no-cond-assign': ['error', 'always'],
+                'no-constructor-return': 'error',
+                'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
+                'no-fallthrough': ['warn', { commentPattern: 'break[\\s\\w]*omitted' }],
+                'no-inner-declarations': ['error', 'functions'],
+                'no-promise-executor-return': ['error', { allowVoid: true }],
+                'no-self-assign': ['error', { props: true }],
+                'no-self-compare': 'error',
+                'no-template-curly-in-string': 'error',
+                'no-unmodified-loop-condition': 'error',
+                'no-unreachable-loop': 'error',
+                'no-use-before-define': [
+                    'error',
+                    {
+                        classes: true,
+                        functions: false,
+                        variables: true,
+                    },
+                ],
+                'require-atomic-updates': 'error',
+                'use-isnan': ['error', { enforceForIndexOf: true, enforceForSwitchCase: true }],
+                'valid-typeof': ['error', { requireStringLiterals: true }],
+
+                // Suggestions
                 'accessor-pairs': ['error', { enforceForClassMembers: true, setWithoutGet: true }],
-                'array-callback-return': 'error',
                 'arrow-body-style': ['error', 'as-needed'],
                 'block-scoped-var': 'error',
                 'camelcase': 'off',
                 'class-methods-use-this': 'error',
                 'consistent-return': ['error', { treatUndefinedAsUnspecified: false }],
-                'constructor-super': 'error',
+                'consistent-this': 'off',
                 'curly': ['error', 'multi-or-nest'],
                 'default-case-last': 'error',
                 'dot-notation': ['warn', { allowKeywords: true }],
                 'eqeqeq': ['error', 'smart'],
-                'for-direction': 'error',
                 'func-name-matching': 'error',
                 'func-style': [
                     'error',
@@ -101,7 +131,6 @@ export const javascript = async (
                         allowArrowFunctions: true,
                     },
                 ],
-                'getter-return': 'error',
                 'grouped-accessor-pairs': 'error',
                 'guard-for-in': 'error',
                 'new-cap': [
@@ -114,69 +143,31 @@ export const javascript = async (
                 ],
                 'no-alert': 'error',
                 'no-array-constructor': 'error',
-                'no-async-promise-executor': 'error',
-                'no-await-in-loop': 'error',
                 'no-caller': 'error',
-                'no-case-declarations': 'error',
-                'no-class-assign': 'error',
-                'no-compare-neg-zero': 'error',
-                'no-cond-assign': ['error', 'always'],
                 'no-console': ['error', { allow: ['warn', 'error'] }],
-                'no-const-assign': 'error',
-                'no-constant-binary-expression': 'error',
-                'no-constructor-return': 'error',
-                'no-control-regex': 'error',
-                'no-debugger': 'error',
-                'no-delete-var': 'error',
-                'no-dupe-args': 'error',
-                'no-dupe-class-members': 'error',
-                'no-dupe-else-if': 'error',
-                'no-dupe-keys': 'error',
-                'no-duplicate-case': 'error',
-                'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
                 'no-else-return': ['error', { allowElseIf: false }],
                 'no-empty': ['error', { allowEmptyCatch: true }],
-                'no-empty-character-class': 'error',
-                'no-empty-pattern': 'error',
                 'no-eq-null': 'error',
                 'no-eval': 'error',
-                'no-ex-assign': 'error',
                 'no-extra-bind': 'error',
-                'no-extra-boolean-cast': 'error',
-                'no-fallthrough': ['warn', { commentPattern: 'break[\\s\\w]*omitted' }],
-                'no-func-assign': 'error',
-                'no-global-assign': 'error',
                 'no-implied-eval': 'error',
-                'no-import-assign': 'error',
-                'no-inner-declarations': ['error', 'functions'],
-                'no-invalid-regexp': 'error',
                 'no-invalid-this': 'error',
-                'no-irregular-whitespace': 'error',
                 'no-iterator': 'error',
                 'no-label-var': 'error',
                 'no-labels': ['error', { allowLoop: true, allowSwitch: true }],
                 'no-lone-blocks': 'error',
                 'no-lonely-if': 'error',
                 'no-loop-func': 'error',
-                'no-loss-of-precision': 'error',
-                'no-misleading-character-class': 'error',
                 'no-multi-assign': 'error',
                 'no-multi-str': 'error',
                 'no-new': 'error',
                 'no-new-func': 'error',
-                'no-new-native-nonconstructor': 'error',
                 'no-new-wrappers': 'error',
-                'no-nonoctal-decimal-escape': 'error',
-                'no-obj-calls': 'error',
                 'no-object-constructor': 'error',
-                'no-octal': 'error',
                 'no-octal-escape': 'error',
                 'no-param-reassign': 'error',
-                'no-promise-executor-return': ['error', { allowVoid: true }],
                 'no-proto': 'error',
-                'no-prototype-builtins': 'error',
                 'no-redeclare': ['error', { builtinGlobals: true }],
-                'no-regex-spaces': 'error',
                 'no-restricted-globals': [
                     'error',
                     { message: 'Use local parameter instead.', name: 'event' },
@@ -256,26 +247,10 @@ export const javascript = async (
 
                 ],
                 'no-return-assign': 'off',
-                'no-self-assign': ['error', { props: true }],
-                'no-self-compare': 'error',
                 'no-sequences': 'error',
-                'no-setter-return': 'error',
-                'no-shadow-restricted-names': 'error',
-                'no-sparse-arrays': 'error',
-                'no-template-curly-in-string': 'error',
-                'no-this-before-super': 'error',
                 'no-throw-literal': 'error',
-                'no-unassigned-vars': 'error',
-                'no-undef': 'error',
                 'no-undef-init': 'error',
-                'no-unexpected-multiline': 'error',
-                'no-unmodified-loop-condition': 'error',
                 'no-unneeded-ternary': ['error', { defaultAssignment: false }],
-                'no-unreachable': 'error',
-                'no-unreachable-loop': 'error',
-                'no-unsafe-finally': 'error',
-                'no-unsafe-negation': 'error',
-                'no-unsafe-optional-chaining': 'error',
                 'no-unused-expressions': [
                     'error',
                     {
@@ -284,27 +259,12 @@ export const javascript = async (
                         allowTernary: true,
                     },
                 ],
-                'no-unused-labels': 'error',
-                'no-unused-private-class-members': 'error',
-                'no-use-before-define': [
-                    'error',
-                    {
-                        classes: true,
-                        functions: false,
-                        variables: true,
-                    },
-                ],
-                'no-useless-assignment': 'error',
-                'no-useless-backreference': 'error',
                 'no-useless-call': 'error',
-                'no-useless-catch': 'error',
                 'no-useless-computed-key': 'error',
                 'no-useless-concat': 'error',
                 'no-useless-constructor': 'error',
-                'no-useless-escape': 'error',
                 'no-useless-rename': 'error',
                 'no-var': 'error',
-                'no-with': 'error',
                 'object-shorthand': [
                     'error',
                     'always',
@@ -354,18 +314,17 @@ export const javascript = async (
                 'prefer-spread': 'error',
                 'prefer-template': 'error',
                 'radix': 'error',
-                'require-atomic-updates': 'error',
                 'require-await': 'error',
                 'require-unicode-regexp': 'error',
-                'require-yield': 'error',
                 'strict': ['error', 'never'],
                 'symbol-description': 'error',
-                'unicode-bom': ['error', 'never'],
-                'use-isnan': ['error', { enforceForIndexOf: true, enforceForSwitchCase: true }],
-                'valid-typeof': ['error', { requireStringLiterals: true }],
                 'vars-on-top': 'error',
                 'yoda': ['error', 'never'],
 
+                // Layout & formatting
+                'unicode-bom': ['error', 'never'],
+
+                // Unused Imports
                 'unused-imports/no-unused-imports': isInEditor ? 'warn' : 'error',
                 'unused-imports/no-unused-vars': [
                     'error',
@@ -378,6 +337,7 @@ export const javascript = async (
                     },
                 ],
 
+                // Functional settings
                 ...(functionalEnforcement === 'none'
                     ? {
                         'max-classes-per-file': ['error', 1],
@@ -392,6 +352,7 @@ export const javascript = async (
                     }
                 ),
 
+                // Sorting enabled if Perfectionist is disabled
                 ...(!perfectionist && {
                     'sort-imports': [
                         'error',
@@ -410,22 +371,38 @@ export const javascript = async (
                     ],
                 }),
 
-                ...(!lessOpinionated && {
-                    '@moso/no-bidi': 'error',
-                    '@moso/no-invisible-characters': 'error',
-                    '@moso/no-redundant-variable': 'error',
-                    '@moso/no-string-interpolation': 'error',
-                    '@moso/no-top-level-await': 'error',
-                    '@moso/no-unneeded-array-flat-map': 'error',
-                    '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
-                    '@moso/prefer-reduce-over-chaining': 'error',
-
-                    'de-morgan/no-negated-conjunction': 'error',
-                    'de-morgan/no-negated-disjunction': 'error',
-                }),
-
                 ...overrides,
             },
         },
+        ...((lessOpinionated
+            ? []
+            : [
+                {
+                    name: 'moso/javascript/opinionated',
+                    plugins: {
+                        '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
+                        'de-morgan': memoize(deMorganPlugin, 'eslint-plugin-de-morgan'),
+                    },
+                    rules: {
+                        // Own rules
+                        '@moso/avoid-barrel-files': ['error', { amountOfExportsToConsiderModuleAsBarrel: 5 }],
+                        '@moso/no-bidi': 'error',
+                        '@moso/no-invisible-characters': 'error',
+                        '@moso/no-redundant-variable': 'error',
+                        '@moso/no-string-interpolation': 'error',
+                        '@moso/no-top-level-await': 'error',
+                        '@moso/no-unneeded-array-flat-map': 'error',
+                        '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
+                        '@moso/prefer-fetch': 'error',
+                        '@moso/prefer-reduce-over-chaining': 'error',
+
+                        // eslint-plugin-de-morgan rules
+                        // @see https://github.com/azat-io/eslint-plugin-de-morgan
+                        'de-morgan/no-negated-conjunction': 'error',
+                        'de-morgan/no-negated-disjunction': 'error',
+                    },
+                },
+            ]) satisfies TypedFlatConfigItem[]
+        ),
     ];
 };
