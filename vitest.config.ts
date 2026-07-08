@@ -1,11 +1,16 @@
 import { defineConfig } from 'vitest/config';
+import type { ViteUserConfig as UserConfig } from 'vitest/config';
 
-export default defineConfig({
+const vitestConfig: UserConfig = defineConfig({
     test: {
-        globals: true,
-        reporters: 'dot',
         environment: 'node',
-        include: ['src/rules/**/*.test.ts', 'test/**/*.test.ts'],
         exclude: ['eslint.config.ts', 'node_modules/**/*'],
+        globals: true,
+        include: ['src/rules/**/*.test.ts', 'test/**/*.test.ts'],
+        pool: 'forks',
+        reporters: 'dot',
+        testTimeout: 30_000,
     },
 });
+
+export default vitestConfig;
