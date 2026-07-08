@@ -1,7 +1,5 @@
 import { loadPackages, memoize } from '../utils';
 
-import type { StylisticCustomizeOptions } from '@stylistic/eslint-plugin';
-
 import type {
     OptionsHasTypeScript,
     OptionsLessOpinionated,
@@ -48,10 +46,11 @@ export const stylistic = async (
         experimental,
         indent,
         jsx,
+        pluginName: '@stylistic',
         quotes,
         semi,
         severity: 'error',
-    } as StylisticCustomizeOptions) as TypedFlatConfigItem;
+    }) as TypedFlatConfigItem;
 
     return [
         {
