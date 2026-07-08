@@ -1,9 +1,15 @@
 import { defineConfig } from 'tsdown';
+import type { UserConfig } from 'tsdown';
 
-export default defineConfig({
+const defaultConfig: UserConfig = defineConfig({
+    deps: {
+        neverBundle: [/^@typescript-eslint\//u, /^typescript\//u],
+    },
+    dts: true,
     entry: ['src/index.ts'],
     exports: true,
     format: ['esm'],
     shims: true,
-    inlineOnly: false,
 });
+
+export default defaultConfig;
