@@ -1,9 +1,12 @@
+import path from 'node:path';
+
 import { FlatConfigComposer } from 'eslint-flat-config-utils';
 import { isPackageExists } from 'local-pkg';
 import {
     astro,
     comments,
     disables,
+    e18e,
     functional,
     ignores,
     imports,
@@ -30,11 +33,13 @@ import {
 import { StylisticConfigDefaults } from './configs/stylistic';
 import {
     GLOB_ASTRO,
+    GLOB_ASTRO_TS,
     GLOB_DTS,
     GLOB_JSON,
     GLOB_JSON5,
     GLOB_JSONC,
     GLOB_JSX,
+    GLOB_MARKDOWN,
     GLOB_ROOT_DTS,
     GLOB_ROOT_JS,
     GLOB_ROOT_JSX,
@@ -52,7 +57,6 @@ import {
     checkFilePath,
     getOverrides,
     isInEditorEnv,
-    // loadPackages,
     resolveSubOptions,
 } from './utils';
 import type { Linter } from 'eslint';
@@ -60,6 +64,8 @@ import type {
     Awaitable,
     ConfigNames,
     OptionsConfig,
+    OptionsIgnores,
+    OptionsProjectRoot,
     OptionsTypeScript,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
@@ -74,19 +80,10 @@ const AstroPackages = [
     '@astrojs/vue',
 ];
 
-const FlatConfigProps = [
-    'languageOptions',
-    'linterOptions',
-    'name',
-    'processor',
-    'plugins',
-    'rules',
-    'settings',
-] satisfies Array<keyof TypedFlatConfigItem>;
-
 const NextJSPackages = ['next'];
 
 const ReactPackages = [
+    '@astrojs/react',
     'gatsby',
     'next',
     'nextra',
@@ -95,6 +92,7 @@ const ReactPackages = [
 ];
 
 const VuePackages = [
+    '@astrojs/vue',
     'nuxt',
     'vitepress',
     'vue',
@@ -103,42 +101,45 @@ const VuePackages = [
 /**
  * Construct an array of ESLint flat config items.
  *
- * @param options - Options for generating the ESLint configurations.
- * @param userConfigs - User configurations to be merged with the generated configurations
- * @returns - The merged ESLint configurations
+ * @param {OptionsConfig & TypedFlatConfigItem} options - Options for generating the ESLint configurations.
+ * @param {Awaitable<TypedFlatConfigItem | TypedFlatConfigItem[]>[]} userConfigs - User configurations to be merged with the generated configurations
+ * @returns {Promise<TypedFlatConfigItem[]>} - The merged ESLint configurations
  */
 export async function moso(
     options: Omit<TypedFlatConfigItem, 'files'> & OptionsConfig,
     ...userConfigs: ReadonlyArray<Awaitable<Linter.Config[] | TypedFlatConfigItem | TypedFlatConfigItem[]>>
-): Promise<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>> {
-    /*
-    const [FlatConfigComposer] = await loadPackages(['eslint-flat-config-utils']).then(
-        ([a]) => [(a as typeof import('eslint-flat-config-utils')).FlatConfigComposer] as const,
-    );
-    */
-
+): Promise<Linter.Config[]> {
     const {
-        astro: astroOptions = AstroPackages.some((x) => isPackageExists(x)),
         componentExts = [],
-        ignores: ignoreOptions = [],
-        ignoresFiles: ignoresFilesOptions = ['.gitignore'],
         isInEditor = isInEditorEnv(),
-        jsdoc: jsdocOptions = true,
-        jsonc: jsoncOptions = true,
+        jsdoc: jsdocOptions = false,
+        jsonc: jsoncOptions = false,
         jsx: jsxOptions = true,
-        nextjs: nextjsOptions = NextJSPackages.some((x) => isPackageExists(x)),
-        projectRoot,
-        react: reactOptions = ReactPackages.some((x) => isPackageExists(x)),
         typescript: typescriptOptions = isPackageExists('typescript'),
-        vue: vueOptions = VuePackages.some((x) => isPackageExists(x)),
     } = options;
+
+    const astroOptions = options.astro ?? AstroPackages.some((x) => isPackageExists(x));
+    const nextjsOptions = options.nextjs ?? NextJSPackages.some((x) => isPackageExists(x));
+    const reactOptions = options.react ?? ReactPackages.some((x) => isPackageExists(x));
+    const vueOptions = options.vue ?? VuePackages.some((x) => isPackageExists(x));
+
+    // Must happen before any config receives `componentExts` or builds file
+    // globs from it - most importantly the TypeScript config, whose plugin
+    // registration has to cover `.vue` files
+    if (vueOptions !== false) componentExts.push('vue');
 
     if ('files' in options)
         throw new Error('[@moso/eslint-config] The first argument should not contain the "files" property as the options are supposed to be global. Place it in the second or later config instead.');
 
-    const validatedProjectRoot = typeof projectRoot === 'string' ? await checkFilePath(projectRoot) : undefined;
-
-    // const ignoreConfigOptions = Boolean(validatedProjectRoot);
+    const e18eOptions = options.e18e === false
+        ? false
+        : typeof options.e18e === 'object'
+            ? options.e18e
+            : options.e18e === true
+                ? {}
+                : options.lessOpinionated === true
+                    ? false
+                    : {};
 
     const functionalEnforcement = typeof options.functional === 'string'
         ? options.functional
@@ -152,13 +153,21 @@ export async function moso(
 
     const hasTypeScript = Boolean(typescriptOptions);
 
-    const modeOptions: ProjectMode = (typeof options.mode === 'string' && options.mode !== 'none')
-        ? options.mode
-        : 'none';
+    const ignoreOptions: OptionsIgnores = typeof options.ignores === 'object'
+        ? options.ignores
+        : {};
+
+    const modeOptions: ProjectMode = typeof options.mode === 'string' ? options.mode : 'none';
 
     const perfectionistOptions = typeof options.perfectionist === 'boolean'
         ? options.perfectionist
-        : options.lessOpinionated !== false;
+        : options.lessOpinionated !== true;
+
+    const projectRootOptions: OptionsProjectRoot['projectRoot'] = typeof options.projectRoot === 'string'
+        ? checkFilePath(options.projectRoot)
+        : typeof options.typescript === 'object' && typeof options.typescript.projectRoot === 'string'
+            ? checkFilePath(options.typescript.projectRoot)
+            : undefined;
 
     const stylisticOptions = options.stylistic === false
         ? false
@@ -168,44 +177,47 @@ export async function moso(
                 jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
                 ...options.stylistic,
             }
-            : {
-                ...StylisticConfigDefaults,
-                jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
-            };
+            : StylisticConfigDefaults;
 
     const {
         filesTypeAware,
+        ignoresTypeAware,
         parserOptions,
         useDefaultDefaultProject,
         ...typescriptSubOptions
-    } = resolveSubOptions(options, 'typescript') as OptionsTypeScript & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
+    } = resolveSubOptions(options, 'typescript') as
+        OptionsTypeScript & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
 
     const projectServiceUserConfig = {
         defaultProject: './tsconfig.json',
         loadTypeScriptPlugins: isInEditor,
-        ...typeof parserOptions?.projectService === 'object' ? parserOptions.projectService : undefined,
+        ...(typeof parserOptions?.projectService === 'object' ? parserOptions.projectService : undefined),
     };
 
     const defaultFilesTypesAware = [GLOB_DTS, GLOB_TS, GLOB_TSX];
 
+    const withRoot = (glob: string): string =>
+        (projectRootOptions === undefined ? glob : path.join(projectRootOptions, glob));
+
     const typescriptConfigOptions: Required<OptionsTypeScriptParserOptions> = {
         ...typescriptSubOptions,
         filesTypeAware: filesTypeAware ?? defaultFilesTypesAware,
+        ignoresTypeAware: ignoresTypeAware ?? [],
         parserOptions: {
-            tsconfigRootDir: validatedProjectRoot,
+            tsconfigRootDir: projectRootOptions,
             ...parserOptions,
             projectService:
-                parserOptions?.projectService === false || options.projectRoot === undefined
+                parserOptions?.projectService === false || projectRootOptions === undefined
                     ? false
                     : useDefaultDefaultProject === false
                         ? projectServiceUserConfig
                         : {
                             allowDefaultProject: [
-                                GLOB_ROOT_DTS,
-                                GLOB_ROOT_JS,
-                                GLOB_ROOT_JSX,
-                                GLOB_ROOT_TS,
-                                GLOB_ROOT_TSX,
+                                withRoot(GLOB_ROOT_DTS),
+                                withRoot(GLOB_ROOT_JS),
+                                withRoot(GLOB_ROOT_JSX),
+                                withRoot(GLOB_ROOT_TS),
+                                withRoot(GLOB_ROOT_TSX),
                             ],
                             ...projectServiceUserConfig,
                         },
@@ -226,9 +238,8 @@ export async function moso(
             overrides: getOverrides(options, 'comments'),
         }),
         ignores({
-            ignores: ignoreOptions,
-            ignoreFiles: ignoresFilesOptions,
-            projectRoot: validatedProjectRoot,
+            ...ignoreOptions,
+            ...resolveSubOptions(options, 'ignores'),
         }),
         imports({
             ...typescriptConfigOptions,
@@ -245,9 +256,9 @@ export async function moso(
         }),
         node({
             hasReact: Boolean(reactOptions),
-            hasTypeScript: Boolean(typescriptOptions),
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'node'),
+            typescript: hasTypeScript,
             ...resolveSubOptions(options, 'node'),
         }),
         promise({
@@ -259,7 +270,6 @@ export async function moso(
             overrides: getOverrides(options, 'regexp'),
         }),
         unicorn({
-            ...functionalConfigOptions,
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'unicorn'),
         }),
@@ -277,12 +287,25 @@ export async function moso(
         );
     }
 
-    if (functionalEnforcement !== 'none' || modeOptions === 'library') {
+    if (e18eOptions !== false) {
+        mut_configs.push(
+            e18e({
+                ...e18eOptions,
+                isInEditor,
+                lessOpinionated: options.lessOpinionated,
+                mode: modeOptions,
+                overrides: getOverrides(options, 'e18e'),
+            })
+        );
+    }
+
+    if (functionalEnforcement !== 'none') {
         mut_configs.push(
             functional({
                 ...typescriptConfigOptions,
                 ...functionalConfigOptions,
                 mode: modeOptions,
+                projectRoot: projectRootOptions,
                 overrides: getOverrides(options, 'functional'),
                 stylistic: stylisticOptions,
             }),
@@ -326,6 +349,7 @@ export async function moso(
         mut_configs.push(
             nextjs({
                 files: [GLOB_SRC],
+                mode: modeOptions,
                 overrides: getOverrides(options, 'nextjs'),
             }),
         );
@@ -351,8 +375,10 @@ export async function moso(
                     GLOB_TS,
                     GLOB_TSX,
                 ],
+                ignoresTypeAware: [GLOB_ASTRO_TS, `${GLOB_MARKDOWN}/**`],
                 lessOpinionated: options.lessOpinionated,
-                projectRoot,
+                nextjs: Boolean(nextjsOptions),
+                projectRoot: projectRootOptions,
                 overrides: getOverrides(options, 'react'),
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
@@ -402,15 +428,13 @@ export async function moso(
                 lessOpinionated: options.lessOpinionated,
                 mode: modeOptions,
                 overrides: getOverrides(options, 'typescript'),
-                projectRoot,
+                projectRoot: projectRootOptions,
                 unsafe: 'warn',
             }),
         );
     }
 
     if (vueOptions !== false) {
-        componentExts.push('vue');
-
         mut_configs.push(
             vue({
                 ...typescriptConfigOptions,
@@ -421,7 +445,7 @@ export async function moso(
                     GLOB_VUE,
                 ],
                 overrides: getOverrides(options, 'vue'),
-                projectRoot,
+                projectRoot: projectRootOptions,
                 sfcBlocks: true,
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
@@ -442,14 +466,6 @@ export async function moso(
 
     mut_configs.push(disables());
 
-    const fusedConfig = FlatConfigProps.reduce<TypedFlatConfigItem>((acc, key) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-        if (key in options) acc[key] = options[key] as any;
-        return acc;
-    }, {});
-
-    if (Object.keys(fusedConfig).length) mut_configs.push([fusedConfig]);
-
     let mut_composer = new FlatConfigComposer<TypedFlatConfigItem, ConfigNames>().append(...mut_configs, ...userConfigs);
 
     if (isInEditor) {
@@ -458,10 +474,10 @@ export async function moso(
             'no-only-tests/no-only-tests',
             'prefer-const',
         ], {
-            // eslint-disable-next-line @typescript-eslint/no-deprecated
+            // eslint-disable-next-line @typescript-eslint/no-deprecated -- ESLint 9+ deprecates builtinRules without offering a runtime replacement
             builtinRules: async () => import('eslint/use-at-your-own-risk').then((r) => r.builtinRules),
         });
     }
 
-    return mut_composer;
-}
+    return mut_composer.toConfigs();
+};
