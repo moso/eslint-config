@@ -15,11 +15,11 @@ export const GLOB_ROOT_TS = './?(.)*.?([cm])ts';
 export const GLOB_ROOT_TSX = './?(.)*.?([cm])tsx';
 export const GLOB_ROOT_DTS = './?(.)*.d.?([cm])ts';
 
-export const GLOB_MJS = '';
-export const GLOB_MTS = '';
+export const GLOB_MJS = '**/*.mjs';
+export const GLOB_MTS = '**/*.mts';
 
-export const GLOB_CJS = '';
-export const GLOB_CTS = '';
+export const GLOB_CJS = '**/*.cjs';
+export const GLOB_CTS = '**/*.cts';
 
 export const GLOB_STYLE = '**/?(.)*.{c,le,sc,pc,postc}ss';
 export const GLOB_CSS = '**/?(.)*.css';
@@ -35,13 +35,15 @@ export const GLOB_ASTRO = '**/*.astro';
 export const GLOB_ASTRO_TS = '**/*.astro/*.ts';
 export const GLOB_HTML = '**/*.htm?(l)';
 export const GLOB_MARKDOWN = '**/*.md';
-export const GLOB_MARKDOWN_CODE = `${GLOB_MARKDOWN}/${GLOB_SRC}`;
+export const GLOB_MARKDOWN_CODE = (`${GLOB_MARKDOWN}/${GLOB_SRC}`) as string;
 export const GLOB_MARKDOWN_IN_MARKDOWN = '**/*.md/*.md';
 export const GLOB_TOML = '**/*.toml';
 export const GLOB_VUE = '**/*.vue';
 export const GLOB_YAML = '**/*.y?(a)ml';
 
-export const GLOB_TESTS = [
+export const GLOB_TYPINGS = 'typings/**/?(.)*.?([cm])ts';
+
+export const GLOB_TESTS: string[] = [
     `**/__tests__/**/?(.)*.${GLOB_SRC_EXT}`,
     `**/?(.)*.spec.${GLOB_SRC_EXT}`,
     `**/?(.)*.test.${GLOB_SRC_EXT}`,
@@ -49,20 +51,18 @@ export const GLOB_TESTS = [
     `**/?(.)*.benchmark.${GLOB_SRC_EXT}`,
 ];
 
-export const GLOB_ALL_SRC = [
+export const GLOB_ALL_SRC: string[] = [
     GLOB_SRC,
     GLOB_STYLE,
     GLOB_JSON,
     GLOB_JSON5,
     GLOB_HTML,
     GLOB_MARKDOWN,
-    GLOB_SRC,
-    GLOB_STYLE,
     GLOB_VUE,
     GLOB_YAML,
 ];
 
-export const GLOB_EXCLUDE = [
+export const GLOB_EXCLUDE: string[] = [
     '**/node_modules',
     '**/dist',
     '**/lib',
