@@ -1,9 +1,18 @@
+import assert from 'node:assert/strict';
+
 import globals from 'globals';
 
-import { GLOB_CJS, GLOB_JS } from '../globs';
+import {
+    GLOB_CJS,
+    GLOB_DTS,
+    GLOB_JS,
+    GLOB_MJS,
+    GLOB_TS,
+    GLOB_TSX,
+} from '../globs';
 import { loadPackages, memoize } from '../utils';
 
-import type { ESLint } from 'eslint';
+import type { Linter } from 'eslint';
 
 import type {
     OptionsLessOpinionated,
@@ -31,8 +40,19 @@ const restricedImports = [
     { name: 'node:assert', message: 'Please use node:assert/strict instead.' },
     { name: 'node-fetch', message: `${npmjs('undici')} (preferred) or ${npmjs('node-fetch-native')}.` },
     { name: 'react-fast-compare', message: 'What\'s faster than a really fast deep comparison? No deep comparison at all.' },
-    { name: 'rimraf', message: 'Use Node\'s built-in fs.rmdir and fm.rm API.' },
+    { name: 'rimraf', message: 'Use Node\'s built-in fs.rmdir and fs.rm API.' },
 ];
+
+const renameNodeRules = (
+    rules: ArrayLike<unknown> | Partial<Linter.Config> | Record<string, unknown>,
+    from: string,
+    to: string,
+) => Object.fromEntries(
+    Object.entries(rules).map(([key, value]) => [
+        key.startsWith(`${from}/`) ? `${to}/${key.slice(from.length + 1)}` : key,
+        value,
+    ]),
+);
 
 export const node = async (
     options: Readonly<
@@ -43,7 +63,7 @@ export const node = async (
 ): Promise<TypedFlatConfigItem[]> => {
     const { lessOpinionated, overrides } = options;
 
-    const [nodePlugin] = (await loadPackages(['eslint-plugin-n'])) as [ESLint.Plugin];
+    const [nodePlugin] = (await loadPackages(['eslint-plugin-n'])) as [(typeof import('eslint-plugin-n'))['default']];
 
     return [
         {
@@ -56,58 +76,57 @@ export const node = async (
                     ...globals.node,
                 },
             },
+            settings: {
+                node: {
+                    version: '^22.22.2 || >=24',
+                },
+            },
             rules: {
-                'node/callback-return': 'error',
-                'node/handle-callback-err': ['error', '^(err|error)$'],
-                'node/no-callback-literal': 'error',
-                'node/no-deprecated-api': 'error',
-                'node/no-exports-assign': 'error',
-                'node/no-extraneous-import': 'off',
-                'node/no-extraneous-require': 'off',
-                'node/no-missing-import': 'off',
-                'node/no-missing-require': 'off',
-                'node/no-mixed-requires': ['error', { allowCall: true, grouping: true }],
-                'node/no-new-require': 'error',
-                'node/no-path-concat': 'error',
-                'node/no-process-exit': 'error',
-                'node/no-restricted-import': [
-                    'error',
-                    [
-                        {
-                            name: 'assert',
-                            message: 'Please use assert/strict instead.',
-                        },
-                        {
-                            name: 'node:assert',
-                            message: 'Please use node:assert/strict instead.',
-                        },
-                    ],
-                ],
-                'node/no-restricted-require': options.hasTypeScript ? 'off' : ['error', [...restricedImports]],
-                'node/no-sync': 'error',
+                ...(assert.ok(!Array.isArray(nodePlugin.configs['flat/recommended'])),
+                renameNodeRules(nodePlugin.configs['flat/recommended'].rules ?? {}, 'n', 'node')),
+
                 'node/no-unpublished-import': 'warn',
-                'node/prefer-global/buffer': ['error', 'never'],
-                'node/prefer-global/console': ['error', 'always'],
                 'node/prefer-global/process': options.hasReact ? 'off' : ['error', 'never'],
                 'node/prefer-global/text-decoder': ['error', 'never'],
                 'node/prefer-global/text-encoder': ['error', 'never'],
-                // 'node/prefer-global/url': ['error', 'never'],
-                'node/prefer-global/url-search-params': ['error', 'never'],
-                'node/prefer-promises/dns': 'error',
-                'node/prefer-promises/fs': 'error',
-                'node/process-exit-as-throw': 'error',
+                'node/prefer-global/url-search-params': ['error', 'always'],
 
                 ...(!lessOpinionated && {
-                    'node/no-top-level-await': 'error',
-                    'node/no-unsupported-features/es-syntax': 'off',
+                    'node/no-top-level-await': 'off', // `@moso/no-top-level-await` will take care of this
+
+                    'node/callback-return': 'error',
+                    'node/handle-callback-err': ['error', '^(err|error)$'],
+                    'node/no-callback-literal': 'error',
+                    'node/no-missing-require': 'off',
+                    'node/no-mixed-requires': ['error', { allowCall: true, grouping: true }],
+                    'node/no-new-require': 'error',
+                    'node/no-path-concat': 'error',
+                    'node/no-restricted-import': [
+                        'error',
+                        [
+                            {
+                                name: 'assert',
+                                message: 'Please use assert/strict instead.',
+                            },
+                            {
+                                name: 'node:assert',
+                                message: 'Please use node:assert/strict instead.',
+                            },
+                        ],
+                    ],
+                    'node/no-restricted-require': options.typescript ? 'off' : ['error', [...restricedImports]],
+                    'node/no-sync': 'error',
+                    'node/prefer-global/buffer': ['error', 'never'],
+                    'node/prefer-global/console': ['error', 'always'],
+                    'node/prefer-promises/dns': 'error',
+                    'node/prefer-promises/fs': 'error',
                 }),
 
                 ...overrides,
             },
         },
-        ...((options.strict === false
-            ? []
-            : [
+        ...((options.strict
+            ? [
                 {
                     name: 'moso/node/strict',
                     files: options.files ?? (
@@ -119,7 +138,27 @@ export const node = async (
                         strict: ['warn', 'global'],
                     },
                 },
-            ]) satisfies TypedFlatConfigItem[]
+            ]
+            : []) satisfies TypedFlatConfigItem[]
         ),
+        {
+            files: [
+                GLOB_DTS,
+                GLOB_MJS,
+                GLOB_TS,
+                GLOB_TSX,
+            ],
+            rules: {
+                'node/no-unsupported-features/es-syntax': 'off',
+            },
+        },
+        {
+            files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
+            rules: {
+                'node/no-extraneous-import': 'off',
+                'node/no-missing-import': 'off',
+                'node/no-restricted-import': 'off',
+            },
+        },
     ];
 };
