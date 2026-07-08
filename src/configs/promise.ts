@@ -1,3 +1,4 @@
+import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
 import type { ESLint } from 'eslint';
@@ -27,6 +28,7 @@ export const promise = async (
     return [
         {
             name: 'moso/promise',
+            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             plugins: {
                 'promise': memoize(promisePlugin, 'eslint-plugin-promise'),
             },
