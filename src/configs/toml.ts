@@ -10,7 +10,10 @@ import type {
 } from '../types';
 
 export const toml = async (
-    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+    options: Readonly<
+        OptionsOverrides &
+        Required<OptionsFiles & RequiredOptionsStylistic>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
         files,
@@ -22,10 +25,7 @@ export const toml = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const [tomlParser, tomlPlugin] = (await loadPackages([
-        'toml-eslint-parser',
-        'eslint-plugin-toml',
-    ])) as [Linter.Parser, ESLint.Plugin];
+    const [tomlParser, tomlPlugin] = (await loadPackages(['toml-eslint-parser', 'eslint-plugin-toml'])) as [Linter.Parser, ESLint.Plugin];
 
     return [
         {
