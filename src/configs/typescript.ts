@@ -6,11 +6,7 @@ import {
     GLOB_JSX,
     GLOB_TESTS,
 } from '../globs';
-import {
-    ensurePackages,
-    loadPackages,
-    memoize,
-} from '../utils';
+import { loadPackages, memoize } from '../utils';
 
 import type { ESLint, Linter } from 'eslint';
 
@@ -22,6 +18,7 @@ import type {
     OptionsMode,
     OptionsOverrides,
     OptionsStylistic,
+    OptionsTypeScriptErasableOnly,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
     TypedFlatConfigItem,
@@ -32,6 +29,7 @@ export const typescript = async (
         OptionsLessOpinionated &
         OptionsOverrides &
         OptionsStylistic &
+        OptionsTypeScriptErasableOnly &
         OptionsTypeScriptWithTypes &
         Required<
             OptionsComponentExts &
@@ -45,6 +43,7 @@ export const typescript = async (
     const {
         componentExts,
         disableTypeAwareRules,
+        erasableOnly,
         files,
         filesTypeAware,
         functionalEnforcement,
@@ -58,81 +57,48 @@ export const typescript = async (
         unsafe,
     } = options;
 
-    await ensurePackages(['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser']);
+    const [tsEslintPlugin, tsEslintParser] = (await loadPackages(['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'])) as [ESLint.Plugin, Linter.Parser];
 
-    const [
-        enforceErasableSyntaxOnlyPlugin,
-        tsEslintPlugin,
-        tsEslintParser,
-    ] = (await loadPackages([
-        'eslint-plugin-erasable-syntax-only',
-        '@typescript-eslint/eslint-plugin',
-        '@typescript-eslint/parser',
-    ])) as [
-        ESLint.Plugin,
-        ESLint.Plugin,
-        Linter.Parser,
-    ];
+    // Enforced unless explicitly disabled or running less opinionated
+    const [erasableSyntaxPlugin] = erasableOnly !== false && !lessOpinionated
+        ? (await loadPackages(['eslint-plugin-erasable-syntax-only'])) as [ESLint.Plugin]
+        : [undefined];
 
     const isTypeAware = typeof projectRoot === 'string';
 
     const stylisticEnabled = stylistic !== false;
 
-    const makeParser = (typeAware: boolean, files: string[], ignores: string[] = []): TypedFlatConfigItem => ({
-        name: `moso/typescript/${typeAware ? 'type-aware-parser' : 'parser'}`,
-        files,
-        ignores,
-        languageOptions: {
-            parser: memoize(tsEslintParser, '@typescript-eslint/parser'),
-            parserOptions: {
-                ecmaFeatures: { jsx: true },
-                ecmaVersion: 'latest',
-                extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
-                sourceType: 'module',
-                jsxPragma: undefined,
-                warnOnUnsupportedTypeScriptVersion: true,
-                ...(typeAware
-                    ? {
-                        projectService: true,
-                        tsconfigRootDir: projectRoot,
-                    }
-                    : {
-                        project: projectRoot,
-                    }
-                ),
-                ...(parserOptions as Linter.ParserOptions),
-            },
-        },
-    });
-
     return [
         {
             name: 'moso/typescript/setup',
+            files,
+            languageOptions: {
+                parser: tsEslintParser,
+                parserOptions: {
+                    ecmaFeatures: { jsx: true },
+                    ecmaVersion: 'latest',
+                    extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
+                    jsxPragma: undefined,
+                    sourceType: 'module',
+                    warnOnUnsupportedTypeScriptVersion: true,
+                    ...(parserOptions as Linter.ParserOptions),
+                },
+            },
             plugins: {
                 '@typescript-eslint': memoize(tsEslintPlugin, '@typescript-eslint/eslint-plugin'),
-                'erasable-syntax-only': memoize(enforceErasableSyntaxOnlyPlugin, 'eslint-plugin-erasable-syntax-only'),
             },
         },
-        ...((isTypeAware
-            ? [
-                makeParser(true, filesTypeAware),
-                makeParser(false, files, filesTypeAware),
-            ]
-            : [
-                makeParser(false, files),
-            ]
-        )),
         {
             name: 'moso/typescript/rules',
             files,
             rules: {
                 // Disable core ESLint rules that are already checked by the TypeScript compiler
-                ...(assert(!Array.isArray(tsEslintPlugin.configs?.['eslint-recommended'])),
-                tsEslintPlugin.configs?.['eslint-recommended']?.rules),
+                ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.['flat/eslint-recommended'])),
+                tsEslintPlugin.configs?.['flat/eslint-recommended'].rules),
 
                 // Recommended @typescript-eslint rules
-                ...(assert(!Array.isArray(tsEslintPlugin.configs?.['recommended'])),
-                tsEslintPlugin.configs?.['recommended']?.rules),
+                ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.recommended)),
+                tsEslintPlugin.configs?.recommended.rules),
 
                 // Turning off additional core ESLint rules
                 'class-methods-use-this': 'off',
@@ -147,13 +113,40 @@ export const typescript = async (
                 'no-use-before-define': 'off',
                 'no-useless-constructor': 'off',
 
+                ...(lessOpinionated
+                    ? {
+                        '@typescript-eslint/no-dynamic-delete': 'off',
+                        '@typescript-eslint/no-invalid-void-type': 'off',
+                        '@typescript-eslint/no-extraneous-class': 'off',
+                        '@typescript-eslint/no-non-null-assertion': 'off',
+                        '@typescript-eslint/no-unsafe-declaration-merging': unsafe,
+                        '@typescript-eslint/no-unsafe-function-type': unsafe,
+                        '@typescript-eslint/triple-slash-reference': 'off',
+                        '@typescript-eslint/unified-signatures': 'off',
+                    }
+                    : {
+                        // I like the stricter rules
+                        ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.strict)),
+                        tsEslintPlugin.configs?.strict.rules),
+
+                        '@moso/no-force-cast-via-top-type': 'error',
+
+                        '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+                    }
+                ),
+
+                // Stylistic
+                ...(stylisticEnabled && {
+                    ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.stylistic)),
+                        tsEslintPlugin.configs?.stylistic.rules),
+
+                    '@typescript-eslint/array-type': ['error', { default: 'array-simple', readonly: 'generic' }],
+
+                    '@stylistic/type-annotation-spacing': 'error',
+                }),
+
                 // TypeScript
-                '@typescript-eslint/ban-ts-comment': [
-                    'error',
-                    {
-                        'ts-ignore': 'allow-with-description',
-                    },
-                ],
+                '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
                 '@typescript-eslint/class-methods-use-this': 'error',
                 '@typescript-eslint/consistent-indexed-object-style': 'error',
                 '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
@@ -211,9 +204,8 @@ export const typescript = async (
                 ],
                 '@typescript-eslint/no-useless-constructor': 'error',
                 '@typescript-eslint/parameter-properties': 'off',
-                '@typescript-eslint/prefer-promise-reject-errors': 'error',
 
-                ...(functionalEnforcement !== 'none' && {
+                ...(functionalEnforcement !== 'none' && mode !== 'library' && {
                     // Opinionated TypeScript-related Functional
                     'functional/no-mixed-types': 'error',
                     'functional/prefer-property-signatures': 'error',
@@ -377,56 +369,49 @@ export const typescript = async (
                     ],
                 }),
 
-                ...(lessOpinionated
-                    ? {
-                        '@typescript-eslint/no-dynamic-delete': 'off',
-                        '@typescript-eslint/no-invalid-void-type': 'off',
-                        '@typescript-eslint/no-extraneous-class': 'off',
-                        '@typescript-eslint/no-non-null-assertion': 'off',
-                        '@typescript-eslint/no-unsafe-declaration-merging': unsafe,
-                        '@typescript-eslint/no-unsafe-function-type': unsafe,
-                        '@typescript-eslint/triple-slash-reference': 'off',
-                        '@typescript-eslint/unified-signatures': 'off',
-                    }
-                    : {
-                        // I like the stricter rules
-                        ...(assert(!Array.isArray(tsEslintPlugin.configs?.['strict'])),
-                        tsEslintPlugin.configs?.['strict']?.rules),
-
-                        '@moso/no-force-cast-via-top-type': 'error',
-                        '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-
-                        'erasable-syntax-only/enums': 'error',
-                        'erasable-syntax-only/import-aliases': 'error',
-                        'erasable-syntax-only/namespaces': 'error',
-                        'erasable-syntax-only/parameter-properties': 'error',
-                    }
-                ),
-
-                // Stylistic
-                ...(stylisticEnabled && {
-                    ...(assert(!Array.isArray(tsEslintPlugin.configs?.['stylistic'])),
-                        tsEslintPlugin.configs?.['stylistic']?.rules),
-
-                    '@typescript-eslint/array-type': ['error', { default: 'array-simple', readonly: 'generic' }],
-
-                    '@stylistic/type-annotation-spacing': 'error',
-                }),
-
                 ...overrides,
             },
         },
+        ...((erasableSyntaxPlugin
+            ? [{
+                name: 'moso/typescript/erasable-syntax',
+                plugins: {
+                    'erasable-syntax-only': memoize(erasableSyntaxPlugin, 'eslint-plugin-erasable-syntax-only'),
+                },
+                rules: {
+                    // Enforce erasable-syntax-only
+                    // @see https://github.com/JoshuaKGoldberg/eslint-plugin-erasable-syntax-only
+                    ...(assert.ok(!Array.isArray(erasableSyntaxPlugin.configs?.recommended)),
+                    erasableSyntaxPlugin.configs?.recommended.rules),
+                },
+            }]
+            : []) satisfies TypedFlatConfigItem[]
+        ),
         ...((isTypeAware
             ? [{
                 name: 'moso/typescript/rules-type-aware',
                 files: filesTypeAware,
+                languageOptions: {
+                    parser: tsEslintParser,
+                    parserOptions: {
+                        ecmaFeatures: { jsx: true },
+                        ecmaVersion: 'latest',
+                        extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
+                        jsxPragma: undefined,
+                        projectService: true,
+                        sourceType: 'module',
+                        tsconfigRootDir: projectRoot,
+                        warnOnUnsupportedTypeScriptVersion: true,
+                        ...(parserOptions as Linter.ParserOptions),
+                    },
+                },
                 rules: {
                     // Recommended type-checked rules
-                    ...(assert(!Array.isArray(tsEslintPlugin.configs?.['recommended-type-checked-only'])),
+                    ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.['recommended-type-checked-only'])),
                     tsEslintPlugin.configs?.['recommended-type-checked-only']?.rules),
 
                     // JS off
-                    'no-implied-val': 'off',
+                    'no-implied-eval': 'off',
                     'only-throw-error': 'off',
                     'prefer-destructuring': 'off',
                     'prefer-promise-reject-errors': 'off',
@@ -518,6 +503,7 @@ export const typescript = async (
                     '@typescript-eslint/no-unnecessary-qualifier': 'error',
                     '@typescript-eslint/no-unnecessary-type-conversion': 'error',
 
+                    '@typescript-eslint/prefer-promise-reject-errors': 'error',
                     '@typescript-eslint/prefer-readonly': 'error',
                     // '@typescript-eslint/prefer-readonly-parameter-types': 'error',
                     '@typescript-eslint/promise-function-async': 'error',
@@ -538,7 +524,7 @@ export const typescript = async (
                         }
                         : {
                             // I like the strict rules
-                            ...(assert(!Array.isArray(tsEslintPlugin.configs?.['strict-type-checked-only'])),
+                            ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.['strict-type-checked-only'])),
                             tsEslintPlugin.configs?.['strict-type-checked-only']?.rules),
 
                             // Strict overrides
@@ -614,7 +600,7 @@ export const typescript = async (
 
                     // Recommended TypeScript type-checked stylistic rules
                     ...(stylisticEnabled && {
-                        ...(assert(!Array.isArray(tsEslintPlugin.configs?.['stylistic-type-checked-only'])),
+                        ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.['stylistic-type-checked-only'])),
                         tsEslintPlugin.configs?.['stylistic-type-checked-only']?.rules),
 
                         // Stylistic overrides
@@ -636,8 +622,9 @@ export const typescript = async (
             ? [{
                 name: 'moso/typescript/rules-disable-type-aware',
                 files,
+                ignores: filesTypeAware,
                 rules: {
-                    ...(assert(!Array.isArray(tsEslintPlugin.configs?.['disable-type-checked'])),
+                    ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.['disable-type-checked'])),
                     tsEslintPlugin.configs?.['disable-type-checked']?.rules),
                 },
             }]
