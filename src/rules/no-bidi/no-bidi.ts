@@ -5,9 +5,14 @@ import {
     makeProgramListener,
 } from '../utils';
 
-const BIDI_PATTERN = /[\u061C\u202A-\u202E\u2066-\u2069]/u;
+import type { TSESTree } from '@typescript-eslint/utils';
 
-export default createRule({
+import type { createRuleType } from '../utils';
+
+const BIDI_PATTERN = /[\u061C\u202A-\u202E\u2066-\u2069]/u;
+const BIDI_PATTERN_GLOBAL = new RegExp(BIDI_PATTERN.source, 'gu');
+
+const ruleNoBidi: createRuleType = createRule({
     name: 'no-bidi',
     meta: {
         type: 'problem',
@@ -22,14 +27,14 @@ export default createRule({
             noBidi: 'Detected potential trojan source attack with unicode bidi introduced in this {{kind}}: {{text}}.',
         },
     },
-    create: (context) => makeProgramListener(BIDI_PATTERN, (node, kind) => {
-        const matcher = new RegExp(BIDI_PATTERN.source, 'gu');
-        const data = { kind, text: escape(node.value, matcher) };
+    create: (context) => makeProgramListener(BIDI_PATTERN, (node: TSESTree.Token, kind: string) => {
         context.report({
             node,
-            data,
+            data: { kind, text: escape(node.value, BIDI_PATTERN_GLOBAL) },
             messageId: 'noBidi',
-            fix: getFixer(node, matcher),
+            fix: getFixer(node, BIDI_PATTERN_GLOBAL),
         });
     }),
 });
+
+export default ruleNoBidi;
