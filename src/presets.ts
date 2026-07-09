@@ -1,10 +1,18 @@
+import path from 'node:path';
+
 import type { OptionsConfig } from './types';
 
 export const full: OptionsConfig = {
     astro: true,
     comments: true,
-    functional: true,
-    ignores: ['.gitignore'],
+    e18e: true,
+    functional: {
+        functionalEnforcement: 'lite',
+    },
+    ignores: {
+        gitignore: true,
+        userIgnores: false,
+    },
     imports: true,
     jsdoc: true,
     jsonc: true,
@@ -14,6 +22,7 @@ export const full: OptionsConfig = {
     nextjs: true,
     node: true,
     perfectionist: true,
+    projectRoot: path.resolve(import.meta.dirname, '..'),
     promise: true,
     react: {
         reactRefresh: {
@@ -30,6 +39,7 @@ export const full: OptionsConfig = {
     unicorn: true,
     vue: {
         a11y: true,
+        sfcBlocks: true,
     },
     yaml: true,
 };
@@ -37,8 +47,9 @@ export const full: OptionsConfig = {
 export const off: OptionsConfig = {
     astro: false,
     comments: false,
+    e18e: false,
     functional: false,
-    ignores: [''],
+    ignores: false,
     imports: false,
     jsdoc: false,
     jsonc: false,
