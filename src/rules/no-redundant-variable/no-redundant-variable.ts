@@ -11,7 +11,9 @@ import {
 import type { TSESTree } from '@typescript-eslint/utils';
 import type { ReportFixFunction, SourceCode } from '@typescript-eslint/utils/ts-eslint';
 
-const isReduntantVariable = (
+import type { createRuleType } from '../utils';
+
+const isRedundantVariable = (
     node: TSESTree.Node | undefined,
     exit: TSESTree.ReturnStatement,
 ): node is TSESTree.VariableDeclaration => {
@@ -24,7 +26,7 @@ const isReduntantVariable = (
     );
 };
 
-const isReduntantVariableFixer = (
+const isRedundantVariableFixer = (
     source: Readonly<SourceCode>,
     variable: TSESTree.VariableDeclaration,
     exit: TSESTree.ReturnStatement,
@@ -43,23 +45,23 @@ const isReduntantVariableFixer = (
         return [fixer.remove(variable), fixer.replaceText(exit.argument, modified)];
     };
 
-const isReturnStatement = (node: TSESTree.Node): node is TSESTree.ReturnStatement => (
+const isReturnStatement = (node: TSESTree.Node): node is TSESTree.ReturnStatement & { argument: TSESTree.Identifier } => (
     node.type === AST_NODE_TYPES.ReturnStatement && isIdentifier(node.argument)
 );
 
-export default createRule({
+const ruleNoRedundantVariables: createRuleType = createRule({
     name: 'no-redundant-variable',
     meta: {
         type: 'problem',
         docs: {
-            description: 'Disallow reduntant variables.',
+            description: 'Disallow redundant variables.',
             recommended: 'stylistic',
             url: 'https://dimensiondev.github.io/eslint-plugin/src/rules/no-redundant-variable',
         },
         fixable: 'code',
         schema: [],
         messages: {
-            noRedundantVar: 'Disallow reduntant variables.',
+            noRedundantVar: 'Disallow redundant variables.',
         },
     },
     create: (context) => ({
@@ -68,13 +70,15 @@ export default createRule({
             if (!exit) return;
 
             const previous = body[body.indexOf(exit) - 1];
-            if (!isReduntantVariable(previous, exit)) return;
+            if (!isRedundantVariable(previous, exit)) return;
 
             context.report({
                 node: exit,
                 messageId: 'noRedundantVar',
-                fix: isReduntantVariableFixer(context.sourceCode, previous, exit),
+                fix: isRedundantVariableFixer(context.sourceCode, previous, exit),
             });
         },
     }),
 });
+
+export default ruleNoRedundantVariables;
