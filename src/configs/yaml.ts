@@ -22,10 +22,7 @@ export const yaml = async (
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
-    const [yamlPlugin, yamlParser] = (await loadPackages([
-        'eslint-plugin-yml',
-        'yaml-eslint-parser',
-    ])) as [ESLint.Plugin, Linter.Parser];
+    const [yamlPlugin, yamlParser] = (await loadPackages(['eslint-plugin-yml', 'yaml-eslint-parser'])) as [ESLint.Plugin, Linter.Parser];
 
     return [
         {
