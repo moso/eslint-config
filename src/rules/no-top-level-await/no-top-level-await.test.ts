@@ -6,9 +6,9 @@ import module from './no-top-level-await';
 const valids = [
     'async function foo() { await bar() }',
     dedent `
-        const a = async () => {
-            await bar()
-        }
+      const a = async () => {
+          await bar()
+      }
     `,
 ];
 
@@ -22,16 +22,16 @@ runTest({
         },
         {
             code: dedent `
-                function foo() {}
-                await foo()
+              function foo() {}
+              await foo()
             `,
             errors: [{ messageId: 'noTopLevelAwait' }],
         },
         {
             code: dedent `
-                const a = {
-                    foo: await bar()
-                }
+              const a = {
+                  foo: await bar()
+              }
             `,
             errors: [{ messageId: 'noTopLevelAwait' }],
         },
