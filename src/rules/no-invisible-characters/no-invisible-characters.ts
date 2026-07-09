@@ -6,7 +6,9 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-const combinePattern = (...patterns: ReadonlyArray<RegExp | string>) => {
+import type { createRuleType } from '../utils';
+
+const combinePattern = (...patterns: ReadonlyArray<string | RegExp>) => {
     const source = patterns
         .map((pattern) => (typeof pattern === 'string' ? pattern : pattern.source))
         .join('');
@@ -29,7 +31,9 @@ const INVISIBLE_PATTERN = combinePattern(
     /\u{E0100}-\u{E01EF}/u,
 );
 
-export default createRule({
+const INVISIBLE_PATTERN_GLOBAL = new RegExp(INVISIBLE_PATTERN.source, 'gu');
+
+const ruleNoInvisibleCharacters: createRuleType = createRule({
     name: 'no-invisible-characters',
     meta: {
         type: 'problem',
@@ -45,11 +49,12 @@ export default createRule({
         },
     },
     create: (context) => makeProgramListener(INVISIBLE_PATTERN, (node: TSESTree.Token) => {
-        const matcher = new RegExp(INVISIBLE_PATTERN.source, 'gu');
         context.report({
             node,
             messageId: 'noInvisibleCharacter',
-            fix: getFixer(node, matcher),
+            fix: getFixer(node, INVISIBLE_PATTERN_GLOBAL),
         });
     }),
 });
+
+export default ruleNoInvisibleCharacters;
