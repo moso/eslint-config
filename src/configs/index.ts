@@ -1,5 +1,6 @@
 export * from './astro';
 export * from './disables';
+export * from './e18e';
 export * from './eslint-comments';
 export * from './functional';
 export * from './ignores';
