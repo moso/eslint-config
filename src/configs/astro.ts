@@ -49,7 +49,6 @@ export const astro = async (
         (await loadPackages(['astro-eslint-parser', 'eslint-plugin-astro'])) as
             [Linter.Parser, (typeof import('eslint-plugin-astro'))['default']];
 
-    // eslint-plugin-astro v2 ships its presets as ARRAYS of flat-config fragments
     const flattenRules = (configs: ReadonlyArray<Linter.Config>): NonNullable<Linter.Config['rules']> =>
         configs.reduce<NonNullable<Linter.Config['rules']>>((acc, config) => Object.assign(acc, config.rules), {});
 
