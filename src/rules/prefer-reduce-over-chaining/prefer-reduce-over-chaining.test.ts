@@ -25,25 +25,25 @@ runTest({
         },
         {
             code: dedent `
-                []
-                .map(() => {})
-                .reduce(() => {}, 0)
+              []
+              .map(() => {})
+              .reduce(() => {}, 0)
             `,
             errors: [{ messageId: 'preferReduceOverChaining' }],
         },
         {
             code: dedent `
-                arr
-                .reduce(() => {}, 0)
-                .map(() => {})
+              arr
+              .reduce(() => {}, 0)
+              .map(() => {})
             `,
             errors: [{ messageId: 'preferReduceOverChaining' }],
         },
         {
             code: dedent `
-                arr
-                .map(() => {})
-                .filter(() => {}, 0)
+              arr
+              .map(() => {})
+              .filter(() => {}, 0)
             `,
             errors: [{ messageId: 'preferReduceOverChaining' }],
         },
