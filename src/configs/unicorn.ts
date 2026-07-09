@@ -19,7 +19,6 @@ export const unicorn = async (
     return [
         {
             name: 'moso/unicorn',
-            // JS-language rules must not reach files linted with the yml/toml/json languages
             files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             plugins: {
                 'unicorn': memoize(unicornPlugin, 'eslint-plugin-unicorn'),
@@ -40,7 +39,6 @@ export const unicorn = async (
                         'unicorn/escape-case': 'error',
                         'unicorn/new-for-builtins': 'error',
                         'unicorn/no-anonymous-default-export': 'error',
-                        // 'unicorn/no-array-for-each': 'error',
                         'unicorn/no-array-method-this-argument': 'error',
                         'unicorn/no-await-expression-member': 'error',
                         'unicorn/no-await-in-promise-methods': 'error',
