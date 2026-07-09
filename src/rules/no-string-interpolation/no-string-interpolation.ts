@@ -2,9 +2,11 @@ import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
+import type { createRuleType } from '../utils';
+
 const isMultiline = ({ loc }: TSESTree.Node) => loc.start.line !== loc.end.line;
 
-export default createRule({
+const ruleNoStringInterpolation: createRuleType = createRule({
     name: 'no-string-interpolation',
     meta: {
         type: 'suggestion',
@@ -19,16 +21,17 @@ export default createRule({
         },
     },
     create: (context) => ({
-        TemplateLiteral: (node: TSESTree.TemplateLiteral) => {
-            node.expressions.reduce((acc, expression) => {
+        TemplateLiteral: ({ expressions }: TSESTree.TemplateLiteral) => {
+            for (const expression of expressions) {
                 if (isMultiline(expression)) {
                     context.report({
                         node: expression,
                         messageId: 'noStringInterpolation',
                     });
                 }
-                return acc;
-            }, undefined);
+            }
         },
     }),
 });
+
+export default ruleNoStringInterpolation;
