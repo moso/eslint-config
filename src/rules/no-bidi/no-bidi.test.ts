@@ -111,10 +111,10 @@ runTest({
         },
         {
             code: dedent `
-                const accessLevel = "user";
-                if (accessLevel != "user\u202E \u2066// Check if admin\u2069 \u2066") {
-                    console.log("You are an admin.")
-                }
+              const accessLevel = "user";
+              if (accessLevel != "user\u202E \u2066// Check if admin\u2069 \u2066") {
+                  console.log("You are an admin.")
+              }
             `,
             errors: [
                 {
@@ -126,10 +126,10 @@ runTest({
                 },
             ],
             output: dedent `
-                const accessLevel = "user";
-                if (accessLevel != "user\\u202E \\u2066// Check if admin\\u2069 \\u2066") {
-                    console.log("You are an admin.")
-                }
+              const accessLevel = "user";
+              if (accessLevel != "user\\u202E \\u2066// Check if admin\\u2069 \\u2066") {
+                  console.log("You are an admin.")
+              }
             `,
         },
     ],
