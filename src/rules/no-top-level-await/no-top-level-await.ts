@@ -1,10 +1,10 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils';
-
 import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export default createRule({
+import type { createRuleType } from '../utils';
+
+const ruleNoTopLevelAwait: createRuleType = createRule({
     name: 'no-top-level-await',
     meta: {
         type: 'problem',
@@ -19,17 +19,24 @@ export default createRule({
         },
     },
     create: (context) => {
-        const source = context.sourceCode;
+        let mut_functionDepth = 0;
+        const enter = (): void => {
+            mut_functionDepth += 1;
+        };
+        const exit = (): void => {
+            mut_functionDepth -= 1;
+        };
 
         return {
-            AwaitExpression: (node: TSESTree.AwaitExpression) => {
-                const ancestors = source.getAncestors(node);
-                const isInsideFunction = ancestors.some((ancestor: TSESTree.Node) =>
-                    ancestor.type === AST_NODE_TYPES.FunctionDeclaration ||
-                    ancestor.type === AST_NODE_TYPES.FunctionExpression ||
-                    ancestor.type === AST_NODE_TYPES.ArrowFunctionExpression);
+            'ArrowFunctionExpression': enter,
+            'ArrowFunctionExpression:exit': exit,
+            'FunctionDeclaration': enter,
+            'FunctionDeclaration:exit': exit,
+            'FunctionExpression': enter,
+            'FunctionExpression:exit': exit,
 
-                if (!isInsideFunction) {
+            'AwaitExpression': (node: TSESTree.AwaitExpression) => {
+                if (mut_functionDepth === 0) {
                     context.report({
                         node,
                         messageId: 'noTopLevelAwait',
@@ -39,3 +46,5 @@ export default createRule({
         };
     },
 });
+
+export default ruleNoTopLevelAwait;
