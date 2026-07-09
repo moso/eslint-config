@@ -2,7 +2,9 @@ import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export default createRule({
+import type { createRuleType } from '../utils';
+
+const ruleNoImportDuplicates: createRuleType = createRule({
     name: 'no-import-duplicates',
     meta: {
         type: 'problem',
@@ -25,18 +27,20 @@ export default createRule({
                 const id = x.local.name;
                 if (mut_names.has(id)) {
                     context.report({
-                        node,
-                        loc: {
-                            start: x.loc.end,
-                            end: x.loc.start,
-                        },
+                        node: x,
                         messageId: 'noImportDuplicates',
                         fix: (fixer) => {
-                            const y = x.range[0];
-                            let mut_z = x.range[1];
-                            if (context.sourceCode.text[mut_z] === ',') mut_z += 1;
+                            const { text } = context.sourceCode;
+                            let mut_start = x.range[0];
+                            let mut_end = x.range[1];
 
-                            return fixer.removeRange([y, mut_z]);
+                            if (text[mut_end] === ',') mut_end += 1;
+                            else {
+                                const comma = text.lastIndexOf(',', mut_start - 1);
+                                if (comma !== -1 && text.slice(comma + 1, mut_start).trim() === '') mut_start = comma;
+                            }
+
+                            return fixer.removeRange([mut_start, mut_end]);
                         },
                     });
                 }
@@ -46,3 +50,5 @@ export default createRule({
         },
     }),
 });
+
+export default ruleNoImportDuplicates;
