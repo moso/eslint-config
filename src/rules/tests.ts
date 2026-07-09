@@ -8,7 +8,7 @@ import type { TSESLint } from '@typescript-eslint/utils';
 
 import type { ExportedRuleModule } from './utils';
 
-type TestCaseGenerator<T, R = T> = ((cast: (input: T) => T) => Generator<R>) | (ReadonlyArray<R>);
+type TestCaseGenerator<T, R = T> = (ReadonlyArray<R>) | ((cast: (input: T) => T) => Generator<R>);
 
 type TestOptions<TOptions extends ReadonlyArray<unknown>, TMessageIds extends string> = {
     invalid?: TestCaseGenerator<InvalidTestCase<TMessageIds, TOptions>>;
@@ -45,9 +45,9 @@ const ruleTest = new RuleTester({
 });
 
 export function runTest<TOptions extends ReadonlyArray<unknown>, TMessageIds extends string>(
-    { invalid, module, valid }: TestOptions<TOptions, TMessageIds>,
+    { invalid, module, valid }: Readonly<TestOptions<TOptions, TMessageIds>>,
     extraRules?: Record<string, TSESLint.AnyRuleModule>,
-) {
+): void {
     const $invalid = typeof invalid === 'function'
         ? [...invalid(identity)]
         : (invalid);
@@ -75,17 +75,13 @@ export function runTest<TOptions extends ReadonlyArray<unknown>, TMessageIds ext
                 },
             });
 
-            Object.entries(extraRules).reduce((acc, [name, rule]) => {
-                extraRulesTester.defineRule(name, rule);
-                return acc;
-            }, []);
+            for (const [name, rule] of Object.entries(extraRules)) extraRulesTester.defineRule(name, rule);
 
             return extraRulesTester;
         })()
         : ruleTest;
 
-    // eslint-disable-next-line @moso/no-force-cast-via-top-type -- mismatch
-    tester.run(module.name, module as unknown as TSESLint.RuleModule<TMessageIds, TOptions>, {
+    tester.run(module.name, module, {
         valid: ($valid?.flat() ?? []).map((item, index) => {
             if (typeof item === 'string') return item;
 
