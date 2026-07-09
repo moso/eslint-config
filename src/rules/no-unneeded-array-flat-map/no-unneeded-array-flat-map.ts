@@ -8,7 +8,9 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export default createRule({
+import type { createRuleType } from '../utils';
+
+const ruleNoUnneededArrayFlatMap: createRuleType = createRule({
     name: 'no-unneeded-array-flat-map',
     meta: {
         type: 'suggestion',
@@ -37,9 +39,11 @@ export default createRule({
                 messageId: 'noUnneededArrayFlatMap',
                 fix: (fixer) => [
                     fixer.replaceText(property, 'flat'),
-                    ...node.arguments.map((node) => fixer.remove(node)),
+                    ...node.arguments.map((argument) => fixer.remove(argument)),
                 ],
             });
         },
     }),
 });
+
+export default ruleNoUnneededArrayFlatMap;
