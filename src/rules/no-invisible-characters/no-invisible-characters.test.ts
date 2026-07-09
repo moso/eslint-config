@@ -12,5 +12,15 @@ runTest({
             errors: [{ messageId: 'noInvisibleCharacter' }],
             output: '"\\u{E0100}example\\u{E0100}"',
         },
+        {
+            code: '"a\u200Bb"',
+            errors: [{ messageId: 'noInvisibleCharacter' }],
+            output: '"a\\u200Bb"',
+        },
+        {
+            code: '"a\u00ADb"',
+            errors: [{ messageId: 'noInvisibleCharacter' }],
+            output: '"a\\u00ADb"',
+        },
     ],
 });
