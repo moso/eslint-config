@@ -17,6 +17,10 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - Respects `.gitignore` by default
 - Requires ESLint v9.30.0+
 
+> [!NOTE]
+> **Note regarding TypeScript v7**
+> See the [FAQ](#typescript-7)
+
 ## Configs
 
 This section contains a list of the plugins used in the named configs that ships with this shareable config.
@@ -774,6 +778,29 @@ bunx simple-git-hooks
 ```
 
 ## FAQ
+
+### TypeScript 7?
+
+TypeScript 7.0 [does not ship a compiler API](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) (a new one supposedly arrives in 7.1), so [`typescript-eslint`](https://typescript-eslint.io) - and therefore all TypeScript linting in this config - cannot run against it. TypeScript's supported setup is running TypeScript 6 side-by-side through the [`@typescript/typescript6`](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0) compatibility package, aliased so tooling that imports `typescript` keeps working:
+
+```bash
+bun add --dev typescript@npm:@typescript/typescript6
+```
+
+Optionally keep TypeScript 7's own `tsc` around as well:
+
+```jsonc
+{
+    "devDependencies": {
+        "@typescript/native": "npm:typescript@^7.0.2",
+        "typescript": "npm:@typescript/typescript6@^6.0.2"
+    }
+}
+```
+
+With the alias in place, this config works unchanged. Without it, the config detects TypeScript >7 and fails fast: an explicit `typescript: true` throws with these instructions, while auto-detection prints a warning and degrades to JavaScript-only linting instead of crashing inside the parser.
+
+**Keep in mind**, this is temporary until an API is provided by TypeScript for v7.
 
 ### I want it less opinionated
 
