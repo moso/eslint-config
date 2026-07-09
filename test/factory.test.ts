@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
 import { it } from 'vitest';
 
 import { moso } from '../src/factory';
 import { full, off } from '../src/presets';
+
+import type { Linter } from 'eslint';
 
 import type { OptionsConfig, TypedFlatConfigItem } from '../src/types';
 
@@ -13,79 +14,94 @@ type ConfigPreset = {
 
 const configPresets: ReadonlyArray<ConfigPreset> = [
     {
-        name: 'default',
         configs: {},
+        name: 'default',
     },
     {
-        name: 'full-off',
         configs: off,
+        name: 'full-off',
     },
     {
-        name: 'full-on',
         configs: full,
+        name: 'full-on',
     },
     {
-        name: 'less-opinionated',
+        configs: {
+            ignores: {
+                gitignore: true,
+                ignoreTypeScript: true,
+                userIgnores: false,
+            },
+        },
+        name: 'ignores',
+    },
+    {
         configs: {
             lessOpinionated: true,
         },
+        name: 'less-opinionated',
     },
     {
-        name: 'js-vue',
         configs: {
             typescript: false,
             vue: true,
         },
+        name: 'js-vue',
     },
     {
-        name: 'is-in-ide',
         configs: {
             isInEditor: true,
         },
+        name: 'is-in-ide',
     },
 ];
 
 const ignoreConfigs: ReadonlyArray<string> = ['moso/ignores', 'moso/javascript/setup'];
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-const serializeConfigPresets = (configs: TypedFlatConfigItem[]) => configs.map((config) => {
+const serializeName = (value: string | Readonly<Linter.Parser | Linter.Processor>): string => (
+    typeof value === 'string' ? value : (value.meta?.name ?? 'unknown')
+);
+
+const unserializableParserOptions = new Set(['parser',
+'projectRoot',
+'projectService',
+'tsconfigRootDir']);
+
+const serializeLanguageOptions = (languageOptions: Linter.LanguageOptions): Record<string, unknown> => {
+    const {
+ globals: _globals, parser, parserOptions, ...rest
+} = languageOptions;
+
+    return {
+        ...rest,
+        ...(parser !== undefined && { parser: serializeName(parser) }),
+        ...(parserOptions !== undefined && {
+            parserOptions: Object.fromEntries(
+                Object.entries(parserOptions).filter(([key]) => !unserializableParserOptions.has(key)),
+            ),
+        }),
+    };
+};
+
+const serializeConfigPresets = (configs: TypedFlatConfigItem[]): unknown[] => configs.map((config) => {
     if (config.name !== undefined && ignoreConfigs.includes(config.name)) return '--ignored--';
 
-    const mut_clone = { ...config } as any;
-    if (config.plugins) mut_clone.plugins = Object.keys(config.plugins);
+    const {
+ languageOptions, plugins, processor, rules, ...rest
+} = config;
 
-    if (config.languageOptions) {
-        if (config.languageOptions.parser !== undefined) {
-            if (typeof config.languageOptions.parser !== 'string') {
-                mut_clone.languageOptions.parser = (config.languageOptions.parser as any).meta?.name ??
-                    (config.languageOptions.parser as any).name ??
-                    'unknown';
-            }
-        }
-        delete mut_clone.languageOptions.globals;
-        if (config.languageOptions.parserOptions !== undefined) {
-            delete mut_clone.languageOptions.parserOptions.parser;
-            delete mut_clone.languageOptions.parserOptions.projectService;
-            delete mut_clone.languageOptions.parserOptions.projectRoot;
-        }
-    }
-
-    if (config.processor !== undefined)
-        if (typeof config.processor !== 'string') mut_clone.processor = (config.processor as any).meta?.name ?? 'unknown';
-
-    if (config.rules !== undefined) {
-        mut_clone.rules = Object.entries(config.rules)
-            .map(([rule, value]) => {
-                if (value === 'off' || value === 0) return `- ${rule}`;
-                return rule;
-            });
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return mut_clone;
+    return {
+        ...rest,
+        ...(plugins !== undefined && { plugins: Object.keys(plugins) }),
+        ...(languageOptions !== undefined && { languageOptions: serializeLanguageOptions(languageOptions) }),
+        ...(processor !== undefined && { processor: serializeName(processor) }),
+        ...(rules !== undefined && {
+            rules: Object.entries(rules).map(([rule, value]) => (value === 'off' || value === 0 ? `- ${rule}` : rule)),
+        }),
+    };
 });
 
-configPresets.map(({ name, configs }) =>
+configPresets.map(({ configs, name }) =>
     it.concurrent(`factory ${name}`, async ({ expect }) => {
         const config = await moso(configs);
         await expect(serializeConfigPresets(config))
