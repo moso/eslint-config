@@ -56,7 +56,7 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
     },
 ];
 
-const ignoreConfigs: ReadonlyArray<string> = ['moso/ignores', 'moso/javascript/setup'];
+const ignoreConfigs: ReadonlySet<string> = new Set(['moso/ignores', 'moso/javascript/setup']);
 
 const serializeName = (value: string | Readonly<Linter.Parser | Linter.Processor>): string => (
     typeof value === 'string' ? value : (value.meta?.name ?? 'unknown')
@@ -84,7 +84,7 @@ const serializeLanguageOptions = (languageOptions: Linter.LanguageOptions): Reco
 };
 
 const serializeConfigPresets = (configs: TypedFlatConfigItem[]): unknown[] => configs.map((config) => {
-    if (config.name !== undefined && ignoreConfigs.includes(config.name)) return '--ignored--';
+    if (config.name !== undefined && ignoreConfigs.has(config.name)) return '--ignored--';
 
     const {
  languageOptions, plugins, processor, rules, ...rest
@@ -101,9 +101,8 @@ const serializeConfigPresets = (configs: TypedFlatConfigItem[]): unknown[] => co
     };
 });
 
-configPresets.map(({ configs, name }) =>
-    it.concurrent(`factory ${name}`, async ({ expect }) => {
-        const config = await moso(configs);
-        await expect(serializeConfigPresets(config))
-            .toMatchFileSnapshot(`./__snapshots__/factory/${name}.snap.js`);
-    }));
+it.concurrent.for(configPresets)('factory $name', async ({ configs, name }, { expect }) => {
+    const config = await moso(configs);
+    await expect(serializeConfigPresets(config))
+        .toMatchFileSnapshot(`./__snapshots__/factory/${name}.snap.js`);
+});

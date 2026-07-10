@@ -108,7 +108,7 @@ export const react = async (
                     ecmaFeatures: {
                         jsx: true,
                     },
-                    ...(typescript ? parserOptions : undefined),
+                    ...(typescript && parserOptions),
                 },
                 sourceType: 'module',
             },

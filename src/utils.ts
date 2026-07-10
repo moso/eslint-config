@@ -44,7 +44,11 @@ export const checkFilePath = (path: string): string => {
     return path;
 };
 
-let mut_globalIgnoreCount = 0;
+/** Auto-numbering for unnamed `globalIgnores` items; the counter lives in the closure. */
+const nextGlobalIgnoresName = ((): (() => string) => {
+    let mut_count = 0;
+    return () => `globalIgnores ${mut_count++}`;
+})();
 
 /**
  * Build a global-ignores config item (an item with only `ignores`,
@@ -60,7 +64,7 @@ export const globalIgnores = (ignorePatterns: ReadonlyArray<string>, name?: stri
     if (ignorePatterns.length === 0) throw new TypeError('`ignorePatterns` must contain at least one pattern');
 
     return {
-        name: (name ?? `globalIgnores ${mut_globalIgnoreCount++}`),
+        name: name ?? nextGlobalIgnoresName(),
         ignores: ignorePatterns as ReadonlyArray<string>,
     };
 };
@@ -216,6 +220,7 @@ declare global {
  * @see https://github.com/SukkaW/eslint-config-sukka/blob/master/packages/shared/src/memoize-eslint-plugin.ts
  */
 export const memoize = <T extends ESLint.Plugin>(plugin: T, key: string): T => {
+    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     globalThis.__ESLINT_PLUGIN_MEMO__ ??= new Map<string, ESLint.Plugin>();
 
     const mut_memo = globalThis.__ESLINT_PLUGIN_MEMO__;

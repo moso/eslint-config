@@ -123,7 +123,7 @@ export const vue = async (
                     },
                     extraFileExtensions: ['.vue'],
                     parser: typescript ? typescriptParser : null,
-                    ...(typescript ? parserOptions : undefined),
+                    ...(typescript && parserOptions),
                     sourceType: 'module',
                 },
             },

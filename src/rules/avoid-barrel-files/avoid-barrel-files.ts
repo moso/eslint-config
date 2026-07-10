@@ -10,6 +10,13 @@ export type Options = {
     amountOfExportsToConsiderModuleAsBarrel: number;
 };
 
+const declarationTypes: ReadonlySet<AST_NODE_TYPES> = new Set([
+    AST_NODE_TYPES.ClassDeclaration,
+    AST_NODE_TYPES.FunctionDeclaration,
+    AST_NODE_TYPES.TSInterfaceDeclaration,
+    AST_NODE_TYPES.TSTypeAliasDeclaration,
+]);
+
 const ruleAvoidBarrelFiles: createRuleType = createRule({
     name: 'avoid-barrel-files',
     meta: {
@@ -41,12 +48,7 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                     if (statement.type === AST_NODE_TYPES.VariableDeclaration)
                         return { declarationCount: declarationCount + statement.declarations.length, exportCount };
 
-                    if (
-                        statement.type === AST_NODE_TYPES.ClassDeclaration ||
-                        statement.type === AST_NODE_TYPES.FunctionDeclaration ||
-                        statement.type === AST_NODE_TYPES.TSInterfaceDeclaration ||
-                        statement.type === AST_NODE_TYPES.TSTypeAliasDeclaration
-                    )
+                    if (declarationTypes.has(statement.type))
                         return { declarationCount: declarationCount + 1, exportCount };
 
                     if (statement.type === AST_NODE_TYPES.ExportNamedDeclaration)

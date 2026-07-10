@@ -209,7 +209,7 @@ export async function moso(
     const projectServiceUserConfig = {
         defaultProject: './tsconfig.json',
         loadTypeScriptPlugins: isInEditor,
-        ...(typeof parserOptions?.projectService === 'object' ? parserOptions.projectService : undefined),
+        ...((typeof parserOptions?.projectService === 'object') && parserOptions.projectService),
     };
 
     const defaultFilesTypesAware = [GLOB_DTS, GLOB_TS, GLOB_TSX];
@@ -248,10 +248,7 @@ export async function moso(
         ...resolveSubOptions(options, 'functional'),
     };
 
-    const mut_configs: Array<Awaitable<TypedFlatConfigItem[]>> = [];
-
-    // Base configs
-    mut_configs.push(
+    const mut_configs: Array<Awaitable<TypedFlatConfigItem[]>> = [
         comments({
             overrides: getOverrides(options, 'comments'),
         }),
@@ -291,7 +288,9 @@ export async function moso(
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'unicorn'),
         }),
-    );
+    ];
+
+    // Base configs
 
     if (astroOptions !== false) {
         mut_configs.push(
@@ -492,7 +491,7 @@ export async function moso(
             'no-only-tests/no-only-tests',
             'prefer-const',
         ], {
-            // eslint-disable-next-line @typescript-eslint/no-deprecated -- ESLint 9+ deprecates builtinRules without offering a runtime replacement
+            // eslint-disable-next-line @typescript-eslint/no-deprecated, unicorn/prefer-await -- ESLint 9+ deprecates builtinRules without offering a runtime replacement
             builtinRules: async () => import('eslint/use-at-your-own-risk').then((r) => r.builtinRules),
         });
     }

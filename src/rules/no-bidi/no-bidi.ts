@@ -9,7 +9,7 @@ import type { TSESTree } from '@typescript-eslint/utils';
 
 import type { createRuleType } from '../utils';
 
-const BIDI_PATTERN = /[\u061C\u202A-\u202E\u2066-\u2069]/u;
+const BIDI_PATTERN = /[\u{61C}\u{202A}-\u{202E}\u{2066}-\u{2069}]/u;
 const BIDI_PATTERN_GLOBAL = new RegExp(BIDI_PATTERN.source, 'gu');
 
 const ruleNoBidi: createRuleType = createRule({

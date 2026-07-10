@@ -249,12 +249,15 @@ export const makeProgramListener = (
     onReport: (node: TSESTree.Token, kind: string) => void,
 ): RuleListener => ({
     Program: (program: TSESTree.Program) => {
-        for (const token of program.tokens ?? []) {
+        const tokens = program.tokens ?? [];
+        const comments = program.comments ?? [];
+
+        for (const token of tokens) {
             const value = getValue(token);
             if (value !== false && pattern.test(value)) onReport(token, 'code');
         }
 
-        for (const comment of program.comments ?? [])
+        for (const comment of comments)
             if (pattern.test(comment.value)) onReport(comment, 'comment');
     },
 });

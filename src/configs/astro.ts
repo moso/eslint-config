@@ -64,7 +64,7 @@ export const astro = async (
                 parserOptions: {
                     extraFileExtensions: ['.astro'],
                     parser: typescript ? typescriptParser : undefined,
-                    ...(typescript ? parserOptions : undefined),
+                    ...(typescript && parserOptions),
                 },
                 sourceType: 'module',
             },
@@ -109,7 +109,7 @@ export const astro = async (
                     // frontmatter fence tokens (`---`)
                     // @see https://ota-meshi.github.io/eslint-plugin-astro/rules/semi
                     // @see https://eslint.org/docs/latest/rules/semi
-                    'semi': 'off',
+                    // 'semi': 'off', -- deprecated
                     'astro/semi': ['error', stylistic.semi ? 'always' : 'never'],
                 }),
 
@@ -126,10 +126,7 @@ export const astro = async (
                         'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y'),
                     },
                     rules: {
-                        ...(lessOpinionated
-                            ? flattenRules(astroPlugin.configs['jsx-a11y-recommended'])
-                            : flattenRules(astroPlugin.configs['jsx-a11y-strict'])
-                        ),
+                        ...flattenRules(astroPlugin.configs[lessOpinionated ? 'jsx-a11y-recommended' : 'jsx-a11y-strict']),
 
                         ...overridesA11y,
                     },

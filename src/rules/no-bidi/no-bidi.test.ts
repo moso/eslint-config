@@ -19,7 +19,7 @@ runTest({
     valid: valids,
     invalid: [
         {
-            code: 'const foo = "Hello\u202EWorld"',
+            code: 'const foo = "Hello\u{202E}World"',
             errors: [
                 {
                     messageId: 'noBidi',
@@ -32,7 +32,7 @@ runTest({
             output: 'const foo = "Hello\\u202EWorld"',
         },
         {
-            code: 'const bar = "Test\u061CString"',
+            code: 'const bar = "Test\u{61C}String"',
             errors: [
                 {
                     messageId: 'noBidi',
@@ -45,7 +45,7 @@ runTest({
             output: 'const bar = "Test\\u061CString"',
         },
         {
-            code: 'const test = "Data\u202DValue"',
+            code: 'const test = "Data\u{202D}Value"',
             errors: [
                 {
                     messageId: 'noBidi',
@@ -58,7 +58,7 @@ runTest({
             output: 'const test = "Data\\u202DValue"',
         },
         {
-            code: 'const sample = "Info\u2066Item"',
+            code: 'const sample = "Info\u{2066}Item"',
             errors: [
                 {
                     messageId: 'noBidi',
@@ -71,7 +71,7 @@ runTest({
             output: 'const sample = "Info\\u2066Item"',
         },
         {
-            code: 'const example = "Text\u2067Here"',
+            code: 'const example = "Text\u{2067}Here"',
             errors: [
                 {
                     messageId: 'noBidi',
@@ -84,7 +84,7 @@ runTest({
             output: 'const example = "Text\\u2067Here"',
         },
         {
-            code: 'const content = "Word\u2068There"',
+            code: 'const content = "Word\u{2068}There"',
             errors: [
                 {
                     messageId: 'noBidi',
@@ -97,7 +97,7 @@ runTest({
             output: 'const content = "Word\\u2068There"',
         },
         {
-            code: 'const value = "Line\u2069End"',
+            code: 'const value = "Line\u{2069}End"',
             errors: [
                 {
                     messageId: 'noBidi',
