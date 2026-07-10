@@ -46,7 +46,7 @@
     },
     "scripts": {
         "build": "bun run typegen && tsdown --clean --dts",
-        "build:inspector": "bun run build && bunx @eslint/config-inspector build",
+        "build:inspector": "bun run build && bunx @eslint/config-inspector build --config eslint.config.ts --out-dir ./.eslint-config-inspector",
         "dev": "bunx @eslint/config-inspector --config eslint.config.ts",
         "lint": "eslint",
         "prepack": "bun run build",
