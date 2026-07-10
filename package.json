@@ -53,6 +53,7 @@
         "prepare": "bun run simple-git-hooks",
         "release": "bumpp && bun publish",
         "test": "vitest run",
+        "test:update-snapshots": "vitest --update",
         "typecheck": "tsc --noEmit",
         "typegen": "tsx scripts/typegen.ts",
         "watch": "tsdown --watch"
@@ -61,7 +62,7 @@
         "src/rules"
     ],
     "peerDependencies": {
-        "@eslint-react/eslint-plugin": "^5.13.2",
+        "@eslint-react/eslint-plugin": "^5.14.0",
         "@next/eslint-plugin-next": "^16.2.10",
         "astro-eslint-parser": "^2.1.0",
         "eslint": ">=9.30.0 || >=10",
@@ -150,7 +151,7 @@
         "yaml-eslint-parser": "^2.1.0"
     },
     "devDependencies": {
-        "@eslint-react/eslint-plugin": "^5.13.2",
+        "@eslint-react/eslint-plugin": "^5.14.0",
         "@eslint/compat": "^2.1.0",
         "@eslint/config-inspector": "^3.0.4",
         "@moso/eslint-plugin": "workspace:*",
