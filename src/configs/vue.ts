@@ -1,12 +1,10 @@
-import inlineElements from 'eslint-plugin-vue/lib/utils/inline-non-void-elements.json' with { type: 'json' };
 import { isPackageExists } from 'local-pkg';
 
 import { GLOB_SRC_EXT } from '../globs';
 import {
-    ensurePackages,
-    interopDefault,
     loadPackages,
     memoize,
+    vueInlineElements,
 } from '../utils';
 
 import type { ESLint, Linter } from 'eslint';
@@ -15,14 +13,15 @@ import type {
     OptionsFiles,
     OptionsHasTypeScript,
     OptionsOverrides,
-    OptionsStylistic,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
     OptionsVue,
+    RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
 
 type VuePlugin = ESLint.Plugin & Omit<VuePluginImportedType, 'processors'> & {
+    configs: VuePluginImportedType['configs'];
     processors: Record<keyof VuePluginImportedType['processors'], Linter.Processor>;
 };
 
@@ -38,8 +37,8 @@ export const vue = async (
         Required<
             OptionsFiles &
             OptionsHasTypeScript &
-            OptionsStylistic &
-            OptionsTypeScriptParserOptions
+            OptionsTypeScriptParserOptions &
+            RequiredOptionsStylistic
         >
     >,
 ): Promise<TypedFlatConfigItem[]> => {
@@ -58,10 +57,6 @@ export const vue = async (
 
     const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
-    await ensurePackages(['eslint-plugin-vue']);
-
-    if (a11y) await ensurePackages(['eslint-plugin-vuejs-accessibility']);
-
     const [
         vuePlugin,
         vueParser,
@@ -79,10 +74,6 @@ export const vue = async (
         typeof import('eslint-merge-processors'),
     ];
 
-    const [vueA11yPlugin] = await Promise.all([
-        ...a11y ? [interopDefault(import('eslint-plugin-vuejs-accessibility'))] : [],
-    ]);
-
     const isTypeAware = typeof projectRoot === 'string';
 
     const isUsingNuxt = NuxtPackages.some((x) => isPackageExists(x));
@@ -91,7 +82,10 @@ export const vue = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const typescriptParser = typescript ? (await loadPackages(['@typescript-eslint/parser'])) as [Linter.Parser] : undefined;
+    const [typescriptParser] = typescript ? (await loadPackages(['@typescript-eslint/parser'])) as [Linter.Parser] : [undefined];
+    const [vueA11yPlugin] = a11y
+        ? (await loadPackages(['eslint-plugin-vuejs-accessibility'])) as [typeof import('eslint-plugin-vuejs-accessibility')]
+        : [undefined];
 
     return [
         {
@@ -129,7 +123,7 @@ export const vue = async (
                     },
                     extraFileExtensions: ['.vue'],
                     parser: typescript ? typescriptParser : null,
-                    ...(typescript ? parserOptions : undefined),
+                    ...(typescript && parserOptions),
                     sourceType: 'module',
                 },
             },
@@ -148,17 +142,17 @@ export const vue = async (
             rules: {
                 ...vuePlugin.configs.base.rules,
 
-                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch
+                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vuePlugin is structured
                 ...vuePlugin.configs['flat/essential']
                     .map((config) => config.rules ?? {})
                     .reduce((acc, rules) => Object.assign(acc, rules), {}),
 
-                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch
+                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vuePlugin is structured
                 ...vuePlugin.configs['flat/strongly-recommended']
                     .map((config) => config.rules ?? {})
                     .reduce((acc, rules) => Object.assign(acc, rules), {}),
 
-                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch
+                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vuePlugin is structured
                 ...vuePlugin.configs['flat/recommended']
                     .map((config) => config.rules ?? {})
                     .reduce((acc, rules) => Object.assign(acc, rules), {}),
@@ -263,14 +257,14 @@ export const vue = async (
                                 'router-link',
                                 'textarea',
                                 'u-link',
-                                ...inlineElements,
+                                ...vueInlineElements,
                             ],
                             ignoreWhenEmpty: true,
                         },
                     ],
                     // 'vue/object-curly-newline': 'off',
                     'vue/object-curly-spacing': ['error', 'always'],
-                    'vue/object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
+                    'vue/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
                     'vue/one-component-per-file': 'off',
                     'vue/operator-linebreak': ['error', 'before'],
                     'vue/padding-line-between-blocks': ['error', 'always'],
@@ -289,7 +283,7 @@ export const vue = async (
                                 'router-link',
                                 'textarea',
                                 'u-link',
-                                ...inlineElements,
+                                ...vueInlineElements,
                             ],
                             ignoreWhenEmpty: true,
                             ignoreWhenNoAttributes: true,
@@ -301,7 +295,6 @@ export const vue = async (
 
                 ...(typescript && {
                     // Rules specifically for Vue + TypeScript. See `isTypeAware`-section for type-aware rules
-
                     'no-undef': 'off',
                     'no-dupe-class-members': 'off',
                     'no-redeclare': 'off',
@@ -379,16 +372,16 @@ export const vue = async (
             }]
             : []) satisfies TypedFlatConfigItem[]
         ),
-        ...((a11y
+        ...((vueA11yPlugin
             ? [{
                 name: 'moso/vue/a11y',
                 plugins: {
                     'vue-a11y': memoize(vueA11yPlugin, 'eslint-plugin-vuejs-accessibility'),
                 },
                 rules: {
-                    // eslint-disable-next-line @moso/prefer-reduce-over-chaining
+                    // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vue-a11y is structured
                     ...vueA11yPlugin.configs['flat/recommended']
-                        .map((config) => config.rules ?? {})
+                        .map((config) => ('rules' in config ? config.rules : undefined) ?? {})
                         .reduce((acc, rules) => Object.assign(acc, rules), {}),
 
                     ...overridesA11y,
@@ -402,24 +395,21 @@ export const vue = async (
                 {
                     name: 'moso/nuxt/ignores',
                     ignores: [
+                        '**/.netlify',
                         '**/.nuxt',
                         '**/.output',
                         '**/.vercel',
-                        '**/.netlify',
                         '**/public',
                     ],
                 },
                 {
                     name: 'moso/nuxt/rules',
                     files: [
-                        // These pages are not used directly by users, so they can have one-worded names
-                        `**/pages/**/*.{${GLOB_SRC_EXT},vue}`,
-                        `**/layouts/**/*.{${GLOB_SRC_EXT},vue}`,
                         `**/app.{${GLOB_SRC_EXT},vue}`,
-                        `**/error.{${GLOB_SRC_EXT},vue}`,
-
-                        // These files shouldn't have multiple words in their names since they are in subdirs
                         `**/components/*/**/*.{${GLOB_SRC_EXT},vue}`,
+                        `**/error.{${GLOB_SRC_EXT},vue}`,
+                        `**/layouts/**/*.{${GLOB_SRC_EXT},vue}`,
+                        `**/pages/**/*.{${GLOB_SRC_EXT},vue}`,
                     ],
                     rules: {
                         'vue/multi-word-component-names': 'off',
@@ -427,9 +417,8 @@ export const vue = async (
                 },
                 {
                     files: [
-                        // Pages and layouts are required to have a single root element if transitions are enabled
+                        `**/layouts/**/*.{${GLOB_SRC_EXT},vue}`,
                         `**/pages/**/*.{${GLOB_SRC_EXT},vue}`,
-                        `**/layouts/**/*,{${GLOB_SRC_EXT},vue}`,
                     ],
                     rules: {
                         'vue/no-multiple-template-root': 'error',

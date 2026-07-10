@@ -5,6 +5,8 @@ import { createRule, isFunctionLike } from '../utils';
 import type { TSESTree } from '@typescript-eslint/utils';
 import type { ReportFixFunction, RuleContext } from '@typescript-eslint/utils/ts-eslint';
 
+import type { createRuleType } from '../utils';
+
 const isTriggering = (node: TSESTree.Node, maximumStatements: number) => {
     if (node.type !== AST_NODE_TYPES.IfStatement || node.alternate !== null) return false;
 
@@ -16,7 +18,7 @@ const isTriggering = (node: TSESTree.Node, maximumStatements: number) => {
 };
 
 const makeFixer = (
-    context: Readonly<RuleContext<string, unknown[]>>,
+    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>,
     parent: TSESTree.Statement,
 ): ReportFixFunction => (fixer) => {
     if (parent.type !== AST_NODE_TYPES.IfStatement) return [];
@@ -27,9 +29,12 @@ const makeFixer = (
         ? context.sourceCode.getText(consequent).slice(1, -1).trim()
         : context.sourceCode.getText(consequent);
 
+    const negated = test.type === AST_NODE_TYPES.UnaryExpression && test.operator === '!'
+        ? context.sourceCode.getText(test.argument)
+        : `!(${context.sourceCode.getText(test)})`;
+
     return [
-        fixer.insertTextBefore(test, '!('),
-        fixer.insertTextAfter(test, ')'),
+        fixer.replaceText(test, negated),
         fixer.replaceText(consequent, 'return;'),
         fixer.insertTextAfter(parent, `\n${bodyText}`),
     ];
@@ -39,7 +44,7 @@ export type Options = {
     maximumStatements: number;
 };
 
-export default createRule({
+const rulePreferEarlyReturns: createRuleType = createRule({
     name: 'prefer-early-return',
     meta: {
         type: 'problem',
@@ -62,8 +67,8 @@ export default createRule({
             preferEarlyReturn: 'Prefer an early return to a conditionally-wrapped function body.',
         },
     },
-    resolveOptions: (options?: Options) => options?.maximumStatements ?? 1,
-    create: (context, maximumStatements: number) => ({
+    defaultOptions: [{ maximumStatements: 1 }] as [Options],
+    create: (context, [{ maximumStatements }]) => ({
         BlockStatement: ({ body, parent }: TSESTree.BlockStatement) => {
             if (!isFunctionLike(parent)) return;
 
@@ -78,3 +83,5 @@ export default createRule({
         },
     }),
 });
+
+export default rulePreferEarlyReturns;

@@ -2,14 +2,17 @@ import {
     createRule,
     escape,
     getFixer,
-    getValue,
+    makeProgramListener,
 } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-const BIDI_PATTERN = /[\u061C\u202A-\u202E\u2066-\u2069]/u;
+import type { createRuleType } from '../utils';
 
-export default createRule({
+const BIDI_PATTERN = /[\u{61C}\u{202A}-\u{202E}\u{2066}-\u{2069}]/u;
+const BIDI_PATTERN_GLOBAL = new RegExp(BIDI_PATTERN.source, 'gu');
+
+const ruleNoBidi: createRuleType = createRule({
     name: 'no-bidi',
     meta: {
         type: 'problem',
@@ -24,33 +27,14 @@ export default createRule({
             noBidi: 'Detected potential trojan source attack with unicode bidi introduced in this {{kind}}: {{text}}.',
         },
     },
-    create: (context) => {
-        const onReport = (node: TSESTree.Token, kind: string) => {
-            const matcher = new RegExp(BIDI_PATTERN.source, 'gu');
-            const data = { kind, text: escape(node.value, matcher) };
-            context.report({
-                node,
-                data,
-                messageId: 'noBidi',
-                fix: getFixer(node, matcher),
-            });
-        };
-
-        return {
-            Program: (program: TSESTree.Program) => {
-                (program.tokens ?? []).reduce((acc, token) => {
-                    const value = getValue(token);
-                    if (value !== false && BIDI_PATTERN.test(value))
-                        onReport(token, 'code');
-                    return acc;
-                }, []);
-
-                (program.comments ?? []).reduce((acc, comment) => {
-                    if (BIDI_PATTERN.test(comment.value))
-                        onReport(comment, 'comment');
-                    return acc;
-                }, []);
-            },
-        };
-    },
+    create: (context) => makeProgramListener(BIDI_PATTERN, (node: TSESTree.Token, kind: string) => {
+        context.report({
+            node,
+            data: { kind, text: escape(node.value, BIDI_PATTERN_GLOBAL) },
+            messageId: 'noBidi',
+            fix: getFixer(node, BIDI_PATTERN_GLOBAL),
+        });
+    }),
 });
+
+export default ruleNoBidi;

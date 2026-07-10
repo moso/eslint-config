@@ -8,9 +8,19 @@ runTest({
     valid: valids,
     invalid: [
         {
-            code: '"\uDB40\uDD00example\uDB40\uDD00"',
+            code: '"\u{E0100}example\u{E0100}"',
             errors: [{ messageId: 'noInvisibleCharacter' }],
             output: '"\\u{E0100}example\\u{E0100}"',
+        },
+        {
+            code: '"a\u{200B}b"',
+            errors: [{ messageId: 'noInvisibleCharacter' }],
+            output: '"a\\u200Bb"',
+        },
+        {
+            code: '"a\u{AD}b"',
+            errors: [{ messageId: 'noInvisibleCharacter' }],
+            output: '"a\\u00ADb"',
         },
     ],
 });

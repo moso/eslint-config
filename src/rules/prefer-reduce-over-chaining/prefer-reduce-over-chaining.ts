@@ -4,6 +4,8 @@ import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
+import type { createRuleType } from '../utils';
+
 const arrayHighOrderFunctions = new Set([
     'filter',
     'forEach',
@@ -20,16 +22,15 @@ const isArrayHigherOrderFunction = (node: TSESTree.Node): node is TSESTree.Membe
     return arrayHighOrderFunctions.has(node.property.name) && node.parent.type === AST_NODE_TYPES.CallExpression;
 };
 
-export default createRule({
+const rulePreferReduceOverChaining: createRuleType = createRule({
     name: 'prefer-reduce-over-chaining',
     meta: {
         type: 'problem',
         docs: {
             description: 'Prefer `.reduce()` over chaining `.map()` and `.filter()` methods.',
             recommended: 'recommended',
-            url: 'https://github.com/SukkaW/eslint-config-sukka/blob/master/packages/eslint-plugin-sukka/src/rules/no-chain-array-higher-order-functions/index.ts',
+            url: 'https://github.com/SukkaW/eslint-plugin-sukka/blob/master/src/rules/no-chain-array-higher-order-functions/index.ts',
         },
-        fixable: 'code',
         schema: [],
         messages: {
             preferReduceOverChaining: 'Detected the chaining of array methods: {{methods}}. Replace with `.reduce` to reduce array iterations and improve performance.',
@@ -37,17 +38,21 @@ export default createRule({
     },
     create: (context) => ({
         MemberExpression: (node: TSESTree.MemberExpression) => {
-            if (!(isArrayHigherOrderFunction(node))) return;
-            const parent = node.parent as TSESTree.CallExpression;
-            if (isArrayHigherOrderFunction(parent.parent)) {
-                context.report({
-                    node: parent,
-                    messageId: 'preferReduceOverChaining',
-                    data: {
-                        methods: `arr.${(node.property as TSESTree.Identifier).name}().${(parent.parent.property as TSESTree.Identifier).name}()`,
-                    },
-                });
-            }
+            if (!isArrayHigherOrderFunction(node)) return;
+
+            const { parent } = node;
+            if (parent.type !== AST_NODE_TYPES.CallExpression) return;
+            if (!isArrayHigherOrderFunction(parent.parent)) return;
+
+            context.report({
+                node: parent,
+                messageId: 'preferReduceOverChaining',
+                data: {
+                    methods: `arr.${node.property.name}().${parent.parent.property.name}()`,
+                },
+            });
         },
     }),
 });
+
+export default rulePreferReduceOverChaining;

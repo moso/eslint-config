@@ -1,46 +1,50 @@
-import mosoPlugin from '../rules';
-import {
-    interopDefault,
-    loadPackages,
-    memoize,
-} from '../utils';
+import assert from 'node:assert/strict';
+
+import { interopDefault, loadPackages, memoize } from '../utils';
 
 import type { ESLint } from 'eslint';
 
 import type {
     OptionsFiles,
+    OptionsIsInEditor,
     OptionsOverrides,
     TypedFlatConfigItem,
 } from '../types';
 
 export const test = async (
-    options: Readonly<OptionsOverrides & Required<OptionsFiles>>,
+    options: Readonly<
+        OptionsIsInEditor &
+        OptionsOverrides &
+        Required<OptionsFiles>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const { files, overrides } = options;
+    const {
+        isInEditor,
+        files,
+        overrides,
+    } = options;
 
-    const [noOnlyTestsPlugin, vitestPlugin] = (await loadPackages([
-        'eslint-plugin-no-only-tests',
-        '@vitest/eslint-plugin',
-    ])) as [ESLint.Plugin, ESLint.Plugin];
+    const [functionalPlugin, noOnlyTestsPlugin] = (
+        await loadPackages(['eslint-plugin-functional', 'eslint-plugin-no-only-tests'])
+    ) as [(typeof import('eslint-plugin-functional'))['default'], ESLint.Plugin];
 
-    const functionalPlugin = (await interopDefault(import('eslint-plugin-functional')));
+    const vitestPlugin = await interopDefault(import('@vitest/eslint-plugin'));
 
     return [
         {
             name: 'moso/test/setup',
             plugins: {
-                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
-                'test': {
-                    ...vitestPlugin,
-                    rules: {
-                        ...vitestPlugin.rules,
-                        ...noOnlyTestsPlugin.rules,
-                    },
-                },
+                'no-only-tests': memoize(noOnlyTestsPlugin, 'eslint-plugin-no-only-tests'),
+                'vitest': memoize(vitestPlugin, '@vitest/eslint-plugin'),
             },
             settings: {
                 vitest: {
                     typecheck: true,
+                },
+            },
+            languageOptions: {
+                globals: {
+                    ...vitestPlugin.environments.env.globals,
                 },
             },
         },
@@ -72,14 +76,17 @@ export const test = async (
                 '@typescript-eslint/no-unused-vars': 'off',
                 '@typescript-eslint/strict-boolean-expressions': 'off',
 
-                'test/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
-                'test/no-identical-title': 'error',
-                'test/no-import-node-test': 'error',
-                'test/prefer-hooks-in-order': 'error',
-                'test/prefer-lowercase-title': 'error',
-                'test/valid-expect': 'off',
+                'no-only-tests/no-only-tests': isInEditor ? 'warn' : 'error',
 
-                'test/no-only-tests': 'error',
+                ...(assert.ok(!Array.isArray(vitestPlugin.configs.recommended)),
+                vitestPlugin.configs.recommended.rules),
+
+                'vitest/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
+                'vitest/prefer-hooks-in-order': 'error',
+                'vitest/prefer-lowercase-title': 'error',
+                'vitest/valid-expect': 'off',
+
+                'vitest/valid-title': 'off',
 
                 ...overrides,
             },

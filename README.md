@@ -7,14 +7,19 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 ## Features
 
 - [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) with reasonable but opinionated defaults
-- [Stylistic](https://eslint.style) with single quotes, semi enabled, sorted imports, dangling commas,
+- [Stylistic](https://eslint.style) with single quotes, semi enabled, sorted imports, and dangling commas
 - Aimed to be used without Prettier
-- Designed to work with JSX, TypeScript, Vue, and React out of the box
-- Applies [Functional](https://github.com/eslint-functional/eslint-plugin-functional) and [Perfectionist](https://perfectionist.dev) by default
-- Lints for JSDoc, JSON, RegEx, and YAML
+- Designed to work with JSX, TypeScript, Vue, React, Astro, and Next.js out of the box
+- Applies [Functional](https://github.com/eslint-functional/eslint-plugin-functional), [Perfectionist](https://perfectionist.dev), and [e18e](https://github.com/e18e/eslint-plugin) by default
+- Lints for JSDoc, JSON, RegEx, TOML, and YAML
+- Ships its own small [`@moso` plugin](#custom-rules) with security and hygiene rules
 - Every config can be enabled/disabled
 - Respects `.gitignore` by default
-- Requires ESLint v9.10.0+
+- Requires ESLint v9.30.0+
+
+> [!NOTE]
+> **Note regarding TypeScript v7**
+> See the [FAQ](#typescript-7)
 
 ## Configs
 
@@ -22,7 +27,7 @@ This section contains a list of the plugins used in the named configs that ships
 
 \- ✅ Enabled by default  
 \- ☑️ Enabled by auto-detect  
-\- 🌟 Enabled unless `lessOpinionated: false`  
+\- 🌟 Enabled unless `lessOpinionated: true`  
 \- 🟨 Can be enabled manually  
 \- 🎨 Stylistic rules enabled  
 \- 💭 Type-aware rules available by setting the path to your `tsconfig.json`  
@@ -38,6 +43,28 @@ This section contains a list of the plugins used in the named configs that ships
 </tr>
 </thead>
 <tbody>
+<tr>
+<td valign="top">
+<details><summary><strong>Astro</strong></summary>
+
+[`eslint-plugin-astro`](https://ota-meshi.github.io/eslint-plugin-astro), [`astro-eslint-parser`](https://github.com/ota-meshi/astro-eslint-parser), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)
+
+</details></td>
+<td valign="top">☑️ℹ️</td>
+<td valign="top">🎨</td>
+<td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>e18e</strong></summary>
+
+[`@e18e/eslint-plugin`](https://github.com/e18e/eslint-plugin)
+
+</details></td>
+<td valign="top">🌟</td>
+<td valign="top"></td>
+<td valign="top"></td>
+</tr>
 <tr>
 <td>
 <details><summary><strong>ESLint Comments</strong></summary>
@@ -57,7 +84,7 @@ This section contains a list of the plugins used in the named configs that ships
 [`eslint-plugin-functional`](https://github.com/eslint-functional/eslint-plugin-functional)
 
 </details></td>
-<td valign="top">✅</td>
+<td valign="top">🌟</td>
 <td valign="top">🎨</td>
 <td valign="top"></td>
 </tr>
@@ -103,6 +130,28 @@ This section contains a list of the plugins used in the named configs that ships
 </details></td>
 <td valign="top">🟨</td>
 <td valign="top">🎨</td>
+<td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>JSX</strong></summary>
+
+[`@stylistic/eslint-plugin`](https://eslint.style), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)
+
+</details></td>
+<td valign="top">✅ℹ️</td>
+<td valign="top">🎨</td>
+<td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>Next.js</strong></summary>
+
+[`@next/eslint-plugin-next`](https://nextjs.org/docs/app/api-reference/config/eslint)
+
+</details></td>
+<td valign="top">☑️</td>
+<td valign="top"></td>
 <td valign="top"></td>
 </tr>
 <tr>
@@ -167,7 +216,7 @@ This section contains a list of the plugins used in the named configs that ships
 [`@stylistic/eslint-plugin`](https://eslint.style)
 
 </details></td>
-<td valign="top">🌟</td>
+<td valign="top">✅</td>
 <td valign="top">🎨</td>
 <td valign="top"></td>
 </tr>
@@ -178,8 +227,19 @@ This section contains a list of the plugins used in the named configs that ships
 [`@vitest/eslint-plugin`](https://github.com/vitest-dev/eslint-plugin-vitest), [`eslint-plugin-no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests)
 
 </details></td>
-<td valign="top">🟨</td>
+<td valign="top">✅</td>
 <td valign="top"></td>
+<td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>TOML</strong></summary>
+
+[`eslint-plugin-toml`](https://ota-meshi.github.io/eslint-plugin-toml)
+
+</details></td>
+<td valign="top">✅</td>
+<td valign="top">🎨</td>
 <td valign="top"></td>
 </tr>
 <tr>
@@ -222,17 +282,39 @@ This section contains a list of the plugins used in the named configs that ships
 [`eslint-plugin-yml`](https://ota-meshi.github.io/eslint-plugin-yml)
 
 </details></td>
-<td valign="top">🟨</td>
+<td valign="top">✅</td>
 <td valign="top">🎨</td>
 <td valign="top"></td>
 </tr>
 </tbody>
 </table>
 
+## Custom rules
+
+This config ships its own small plugin, registered as `@moso`. Each rule has full documentation next to its implementation.
+
+| Rule | Description | Default | Fixable |
+| --- | --- | --- | --- |
+| [`avoid-barrel-files`](./src/rules/avoid-barrel-files/avoid-barrel-files.md) | Disallow *authoring* barrel files | ✅ | |
+| [`no-bidi`](./src/rules/no-bidi/no-bidi.md) | Detect and stop trojan source attacks | ✅ | 🔧 |
+| [`no-force-cast-via-top-type`](./src/rules/no-force-cast-via-top-type/no-force-cast-via-top-type.md) | Disallow `T as any as Q` casts | ✅ | |
+| [`no-import-duplicates`](./src/rules/no-import-duplicates/no-import-duplicates.md) | Fix duplicate specifiers within an import | ✅ | 🔧 |
+| [`no-import-from-dist`](./src/rules/no-import-from-dist/no-import-from-dist.md) | Prevent importing from `dist` folders | ✅ | |
+| [`no-import-node-modules-by-path`](./src/rules/no-import-node-modules-by-path/no-import-node-modules-by-path.md) | Prevent importing `node_modules` by path | ✅ | |
+| [`no-invisible-characters`](./src/rules/no-invisible-characters/no-invisible-characters.md) | Disallow invisible characters | ✅ | 🔧 |
+| [`no-redundant-variable`](./src/rules/no-redundant-variable/no-redundant-variable.md) | Disallow variables that are immediately returned | | 🔧 |
+| [`no-string-interpolation`](./src/rules/no-string-interpolation/no-string-interpolation.md) | Disallow multiline expressions in template literals | | |
+| [`no-top-level-await`](./src/rules/no-top-level-await/no-top-level-await.md) | Prevent top-level `await` | ✅ | |
+| [`no-unneeded-array-flat-map`](./src/rules/no-unneeded-array-flat-map/no-unneeded-array-flat-map.md) | Disallow `flatMap` with identity callbacks | | 🔧 |
+| [`prefer-early-return`](./src/rules/prefer-early-return/prefer-early-return.md) | Prefer guard clauses over wrapped function bodies | | 🔧 |
+| [`prefer-fetch`](./src/rules/prefer-fetch/prefer-fetch.md) | Enforce `fetch` over legacy HTTP clients | | |
+| [`prefer-reduce-over-chaining`](./src/rules/prefer-reduce-over-chaining/prefer-reduce-over-chaining.md) | Prefer one `.reduce()` pass over `.map().filter()` chains | ✅ | |
+
 ## Usage
 
 ### Install
 
+> [!NOTE]
 > I like to use [Bun](https://bun.sh) because it's hella fast. Thus all the install instructions are with Bun. If you use something else, check the syntax with your favorite package manager.
 
 ```bash
@@ -278,8 +360,8 @@ export default moso(
     // Other flat configs...
 );
 ```
-
-> Note that `.eslintignore` no longer works in Flat config, see [customization](#customization) for more details.
+> [!NOTE]
+> `.eslintignore` no longer works in Flat config, see [customization](#customization) for more details.
 
 </details>
 
@@ -371,14 +453,20 @@ export default moso({
     // Stylistic rules (enabled by default)
     stylistic: false, // disable entirely
     stylistic: {
-        indent: 2, // 4, or 'tab'
+        indent: 4, // 2, or 'tab'
+        jsx: true, // or false to disable JSX support
         quotes: 'single', // or 'double'
+        semi: true, // or false
     },
 
     // Auto-detected, or enable explicitly
-    typescript: true,
+    astro: true,
     react: true,
+    typescript: true,
     vue: true,
+
+    // JSDoc support
+    jsdoc: true, // enable explicitly with reasonable defaults
 
     // File format support
     jsonc: false,
@@ -490,11 +578,68 @@ export default combine(
 
 ## Optional configs
 
+### JSDoc
+
+Disabled by default, will have to be enabled manually.
+
+There are many ways JSDoc support can be configured. However, the most simple way is just enabling it which will use very reasonable defaults:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    jsdoc: true,
+});
+```
+
+This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exists, and tags are formatted and styled consistently.
+
+Individual rules can be tweaked with the `overrides` property:
+
+```js
+{
+    jsdoc: {
+        overrides: {
+            'jsdoc/require-description': 'off',
+        },
+    },
+}
+```
+
+## Frameworks
+
 Framework support is auto-detected based on installed packages, but can be enabled explicitly. Dependencies are not bundled and will be prompted for installation.
+
+> [!NOTE]
+> **Note**: Framework support is just as opinionated as the rest of the config. If your favorite framework is missing, then you can always extend the config yourself.
+
+### Astro
+
+Auto-detected if you have [Astro](https://astro.build) installed. Enable explicitly:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    astro: true,
+});
+```
+
+Install dependencies when prompted, or manually:
+
+```bash
+bun add --dev eslint-plugin-astro astro-eslint-parser
+```
+
+> [!NOTE]
+> Since Astro can be plugged with other frameworks as well, you'll be prompted to install the required packages for linting those as well. Example: If you have installed `@astrojs/react`, you'll be prompted to install the required packages to lint React.
+
 
 ### React
 
-Auto-detected if you have Gatsby, Next.js, Nextra, React, or Remix installed. Enable explicitly:
+Auto-detected if you have React, Next.js, Nextra, Remix, Gatsby, or the `@astrojs/react` Astro framework integration installed. Enable explicitly:
 
 ```js
 // eslint.config.js
@@ -513,7 +658,7 @@ bun add --dev @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugi
 
 ### Vue
 
-Auto-detected if you have Nuxt, VitePress, or Vue installed. Enable explicitly:
+Auto-detected if you have Vue, Nuxt, VitePress, or the `@astrojs/vue` Astro framework intefration installed. Enable explicitly:
 
 ```js
 // eslint.config.js
@@ -524,13 +669,14 @@ export default moso({
 });
 ```
 
-Install dependencies when prompted, or manually:
+Install dependencies when prompted, or manually (the Vue parser and SFC processors are already bundled as dependencies):
 
 ```bash
-bun add --dev eslint-plugin-vue vue-eslint-parser eslint-processor-vue-blocks eslint-merge-processors
+bun add --dev eslint-plugin-vue
 ```
 
-**Note**: Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need to support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
+> [!CAUTION]
+> Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need to support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
 
 ### Typed Linting
 
@@ -566,25 +712,26 @@ export default moso(
 
 #### Disable type-aware
 
-Optionally, you can even disable type-aware rules on certain file extensions, or even specific files:
+You can disable the type-aware layer entirely, or exclude certain globs or specific files from it:
 
 ```js
 // eslint.config.js
 import moso from '@moso/eslint-config';
 
-export default moso(
-    {
-        projectRoot: import.meta.dirname,
+export default moso({
+    projectRoot: import.meta.dirname,
+
+    typescript: {
+        // Kill switch: keep regular TypeScript rules, drop the type-aware layer
+        disableTypeAwareRules: true,
+
+        // ...or keep it, but exclude globs or specific files from it
+        ignoresTypeAware: [
+            '**/*.{js,jsx}',
+            '**/components/User.tsx',
+        ],
     },
-    {
-        files: ['**/*.{js,jsx}'],
-        disableTypeAware: true,
-    },
-    {
-        files: ['**/components/User.jsx'],
-        disableTypeAware: true,
-    },
-);
+});
 ```
 
 ### Editor specific non-fixes
@@ -593,7 +740,7 @@ Some rules are deemed as 'non-fixable' when inside your editor with ESLint integ
 
 - [`prefer-const`](https://eslint.org/docs/rules/prefer-const)
 - [`unused-imports/no-unused-imports`](https://github.com/sweepline/eslint-plugin-unused-imports)
-- [`vitest/no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests)
+- [`no-only-tests/no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests)
 
 Before v1.0.0, they used to be hard disabled. But with a [helper](https://github.com/antfu/eslint-flat-config-utils#composerdisablerulesfix), they are now just marked as 'non-fixable'. They are re-applied when you're linting through a terminal, or by using [Lint Staged](#lint-staged).
 
@@ -615,7 +762,7 @@ Linting and auto-fixing before every commit is easy, you just add the following 
     "simple-git-hooks": {
         "pre-commit": "bunx lint-staged"
     },
-    "lint-staged": {
+    "nano-staged": {
         "*": "eslint --fix"
     }
 }
@@ -624,23 +771,36 @@ Linting and auto-fixing before every commit is easy, you just add the following 
 and then
 
 ```bash
-bun add -dev lint-staged simple-git-hooks
+bun add --dev nano-staged simple-git-hooks
 
 # to activate the hooks
 bunx simple-git-hooks
 ```
 
-## View which rules are enabled
+## FAQ
 
-[Antfu](https://github.com/antfu) built a visual tool that can help you view what rules are enabled in your project: [@eslint/config-inspector](https://github.com/eslint/config-inspector).
+### TypeScript 7?
 
-To view it in action, navigate to the root of your project that contains your `eslint.config.js` and run:
+TypeScript 7.0 [does not ship a compiler API](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) (a new one supposedly arrives in 7.1), so [`typescript-eslint`](https://typescript-eslint.io) - and therefore all TypeScript linting in this config - cannot run against it. TypeScript's supported setup is running TypeScript 6 side-by-side through the [`@typescript/typescript6`](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0) compatibility package, aliased so tooling that imports `typescript` keeps working:
 
 ```bash
-bunx @eslint/config-inspector
+bun add --dev typescript@npm:@typescript/typescript6
 ```
 
-## FAQ
+Optionally keep TypeScript 7's own `tsc` around as well:
+
+```jsonc
+{
+    "devDependencies": {
+        "@typescript/native": "npm:typescript@^7.0.2",
+        "typescript": "npm:@typescript/typescript6@^6.0.2"
+    }
+}
+```
+
+With the alias in place, this config works unchanged. Without it, the config detects TypeScript >7 and fails fast: an explicit `typescript: true` throws with these instructions, while auto-detection prints a warning and degrades to JavaScript-only linting instead of crashing inside the parser.
+
+**Keep in mind**, this is temporary until an API is provided by TypeScript for v7.
 
 ### I want it less opinionated
 
@@ -660,10 +820,16 @@ export default moso({
 
 ```js
 {
-    functional: true, // will default to 'lite' enforcement
+    // Disable opinionated rules
+    lessOpinionated: true,
 
-    // Optionally change the `functionalEnforcement`:
-    functionalEnforcement: 'recommended',
+    // Re-enable functional - a string sets the enforcement level directly
+    functional: 'lite', // 'lite' | 'recommended' | 'strict'
+
+    // ...or as an object:
+    functional: {
+        functionalEnforcement: 'recommended',
+    },
 
     // Re-enable `perfectionist`
     perfectionist: true,
@@ -672,7 +838,7 @@ export default moso({
 
 ### Prettier? dprint?
 
-You can still use these to format files that aren't linted with this config, however, I strongly recommend you only format your code with ESLint, as Pretter and other AST-reading-then-reprint projects tend to ignore stuff like the original line breaks and might also cause inconsistent diffs when commiting code.
+You can still use these to format files that aren't linted with this config, however, I strongly recommend you only format your code with ESLint, as Prettier and other AST-reading-then-reprint projects tend to ignore stuff like the original line breaks and might also cause inconsistent diffs when committing code.
 
 ### How to format CSS?
 
@@ -705,8 +871,8 @@ A personal thank-you to Anthony, Rebecca, Sukka, and Azat, and everyone else who
 - Simplification in some areas
 - Better type-aware checks
 - Plugin memoization
-- Optional a11y support for React and Vue
-- No dangerous plugin renaming
+- Optional a11y support for JSX, React and Vue
+- No dangerous plugin renaming (except for `node`)
 
 ## License
 

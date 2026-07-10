@@ -3,6 +3,12 @@ import module from './no-redundant-variable';
 
 runTest({
     module,
+    valid: [
+        'function example() { const foo = \'bar\'; use(foo); return foo }',
+        'function example() { const foo = \'bar\'; return foo + \'baz\' }',
+        'function example() { const [foo] = bar; return foo }',
+        'function example() { return \'bar\' }',
+    ],
     invalid: [
         {
             code: 'function example() { const foo: string = \'bar\'; return foo }',

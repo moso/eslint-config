@@ -10,7 +10,10 @@ import type {
 } from '../types';
 
 export const toml = async (
-    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+    options: Readonly<
+        OptionsOverrides &
+        Required<OptionsFiles & RequiredOptionsStylistic>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
         files,
@@ -22,10 +25,7 @@ export const toml = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const [tomlParser, tomlPlugin] = (await loadPackages([
-        'toml-eslint-parser',
-        'eslint-plugin-toml',
-    ])) as [Linter.Parser, ESLint.Plugin];
+    const [tomlParser, tomlPlugin] = (await loadPackages(['toml-eslint-parser', 'eslint-plugin-toml'])) as [Linter.Parser, ESLint.Plugin];
 
     return [
         {
@@ -57,7 +57,7 @@ export const toml = async (
                     'toml/array-bracket-newline': 'error',
                     'toml/array-bracket-spacing': 'error',
                     'toml/array-element-newline': 'error',
-                    'toml/indent': ['error', indent === 'tab' ? 2 : indent],
+                    'toml/indent': ['error', typeof indent === 'number' || typeof indent === 'string' ? indent : 2],
                     'toml/inline-table-curly-spacing': 'error',
                     'toml/key-spacing': 'error',
                     'toml/padding-line-between-pairs': 'error',

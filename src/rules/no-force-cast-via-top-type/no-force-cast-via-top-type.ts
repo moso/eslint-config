@@ -4,13 +4,15 @@ import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
+import type { createRuleType } from '../utils';
+
 const isTopType = (node: TSESTree.Node) =>
     node.type === AST_NODE_TYPES.TSAnyKeyword || node.type === AST_NODE_TYPES.TSUnknownKeyword;
 
 const isTypeReference = (node: TSESTree.Node | undefined) =>
-    node && node.type === AST_NODE_TYPES.TSAsExpression && node.typeAnnotation.type === AST_NODE_TYPES.TSTypeReference;
+    node?.type === AST_NODE_TYPES.TSAsExpression && node.typeAnnotation.type === AST_NODE_TYPES.TSTypeReference;
 
-export default createRule({
+const ruleNoForceCastViaTopType: createRuleType = createRule({
     name: 'no-force-cast-via-top-type',
     meta: {
         type: 'problem',
@@ -39,3 +41,5 @@ export default createRule({
         },
     }),
 });
+
+export default ruleNoForceCastViaTopType;

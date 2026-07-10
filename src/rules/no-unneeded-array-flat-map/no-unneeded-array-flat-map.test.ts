@@ -3,6 +3,12 @@ import module from './no-unneeded-array-flat-map';
 
 runTest({
     module,
+    valid: [
+        '[].flatMap((x) => x + 1)',
+        '[].flatMap((x) => [x, x])',
+        '[].flatMap(fn)',
+        '[].flat()',
+    ],
     invalid: [
         {
             code: '[].flatMap((x) => x)',

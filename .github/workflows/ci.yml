@@ -9,14 +9,20 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
+env:
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: 1
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: lts/*
 
@@ -26,7 +32,7 @@ jobs:
           bun-version: latest
 
       - name: Install packages
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Build
         run: bun run build
@@ -47,20 +53,20 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node ${{ matrix.os }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
 
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ matrix.bun }}
+          bun-version: latest
 
       - name: Install packages
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Build
         run: bun run build

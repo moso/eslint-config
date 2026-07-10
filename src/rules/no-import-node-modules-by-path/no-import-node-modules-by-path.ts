@@ -4,7 +4,9 @@ import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export default createRule({
+import type { createRuleType } from '../utils';
+
+const ruleNoImportNodeModulesByPath: createRuleType = createRule({
     name: 'no-import-node-modules-by-path',
     meta: {
         type: 'problem',
@@ -40,3 +42,5 @@ export default createRule({
         },
     }),
 });
+
+export default ruleNoImportNodeModulesByPath;

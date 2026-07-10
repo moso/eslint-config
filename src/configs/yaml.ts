@@ -22,10 +22,7 @@ export const yaml = async (
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
-    const [yamlPlugin, yamlParser] = (await loadPackages([
-        'eslint-plugin-yml',
-        'yaml-eslint-parser',
-    ])) as [ESLint.Plugin, Linter.Parser];
+    const [yamlPlugin, yamlParser] = (await loadPackages(['eslint-plugin-yml', 'yaml-eslint-parser'])) as [ESLint.Plugin, Linter.Parser];
 
     return [
         {
@@ -36,6 +33,7 @@ export const yaml = async (
         },
         {
             files,
+            language: 'yml/yaml',
             languageOptions: {
                 parser: memoize(yamlParser, 'yaml-eslint-parser'),
             },
@@ -49,7 +47,6 @@ export const yaml = async (
                 'yml/no-empty-sequence-entry': 'error',
                 'yml/no-irregular-whitespace': 'error',
                 'yml/plain-scalar': 'error',
-
                 'yml/vue-custom-block/no-parsing-error': 'error',
 
                 'yml/block-mapping-question-indicator-newline': stylisticEnabled,
@@ -61,8 +58,15 @@ export const yaml = async (
                 'yml/indent': [stylisticEnabled, 2],
                 'yml/key-spacing': stylisticEnabled,
                 'yml/no-tab-indent': stylisticEnabled,
-                'yml/quotes': [stylisticEnabled, { avoidEscape: true, prefer: quotes === 'backtick' ? 'single' : quotes }],
                 'yml/spaced-comment': stylisticEnabled,
+                'yml/quotes': 'off',
+
+                ...(stylistic !== false && {
+                    'yml/quotes': [
+                        'error',
+                        { avoidEscape: true, prefer: quotes === 'backtick' ? 'single' : quotes },
+                    ],
+                }),
 
                 ...overrides,
             },

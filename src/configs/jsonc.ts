@@ -10,7 +10,10 @@ import type {
 } from '../types';
 
 export const jsonc = async (
-    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+    options: Readonly<
+        OptionsOverrides &
+        Required<OptionsFiles & RequiredOptionsStylistic>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
         files,
@@ -20,10 +23,9 @@ export const jsonc = async (
 
     const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
-    const [jsoncPlugin, jsoncParser] = (await loadPackages([
-        'eslint-plugin-jsonc',
-        'jsonc-eslint-parser',
-    ])) as [ESLint.Plugin, Linter.Parser];
+    const [jsoncPlugin, jsoncParser] =
+        (await loadPackages(['eslint-plugin-jsonc', 'jsonc-eslint-parser'])) as
+            [ESLint.Plugin, Linter.Parser];
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
@@ -68,11 +70,11 @@ export const jsonc = async (
                 'jsonc/array-bracket-spacing': [stylisticEnabled, 'never'],
                 'jsonc/comma-dangle': [stylisticEnabled, 'never'],
                 'jsonc/comma-style': [stylisticEnabled, 'last'],
-                'jsonc/indent': [stylisticEnabled, indent],
+                'jsonc/indent': [stylisticEnabled, typeof indent === 'number' || typeof indent === 'string' ? indent : 4],
                 'jsonc/key-spacing': [stylisticEnabled, { afterColon: true, beforeColon: false }],
                 'jsonc/object-curly-newline': [stylisticEnabled, { consistent: true, multiline: true }],
                 'jsonc/object-curly-spacing': [stylisticEnabled, 'always'],
-                'jsonc/object-property-newline': [stylisticEnabled, { allowMultiplePropertiesPerLine: true }],
+                'jsonc/object-property-newline': [stylisticEnabled, { allowAllPropertiesOnSameLine: true }],
                 'jsonc/quote-props': stylisticEnabled,
                 'jsonc/quotes': stylisticEnabled,
 

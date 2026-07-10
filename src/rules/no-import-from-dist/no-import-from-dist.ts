@@ -2,10 +2,14 @@ import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-const isDist = (path: string): boolean =>
-    (path.startsWith('.') && (/\/dist(?:\/|$)/u).test(path)) || path === 'dist';
+import type { createRuleType } from '../utils';
 
-export default createRule({
+const DIST_CHECK = /\/dist(?:\/|$)/u;
+
+const isDist = (path: string): boolean =>
+    (path.startsWith('.') && DIST_CHECK.test(path)) || path === 'dist';
+
+const ruleNoImportFromDist: createRuleType = createRule({
     name: 'no-import-from-dist',
     meta: {
         type: 'problem',
@@ -31,3 +35,5 @@ export default createRule({
         },
     }),
 });
+
+export default ruleNoImportFromDist;

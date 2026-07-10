@@ -1,43 +1,27 @@
-import {
-    ensurePackages,
-    interopDefault,
-    memoize,
-    normalizeRules,
-} from '../utils';
+import assert from 'node:assert/strict';
+
+import { loadPackages, memoize } from '../utils';
 
 import type {
     OptionsFiles,
-    OptionsOverrides,
+    OptionsNextJS,
     TypedFlatConfigItem,
 } from '../types';
 
 export const nextjs = async (
-    options: Readonly<OptionsFiles & OptionsOverrides>,
+    options: Readonly<OptionsFiles & OptionsNextJS>,
 ): Promise<TypedFlatConfigItem[]> => {
-    const { files, overrides } = options;
+    const {
+        files,
+        mode,
+        overrides,
+    } = options;
 
-    await ensurePackages(['@next/eslint-plugin-next']);
-
-    const nextjsPlugin = (await interopDefault(import('@next/eslint-plugin-next')));
-
-    const getRules = (name: keyof typeof nextjsPlugin.configs): Record<string, unknown> => {
-        const { rules } = nextjsPlugin.configs[name];
-        // eslint-disable-next-line functional/no-throw-statements
-        if (!rules) throw new Error(`[@moso/eslint-config] Failed to find config ${name} in @next/eslint-plugin-next`);
-
-        return normalizeRules(rules);
-    };
+    const [nextjsPlugin] = (await loadPackages(['@next/eslint-plugin-next'])) as [typeof import('@next/eslint-plugin-next')];
 
     return [
         {
             name: 'moso/nextjs/setup',
-            plugins: {
-                '@next/next': memoize(nextjsPlugin, '@next/eslint-plugin-next'),
-            },
-        },
-        {
-            name: 'moso/nextjs/rules',
-            files,
             languageOptions: {
                 parserOptions: {
                     ecmaFeatures: {
@@ -51,26 +35,31 @@ export const nextjs = async (
                     version: 'detect',
                 },
             },
+            plugins: {
+                '@next/next': memoize(nextjsPlugin, '@next/eslint-plugin-next'),
+            },
+        },
+        {
+            name: 'moso/nextjs/rules',
+            files,
             rules: {
-                ...getRules('recommended'),
-                ...getRules('core-web-vitals'),
+                ...(assert.ok(!Array.isArray(nextjsPlugin.configs.recommended)),
+                nextjsPlugin.configs.recommended.rules),
 
-                'react-refresh/only-export-components': [
-                    'warn',
-                    {
-                        allowExportNames: [
-                            'config',
-                            'generateMetadata',
-                            'generateStaticParams',
-                            'generateViewport',
-                            'metadata',
-                            'viewport',
-                        ],
-                    },
-                ],
+                ...(assert.ok(!Array.isArray(nextjsPlugin.configs['core-web-vitals'])),
+                nextjsPlugin.configs['core-web-vitals'].rules),
 
                 ...overrides,
             },
         },
+        ...((mode === 'library'
+            ? [{
+                name: 'moso/next/library-rules',
+                rules: {
+                    '@next/next/no-html-link-for-pages': 'off',
+                },
+            }]
+            : []) satisfies TypedFlatConfigItem[]
+        ),
     ];
 };
