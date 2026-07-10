@@ -424,7 +424,6 @@
       "regexp/sort-flags",
       "- regexp/strict",
       "regexp/use-ignore-case",
-      "unicorn/better-regex",
     ],
   },
   {
