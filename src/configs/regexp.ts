@@ -27,9 +27,8 @@ export const regexp = async (
                 ...(assert.ok(!Array.isArray(regexpPlugin.configs['flat/recommended'])),
                 regexpPlugin.configs['flat/recommended'].rules),
 
-                // Accept Annex B from unicorn/better-regex
+                // Accept Annex B
                 'regexp/strict': 'off',
-                'unicorn/better-regex': 'warn',
 
                 ...overrides,
             },
