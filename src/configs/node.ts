@@ -116,6 +116,7 @@ export const node = async (
                     ],
                     'node/no-restricted-require': options.typescript ? 'off' : ['error', [...restricedImports]],
                     'node/no-sync': 'error',
+                    'node/no-unsupported-features/node-builtins': 'off',
                     'node/prefer-global/buffer': ['error', 'never'],
                     'node/prefer-global/console': ['error', 'always'],
                     'node/prefer-promises/dns': 'error',
