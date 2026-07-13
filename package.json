@@ -2,7 +2,7 @@
     "name": "@moso/eslint-config",
     "type": "module",
     "version": "3.0.0",
-    "description": "My shareable ESLint config",
+    "description": "@moso's sharable ESLint config",
     "author": {
         "name": "Morten Sørensen",
         "email": "morten@moso.dev",
@@ -42,7 +42,7 @@
         "dist/"
     ],
     "engines": {
-        "node": "^22.22.2 || >=24"
+        "node": "^22.22.3 || >=24"
     },
     "scripts": {
         "build": "bun run typegen && tsdown --clean --dts",
@@ -51,7 +51,7 @@
         "lint": "eslint",
         "prepack": "bun run build",
         "prepare": "bun run simple-git-hooks",
-        "release": "bumpp && bun publish",
+        "release": "bumpp --recursive && bun publish",
         "test": "vitest run",
         "test:update-snapshots": "vitest --update",
         "typecheck": "tsc --noEmit",
@@ -62,10 +62,10 @@
         "src/rules"
     ],
     "peerDependencies": {
-        "@eslint-react/eslint-plugin": "^5.14.5",
+        "@eslint-react/eslint-plugin": "^5.14.7",
         "@next/eslint-plugin-next": "^16.2.10",
         "astro-eslint-parser": "^3.0.0",
-        "eslint": ">=9.30.0 || >=10",
+        "eslint": "^10.0.0",
         "eslint-plugin-astro": "^3.0.0",
         "eslint-plugin-erasable-syntax-only": "^0.4.2",
         "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -151,7 +151,7 @@
         "yaml-eslint-parser": "^2.1.0"
     },
     "devDependencies": {
-        "@eslint-react/eslint-plugin": "^5.14.5",
+        "@eslint-react/eslint-plugin": "^5.14.7",
         "@eslint/compat": "^2.1.0",
         "@eslint/config-inspector": "^3.0.4",
         "@moso/eslint-plugin": "workspace:*",
@@ -175,8 +175,8 @@
         "nano-staged": "^1.0.2",
         "simple-git-hooks": "^2.13.1",
         "ts-dedent": "^2.3.0",
-        "tsdown": "^0.22.5",
-        "tsx": "^4.23.0",
+        "tsdown": "^0.22.7",
+        "tsx": "^4.23.1",
         "typescript": "^6.0.3",
         "vitest": "^4.1.10"
     },
