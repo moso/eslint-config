@@ -9,13 +9,13 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) with reasonable but opinionated defaults
 - [Stylistic](https://eslint.style) with single quotes, semi enabled, sorted imports, and dangling commas
 - Aimed to be used without Prettier
-- Designed to work with JSX, TypeScript, Vue, React, Astro, and Next.js out of the box
+- Designed to work with JSX, TypeScript, Vue, React, Astro, Nuxt, and Next.js out of the box
 - Applies [Functional](https://github.com/eslint-functional/eslint-plugin-functional), [Perfectionist](https://perfectionist.dev), and [e18e](https://github.com/e18e/eslint-plugin) by default
 - Lints for JSDoc, JSON, RegEx, TOML, and YAML
-- Ships its own small [`@moso` plugin](#custom-rules) with security and hygiene rules
+- Ships its own small [`@moso`](#custom-rules)-ruleset with security and hygiene rules
 - Every config can be enabled/disabled
 - Respects `.gitignore` by default
-- Requires ESLint v9.30.0+
+- Requires Node.js >= v22.23.x/v24.18.x, ESLint v10+
 
 > [!NOTE]
 > **Note regarding TypeScript v7**
@@ -778,6 +778,12 @@ bunx simple-git-hooks
 ```
 
 ## FAQ
+
+### ESLint v9, older Node.js versions?
+
+ESLint v9 will reach [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that has reached EOL unless absolutely necessary. The same goes with older Node.js versions.
+
+Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this version has also reached EOL. The rest of their requirements mention `v22.13.0` and `>= 24`. However, the minimum requirements of some of the configs that this sharable config apply rules from have a minimum requirement of `v22.22.3`, this project will stay within this range.
 
 ### TypeScript 7?
 
