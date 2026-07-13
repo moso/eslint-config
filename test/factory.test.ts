@@ -62,15 +62,20 @@ const serializeName = (value: string | Readonly<Linter.Parser | Linter.Processor
     typeof value === 'string' ? value : (value.meta?.name ?? 'unknown')
 );
 
-const unserializableParserOptions = new Set(['parser',
-'projectRoot',
-'projectService',
-'tsconfigRootDir']);
+const unserializableParserOptions = new Set([
+    'parser',
+    'projectRoot',
+    'projectService',
+    'tsconfigRootDir',
+]);
 
 const serializeLanguageOptions = (languageOptions: Linter.LanguageOptions): Record<string, unknown> => {
     const {
- globals: _globals, parser, parserOptions, ...rest
-} = languageOptions;
+        globals: _globals,
+        parser,
+        parserOptions,
+        ...rest
+    } = languageOptions;
 
     return {
         ...rest,
@@ -87,8 +92,12 @@ const serializeConfigPresets = (configs: TypedFlatConfigItem[]): unknown[] => co
     if (config.name !== undefined && ignoreConfigs.has(config.name)) return '--ignored--';
 
     const {
- languageOptions, plugins, processor, rules, ...rest
-} = config;
+        languageOptions,
+        plugins,
+        processor,
+        rules,
+        ...rest
+    } = config;
 
     return {
         ...rest,

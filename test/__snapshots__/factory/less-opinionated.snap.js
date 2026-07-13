@@ -55,6 +55,7 @@
       "**/components.d.ts",
       "**/typegen.ts",
       "**/typegen.d.ts",
+      "**/*.css.ts",
     ],
     "name": "moso/ignores/globals",
   },
@@ -226,7 +227,7 @@
       "no-octal-escape",
       "no-param-reassign",
       "no-proto",
-      "no-restricted-globals",
+      "- no-restricted-globals",
       "no-restricted-properties",
       "no-restricted-syntax",
       "- no-return-assign",
@@ -766,27 +767,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])tsx",
-    ],
-    "languageOptions": {
-      "parserOptions": {
-        "ecmaFeatures": {
-          "jsx": true,
-        },
-      },
-    },
-    "name": "moso/jsx/setup",
-  },
-  {
-    "name": "moso/jsx/rules",
-    "rules": [
-      "@stylistic/jsx-curly-spacing",
-      "- @stylistic/jsx-one-expression-per-line",
-    ],
-  },
-  {
     "name": "moso/stylistic",
     "plugins": [
       "@stylistic",
@@ -857,6 +837,31 @@
       "@stylistic/jsx-quotes",
       "@stylistic/jsx-tag-spacing",
       "@stylistic/jsx-wrap-multilines",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])jsx",
+      "**/*.?([cm])tsx",
+    ],
+    "languageOptions": {
+      "parserOptions": {
+        "ecmaFeatures": {
+          "jsx": true,
+        },
+      },
+    },
+    "name": "moso/jsx/setup",
+  },
+  {
+    "files": [
+      "**/*.?([cm])jsx",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/jsx/rules",
+    "rules": [
+      "@stylistic/jsx-curly-spacing",
+      "- @stylistic/jsx-one-expression-per-line",
     ],
   },
   {

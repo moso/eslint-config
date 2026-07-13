@@ -59,7 +59,7 @@ export const typescript = async (
 
     const [tsEslintPlugin, tsEslintParser] = (await loadPackages(['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'])) as [ESLint.Plugin, Linter.Parser];
 
-    // Enforced unless explicitly disabled or running less opinionated
+    // Enforcing Erasable Syntax Only unless explicitly disabled or `lessOpinionated`
     const [erasableSyntaxPlugin] = erasableOnly !== false && !lessOpinionated
         ? (await loadPackages(['eslint-plugin-erasable-syntax-only'])) as [ESLint.Plugin]
         : [undefined];

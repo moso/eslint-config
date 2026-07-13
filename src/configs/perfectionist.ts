@@ -2,15 +2,11 @@ import assert from 'node:assert/strict';
 
 import { loadPackages, memoize } from '../utils';
 
-import type { CommonOptions, TypeOption } from '@/perfectionist-types/common-options.d.ts';
-
 import type {
     OptionsLessOpinionated,
     OptionsPerfectionist,
     TypedFlatConfigItem,
 } from '../types';
-
-type PerfectionistOptions = Omit<CommonOptions<TypeOption>, 'alphabet'>;
 
 const commonOptions = {
     fallbackSort: { order: 'asc', type: 'alphabetical' },
@@ -19,7 +15,7 @@ const commonOptions = {
     order: 'asc',
     specialCharacters: 'keep',
     type: 'natural',
-} satisfies PerfectionistOptions;
+} as const;
 
 export const perfectionist = async (
     options: Readonly<OptionsLessOpinionated & OptionsPerfectionist>,

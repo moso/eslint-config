@@ -3,9 +3,6 @@
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "bundler",
-        "paths": {
-            "@/perfectionist-types/*": ["./node_modules/eslint-plugin-perfectionist/dist/types/*"]
-        },
         "types": ["eslint-plugin-jsx-a11y", "node", "vitest/config"],
         "strict": true,
         "declaration": true,

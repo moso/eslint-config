@@ -36,8 +36,8 @@ export const stylistic = async (
         semi,
         typescript,
     } = {
-        ...options,
         ...StylisticConfigDefaults,
+        ...options,
     };
 
     const [stylisticPlugin] = (await loadPackages(['@stylistic/eslint-plugin'])) as [typeof import('@stylistic/eslint-plugin')['default']];
@@ -67,14 +67,28 @@ export const stylistic = async (
                 // as well as rules not defined in above `rules` but considered more or less default,
                 // or I simply wanted/needed the rule set - even with documented defaults
                 ...(!lessOpinionated && {
-                    '@stylistic/array-element-newline': [
-                        'error',
-                        {
-                            consistent: true,
-                            minItems: 4,
-                            multiline: true,
-                        },
-                    ],
+                    ...(!experimental && {
+                        '@stylistic/array-element-newline': [
+                            'error',
+                            {
+                                consistent: true,
+                                minItems: 4,
+                                multiline: true,
+                            },
+                        ],
+                        '@stylistic/function-call-argument-newline': ['error', 'consistent'],
+                        '@stylistic/function-paren-newline': ['error', 'consistent'],
+                        '@stylistic/object-curly-newline': [
+                            'error',
+                            {
+                                consistent: true,
+                                minProperties: 4,
+                                multiline: true,
+                            },
+                        ],
+                        '@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
+                    }),
+
                     '@stylistic/arrow-parens': ['error', 'always'],
                     '@stylistic/block-spacing': ['error', 'always'],
                     '@stylistic/brace-style': [
@@ -105,8 +119,6 @@ export const stylistic = async (
                     '@stylistic/computed-property-spacing': 'error',
                     '@stylistic/dot-location': ['error', 'property'],
                     '@stylistic/eol-last': ['error', 'always'],
-                    '@stylistic/function-call-argument-newline': ['error', 'consistent'],
-                    '@stylistic/function-paren-newline': ['error', 'consistent'],
                     '@stylistic/generator-star-spacing': ['error', 'after'],
                     '@stylistic/indent': typescript
                         ? 'off'
@@ -213,15 +225,6 @@ export const stylistic = async (
                     '@stylistic/no-multi-spaces': ['error', { ignoreEOLComments: true }],
                     '@stylistic/no-tabs': 'error',
                     '@stylistic/no-trailing-spaces': ['error', { ignoreComments: true, skipBlankLines: true }],
-                    '@stylistic/object-curly-newline': [
-                        'error',
-                        {
-                            consistent: true,
-                            minProperties: 4,
-                            multiline: true,
-                        },
-                    ],
-                    '@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
                     '@stylistic/one-var-declaration-per-line': ['error', 'always'],
                     '@stylistic/operator-linebreak': [
                         'error',

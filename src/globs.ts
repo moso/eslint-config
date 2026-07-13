@@ -101,4 +101,6 @@ export const GLOB_EXCLUDE: string[] = [
     '**/components.d.ts',
     '**/typegen.ts',
     '**/typegen.d.ts',
+
+    '**/*.css.ts',
 ];

@@ -168,13 +168,7 @@ export const javascript = async (
                 'no-param-reassign': 'error',
                 'no-proto': 'error',
                 'no-redeclare': ['error', { builtinGlobals: true }],
-                'no-restricted-globals': [
-                    'error',
-                    { message: 'Use local parameter instead.', name: 'event' },
-                    { message: 'Use `globalThis` instead.', name: 'global' },
-                    { message: 'Use `globalThis` instead.', name: 'self' },
-                    { message: 'Use `globalThis` instead.', name: 'window' },
-                ],
+                'no-restricted-globals': 'off',
                 'no-restricted-properties': [
                     'error',
                     { message: 'Use `Object.getOwnPropertyDescriptor` instead.', property: '__lookupGetter__' },

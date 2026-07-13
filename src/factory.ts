@@ -121,14 +121,14 @@ export async function moso(
     const typescriptPackage = typescriptRequested === false ? undefined : await getPackageInfo('typescript');
     const typescriptVersion = typescriptPackage?.version;
 
-    // TypeScript 7.0 does not ship with a compiler API.
-    // 7.1 will supposedly ship a new, different one, so @typescript-eslint cannot run against it.
+    // TypeScript 7.0 does not ship with a programmatic API.
+    // 7.1 will supposedly ship a new, different one, so @typescript-eslint currently cannot run against it.
     // Microsoft's supported setup is aliasing the `typescript` specifier to the 6.x compatibility package.
     // With the alias in place the resolved version reads 6.x and this gate passes
     const typescriptUnsupported = typescriptVersion !== undefined && Number(typescriptVersion.split('.')[0]) >= 7;
 
     if (typescriptUnsupported) {
-        const message = `[@moso/eslint-config] TypeScript ${typescriptVersion} was detected, but TypeScript 7 does not ship a compiler API, so @typescript-eslint (and therefore all TypeScript linting) cannot run against it.\n\n
+        const message = `[@moso/eslint-config] TypeScript ${typescriptVersion} was detected, but TypeScript 7 does not ship a programmatic API, so @typescript-eslint (and therefore all TypeScript linting) cannot run against it.\n\n
             Install the TypeScript 6 compatibility package side-by-side via an npm alias:\n\n
                 npm install -D typescript@npm:@typescript/typescript6\n\n
             Optionally keep TypeScript 7's own tsc available as "@typescript/native": "npm:typescript@^7.0.2".\n
@@ -189,13 +189,11 @@ export async function moso(
 
     const stylisticOptions = options.stylistic === false
         ? false
-        : typeof options.stylistic === 'object'
-            ? {
-                ...StylisticConfigDefaults,
-                jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
-                ...options.stylistic,
-            }
-            : StylisticConfigDefaults;
+        : {
+            ...StylisticConfigDefaults,
+            jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
+            ...(typeof options.stylistic === 'object' && options.stylistic),
+        };
 
     const {
         filesTypeAware,
@@ -291,6 +289,16 @@ export async function moso(
     ];
 
     // Base configs
+    if (stylisticOptions !== false) {
+        mut_configs.push(
+            stylistic({
+                ...stylisticOptions,
+                lessOpinionated: options.lessOpinionated,
+                overrides: getOverrides(options, 'stylistic'),
+                typescript: hasTypeScript,
+            }),
+        );
+    }
 
     if (astroOptions !== false) {
         mut_configs.push(
@@ -400,17 +408,6 @@ export async function moso(
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
                 ...resolveSubOptions(options, 'react'),
-            }),
-        );
-    }
-
-    if (stylisticOptions !== false) {
-        mut_configs.push(
-            stylistic({
-                ...stylisticOptions,
-                lessOpinionated: options.lessOpinionated,
-                overrides: getOverrides(options, 'stylistic'),
-                typescript: hasTypeScript,
             }),
         );
     }
