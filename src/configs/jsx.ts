@@ -46,6 +46,7 @@ export const jsx = async (
         },
         {
             name: 'moso/jsx/rules',
+            files,
             rules: {
                 ...(stylisticEnabled && {
                     '@stylistic/jsx-curly-spacing': [
@@ -69,6 +70,7 @@ export const jsx = async (
             ? [
                 {
                     name: 'moso/jsx/a11y',
+                    files,
                     plugins: {
                         'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y'),
                     },
