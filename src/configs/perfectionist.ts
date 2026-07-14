@@ -136,19 +136,6 @@ export const perfectionist = async (
                             },
                             {
                                 ...commonOptions,
-                                fallbackSort: { order: 'asc', type: 'natural' },
-                                ignoreCase: true,
-                                type: 'alphabetical',
-                                groups: [
-                                    'reserved',
-                                    'almost-props',
-                                    'unknown',
-                                    'directive',
-                                    'a11y',
-                                    'shorthand-prop',
-                                    'callback',
-                                    'multiline-prop',
-                                ],
                                 customGroups: [
                                     {
                                         groupName: 'a11y',
@@ -180,6 +167,19 @@ export const perfectionist = async (
                                         elementNamePattern: ['^ref$', '^key$'],
                                     },
                                 ],
+                                fallbackSort: { order: 'asc', type: 'natural' },
+                                ignoreCase: true,
+                                groups: [
+                                    'reserved',
+                                    'almost-props',
+                                    'unknown',
+                                    'directive',
+                                    'a11y',
+                                    'shorthand-prop',
+                                    'callback',
+                                    'multiline-prop',
+                                ],
+                                type: 'alphabetical',
                             },
                         ],
                         'perfectionist/sort-maps': [
