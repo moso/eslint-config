@@ -129,22 +129,6 @@ export const perfectionist = async (
                             'error',
                             {
                                 ...commonOptions,
-                                ignoreCase: true,
-                                type: 'unsorted',
-                                useConfigurationIf: {
-                                    tagMatchesPattern: '*Component$',
-                                },
-                            },
-                            {
-                                ...commonOptions,
-                                ignoreCase: true,
-                                type: 'unsorted',
-                                useConfigurationIf: {
-                                    matchesAstSelector: 'VariableDeclaration[kind="const"] JSXElement',
-                                },
-                            },
-                            {
-                                ...commonOptions,
                                 fallbackSort: { order: 'asc', type: 'natural' },
                                 ignoreCase: true,
                                 type: 'alphabetical',
