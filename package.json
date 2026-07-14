@@ -1,7 +1,7 @@
 {
     "name": "@moso/eslint-config",
     "type": "module",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "@moso's sharable ESLint config",
     "author": {
         "name": "Morten Sørensen",
