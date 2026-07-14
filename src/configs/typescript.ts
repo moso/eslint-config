@@ -107,7 +107,6 @@ export const typescript = async (
                 'no-extra-boolean-cast': 'off',
                 'no-implied-eval': 'off',
                 'no-invalid-this': 'off',
-                'no-loop-func': 'off',
                 'no-loss-of-precision': 'off',
                 'no-unused-vars': 'off',
                 'no-use-before-define': 'off',
@@ -174,7 +173,6 @@ export const typescript = async (
                 '@typescript-eslint/no-explicit-any': unsafe,
                 '@typescript-eslint/no-import-type-side-effects': 'error',
                 '@typescript-eslint/no-invalid-this': 'off',
-                '@typescript-eslint/no-loop-func': 'error',
                 '@typescript-eslint/no-unused-expressions': [
                     'error',
                     {
