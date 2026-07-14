@@ -129,9 +129,57 @@ export const perfectionist = async (
                             'error',
                             {
                                 ...commonOptions,
+                                type: 'unsorted',
+                                useConfigurationIf: {
+                                    tagMatchesPattern: '^[a-z][^.]*$',
+                                },
+                            },
+                            {
+                                ...commonOptions,
                                 fallbackSort: { order: 'asc', type: 'natural' },
                                 ignoreCase: true,
                                 type: 'alphabetical',
+                                groups: [
+                                    'reserved',
+                                    'almost-props',
+                                    'unknown',
+                                    'directive',
+                                    'a11y',
+                                    'shorthand-prop',
+                                    'callback',
+                                    'multiline-prop',
+                                ],
+                                customGroups: [
+                                    {
+                                        groupName: 'a11y',
+                                        elementNamePattern: ['^role$', '^aria-.+$'],
+                                    },
+                                    {
+                                        groupName: 'almost-props',
+                                        elementNamePattern: [
+                                            '^type$',
+                                            '^id$',
+                                            '^className$',
+                                            '^href$',
+                                            '^src$',
+                                            '^srcSet$',
+                                            '^name$',
+                                            '^style$',
+                                        ],
+                                    },
+                                    {
+                                        groupName: 'callback',
+                                        elementNamePattern: '^on.+',
+                                    },
+                                    {
+                                        groupName: 'directive',
+                                        elementNamePattern: '^(?:class|client|is|server|set|transition):',
+                                    },
+                                    {
+                                        groupName: 'reserved',
+                                        elementNamePattern: ['^ref$', '^key$'],
+                                    },
+                                ],
                             },
                         ],
                         'perfectionist/sort-maps': [
