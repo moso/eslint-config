@@ -49,6 +49,8 @@ export const astro = async (
         (await loadPackages(['astro-eslint-parser', 'eslint-plugin-astro'])) as
             [Linter.Parser, (typeof import('eslint-plugin-astro'))['default']];
 
+    const { projectService, ...typeAwareParserOptions } = parserOptions ?? {};
+
     const flattenRules = (configs: ReadonlyArray<Linter.Config>): NonNullable<Linter.Config['rules']> =>
         configs.reduce<NonNullable<Linter.Config['rules']>>((acc, config) => Object.assign(acc, config.rules), {});
 
@@ -64,7 +66,10 @@ export const astro = async (
                 parserOptions: {
                     extraFileExtensions: ['.astro'],
                     parser: typescript ? typescriptParser : undefined,
-                    ...(typescript && parserOptions),
+                    ...(typescript && {
+                        ...typeAwareParserOptions,
+                        ...(Boolean(projectService) && { project: true }),
+                    }),
                 },
                 sourceType: 'module',
             },
@@ -82,13 +87,15 @@ export const astro = async (
                 '@moso/no-top-level-await': 'off',
                 'node/no-top-level-await': 'off',
 
+                'unicorn/no-await-expression-member': 'off',
+
                 ...flattenRules(astroPlugin.configs.recommended),
 
                 ...(!lessOpinionated && {
                     'astro/no-set-html-directive': 'error',
                     'astro/no-set-text-directive': 'error',
                     'astro/no-unsafe-inline-scripts': 'error',
-                    'astro/no-unused-css-selector': 'error',
+                    // 'astro/no-unused-css-selector': 'error', // False positives on selectors only used by imported JSX components
 
                     ...(stylisticEnabled && {
                         'astro/prefer-class-list-directive': 'error',

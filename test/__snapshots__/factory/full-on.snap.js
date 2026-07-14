@@ -396,9 +396,12 @@
   },
   {
     "files": [
+      "**/*.astro",
       "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
+      "**/*.vue",
     ],
     "rules": [
       "- node/no-extraneous-import",
@@ -945,6 +948,7 @@
         "extraFileExtensions": [
           ".astro",
         ],
+        "project": true,
       },
       "sourceType": "module",
     },
@@ -962,6 +966,7 @@
     "rules": [
       "- @moso/no-top-level-await",
       "- node/no-top-level-await",
+      "- unicorn/no-await-expression-member",
       "- prettier/prettier",
       "astro/missing-client-only-directive-value",
       "astro/no-conflict-set-directives",
@@ -975,7 +980,6 @@
       "astro/no-set-html-directive",
       "astro/no-set-text-directive",
       "astro/no-unsafe-inline-scripts",
-      "astro/no-unused-css-selector",
       "astro/prefer-class-list-directive",
       "astro/prefer-object-class-list",
       "astro/prefer-split-class-list",
@@ -1772,7 +1776,6 @@
       "- no-extra-boolean-cast",
       "- no-implied-eval",
       "- no-invalid-this",
-      "- no-loop-func",
       "- no-loss-of-precision",
       "- no-use-before-define",
       "- no-useless-constructor",
@@ -1808,7 +1811,6 @@
       "- @typescript-eslint/no-dupe-class-members",
       "@typescript-eslint/no-import-type-side-effects",
       "- @typescript-eslint/no-invalid-this",
-      "@typescript-eslint/no-loop-func",
       "@typescript-eslint/no-use-before-define",
       "- @typescript-eslint/parameter-properties",
       "functional/no-mixed-types",

@@ -316,9 +316,12 @@
   },
   {
     "files": [
+      "**/*.astro",
       "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
+      "**/*.vue",
     ],
     "rules": [
       "- node/no-extraneous-import",
@@ -1062,7 +1065,6 @@
       "- no-extra-boolean-cast",
       "- no-implied-eval",
       "- no-invalid-this",
-      "- no-loop-func",
       "- no-loss-of-precision",
       "- no-use-before-define",
       "- no-useless-constructor",
@@ -1094,7 +1096,6 @@
       "- @typescript-eslint/no-dupe-class-members",
       "@typescript-eslint/no-import-type-side-effects",
       "- @typescript-eslint/no-invalid-this",
-      "@typescript-eslint/no-loop-func",
       "@typescript-eslint/no-use-before-define",
       "@typescript-eslint/no-useless-constructor",
       "- @typescript-eslint/parameter-properties",
