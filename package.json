@@ -153,7 +153,7 @@
     "devDependencies": {
         "@eslint-react/eslint-plugin": "^5.14.8",
         "@eslint/compat": "^2.1.0",
-        "@eslint/config-inspector": "^3.0.4",
+        "@eslint/config-inspector": "^3.1.0",
         "@moso/eslint-plugin": "workspace:*",
         "@next/eslint-plugin-next": "^16.2.10",
         "@types/eslint-plugin-jsx-a11y": "^6.10.1",
