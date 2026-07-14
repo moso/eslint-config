@@ -129,8 +129,56 @@ export const perfectionist = async (
                             'error',
                             {
                                 ...commonOptions,
+                                type: 'unsorted',
+                                useConfigurationIf: {
+                                    tagMatchesPattern: '^[a-z][^.]*$',
+                                },
+                            },
+                            {
+                                ...commonOptions,
+                                customGroups: [
+                                    {
+                                        elementNamePattern: ['^role$', '^aria-.+$'],
+                                        groupName: 'a11y',
+                                    },
+                                    {
+                                        elementNamePattern: [
+                                            '^type$',
+                                            '^id$',
+                                            '^className$',
+                                            '^href$',
+                                            '^src$',
+                                            '^srcSet$',
+                                            '^name$',
+                                            '^style$',
+                                        ],
+                                        groupName: 'almost-props',
+                                    },
+                                    {
+                                        elementNamePattern: '^on.+',
+                                        groupName: 'callback',
+                                    },
+                                    {
+                                        elementNamePattern: '^(?:class|client|is|server|set|transition):',
+                                        groupName: 'directive',
+                                    },
+                                    {
+                                        elementNamePattern: ['^ref$', '^key$'],
+                                        groupName: 'reserved',
+                                    },
+                                ],
                                 fallbackSort: { order: 'asc', type: 'natural' },
                                 ignoreCase: true,
+                                groups: [
+                                    'reserved',
+                                    'almost-props',
+                                    'unknown',
+                                    'directive',
+                                    'a11y',
+                                    'shorthand-prop',
+                                    'callback',
+                                    'multiline-prop',
+                                ],
                                 type: 'alphabetical',
                             },
                         ],
