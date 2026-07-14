@@ -396,9 +396,12 @@
   },
   {
     "files": [
+      "**/*.astro",
       "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
+      "**/*.vue",
     ],
     "rules": [
       "- node/no-extraneous-import",
@@ -945,6 +948,7 @@
         "extraFileExtensions": [
           ".astro",
         ],
+        "project": true,
       },
       "sourceType": "module",
     },
@@ -962,6 +966,7 @@
     "rules": [
       "- @moso/no-top-level-await",
       "- node/no-top-level-await",
+      "- unicorn/no-await-expression-member",
       "- prettier/prettier",
       "astro/missing-client-only-directive-value",
       "astro/no-conflict-set-directives",
@@ -975,7 +980,6 @@
       "astro/no-set-html-directive",
       "astro/no-set-text-directive",
       "astro/no-unsafe-inline-scripts",
-      "astro/no-unused-css-selector",
       "astro/prefer-class-list-directive",
       "astro/prefer-object-class-list",
       "astro/prefer-split-class-list",

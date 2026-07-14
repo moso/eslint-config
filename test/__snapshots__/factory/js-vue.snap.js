@@ -337,9 +337,12 @@
   },
   {
     "files": [
+      "**/*.astro",
       "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
+      "**/*.vue",
     ],
     "rules": [
       "- node/no-extraneous-import",
