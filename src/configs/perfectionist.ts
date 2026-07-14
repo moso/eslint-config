@@ -138,11 +138,10 @@ export const perfectionist = async (
                                 ...commonOptions,
                                 customGroups: [
                                     {
-                                        groupName: 'a11y',
                                         elementNamePattern: ['^role$', '^aria-.+$'],
+                                        groupName: 'a11y',
                                     },
                                     {
-                                        groupName: 'almost-props',
                                         elementNamePattern: [
                                             '^type$',
                                             '^id$',
@@ -153,18 +152,19 @@ export const perfectionist = async (
                                             '^name$',
                                             '^style$',
                                         ],
+                                        groupName: 'almost-props',
                                     },
                                     {
-                                        groupName: 'callback',
                                         elementNamePattern: '^on.+',
+                                        groupName: 'callback',
                                     },
                                     {
-                                        groupName: 'directive',
                                         elementNamePattern: '^(?:class|client|is|server|set|transition):',
+                                        groupName: 'directive',
                                     },
                                     {
-                                        groupName: 'reserved',
                                         elementNamePattern: ['^ref$', '^key$'],
+                                        groupName: 'reserved',
                                     },
                                 ],
                                 fallbackSort: { order: 'asc', type: 'natural' },
