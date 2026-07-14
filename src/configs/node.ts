@@ -3,12 +3,15 @@ import assert from 'node:assert/strict';
 import globals from 'globals';
 
 import {
+    GLOB_ASTRO,
     GLOB_CJS,
     GLOB_DTS,
     GLOB_JS,
+    GLOB_JSX,
     GLOB_MJS,
     GLOB_TS,
     GLOB_TSX,
+    GLOB_VUE,
 } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
@@ -154,7 +157,14 @@ export const node = async (
             },
         },
         {
-            files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
+            files: [
+                GLOB_ASTRO,
+                GLOB_DTS,
+                GLOB_JSX,
+                GLOB_TS,
+                GLOB_TSX,
+                GLOB_VUE,
+            ],
             rules: {
                 'node/no-extraneous-import': 'off',
                 'node/no-missing-import': 'off',
