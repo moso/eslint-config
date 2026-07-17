@@ -55,7 +55,7 @@ export const promise = async (
                         },
                     ],
                     'promise/no-native': 'off',
-                    'promise/prefer-catch': 'error',
+                    // 'promise/prefer-catch': 'error', // Disabled as `unicorn/prefer-then-catch` forces `.then().catch()` better
                 }),
 
                 ...overrides,
