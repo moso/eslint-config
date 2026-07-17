@@ -81,6 +81,7 @@ export const unicorn = async (
                         'unicorn/no-nonstandard-builtin-properties': 'off',
                         'unicorn/no-null': 'off',
                         'unicorn/no-process-exit': 'off',
+                        'unicorn/no-shorthand-property-overrides': 'off', // Transpiling with LightningCSS can trigger false positivies
                         'unicorn/no-unnecessary-array-flat-map': 'off', // Clashes with @moso/no-unnecessary-array-flat-map
                         'unicorn/no-unsafe-string-replacement': 'off',
                         'unicorn/no-useless-boolean-cast': 'off',
