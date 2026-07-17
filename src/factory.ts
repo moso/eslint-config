@@ -223,7 +223,7 @@ export async function moso(
             tsconfigRootDir: projectRootOptions,
             ...parserOptions,
             projectService:
-                parserOptions?.projectService === false || projectRootOptions === undefined
+                projectRootOptions === undefined || parserOptions?.projectService === false
                     ? false
                     : useDefaultDefaultProject === false
                         ? projectServiceUserConfig
