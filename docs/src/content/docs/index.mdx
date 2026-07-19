@@ -1,0 +1,41 @@
+---
+title: '@moso/eslint-config'
+description: Opinionated ESLint config for JavaScript, TypeScript, Vue, React, and more.
+template: splash
+hero:
+  tagline: Opinionated ESLint config for JavaScript, TypeScript, Vue, React, and more.
+  actions:
+    - text: Get started
+      link: /guides/getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/moso/eslint-config
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Features
+
+<CardGrid>
+	<Card title="Opinionated" icon="rocket">
+		A modern [ESLint config](https://eslint.org/docs/latest/use/configure/configuration-files-new) with reasonable but *very* opinionated defaults. These can be disabled.
+	</Card>
+	<Card title="Stylistic, without Prettier" icon="pencil">
+		[Stylistic](https://eslint.style) rules with single quotes, semicolons, sorted imports, and dangling commas, aimed to be used without Prettier.
+	</Card>
+	<Card title="Framework support" icon="puzzle">
+		Designed to work with JSX, TypeScript, Vue, React, Astro, Nuxt, and Next.js out of the box.
+	</Card>
+	<Card title="e18e, Functional, Perfectionist" icon="approve-check">
+		Applies [e18e](https://e18e.dev), [Perfectionist](https://perfectionist.dev), and [Functional](https://github.com/eslint-functional/eslint-plugin-functional) by default.
+	</Card>
+	<Card title="Internal @moso ruleset" icon="star">
+		Ships a small set of custom rules with security and hygiene in mind. See the [Configs reference](/reference/configs/).
+	</Card>
+	<Card title="Fully toggleable" icon="setting">
+		Every config can be enabled or disabled to fit your project.
+	</Card>
+</CardGrid>

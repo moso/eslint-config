@@ -1,0 +1,32 @@
+{
+    "name": "@moso/eslint-config-docs",
+    "type": "module",
+    "version": "3.0.4",
+    "private": true,
+    "scripts": {
+        "build": "bun run sync && astro build",
+        "check": "astro check",
+        "dev": "bun run sync && astro dev",
+        "lint": "eslint",
+        "preview": "astro preview",
+        "sync": "tsx scripts/sync-rules.ts"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.9",
+        "@astrojs/mdx": "^7.0.3",
+        "@astrojs/starlight": "^0.41.3",
+        "@fontsource-variable/inter": "^5.2.8",
+        "@fontsource-variable/noto-sans-mono": "^5.2.10",
+        "@moso/eslint-config": "^3.0.4",
+        "@types/mdx": "^2.0.14",
+        "@types/node": "^26.1.1",
+        "astro": "^7.1.1",
+        "astro-eslint-parser": "^3.0.0",
+        "eslint": "^10.7.0",
+        "eslint-plugin-astro": "^3.0.1",
+        "eslint-plugin-jsx-a11y": "^6.10.2",
+        "jiti": "^2.7.0",
+        "tsx": "^4.23.1",
+        "typescript": "^6.0.3"
+    }
+}

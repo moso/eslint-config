@@ -33,6 +33,9 @@ const config: Promise<Linter.Config[]> = moso(
         yaml: true,
     },
     {
+        ignores: ['docs'],
+    },
+    {
         files: ['src/**/*.ts'],
         rules: {
             'perfectionist/sort-exports': 'off',

@@ -1,0 +1,110 @@
+---
+title: FAQ
+description: 'Frequently asked questions about @moso/eslint-config.'
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## ESLint v9, older Node.js versions?
+
+ESLint v9 will reach [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that has reached EOL unless absolutely necessary. The same goes with older Node.js versions.
+
+Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this version has also reached EOL. The rest of their requirements mention `v22.13.0` and `>= 24`. However, the minimum requirements of some of the configs that this sharable config apply rules from have a minimum requirement of `v22.22.3`, this project will stay within this range.
+
+## TypeScript 7?
+
+TypeScript 7.0 [does not ship a compiler API](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) (a new one supposedly arrives in 7.1), so [`typescript-eslint`](https://typescript-eslint.io) - and therefore all TypeScript linting in this config - cannot run against it. TypeScript's supported setup is running TypeScript 6 side-by-side through the [`@typescript/typescript6`](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0) compatibility package, aliased so tooling that imports `typescript` keeps working:
+
+<Tabs syncKey="pkg">
+    <TabItem label="npm">
+        ```sh
+        npm install -D typescript@npm:@typescript/typescript6
+        ```
+    </TabItem>
+    <TabItem label="pnpm">
+        ```sh
+        pnpm add -D typescript@npm:@typescript/typescript6
+        ```
+    </TabItem>
+    <TabItem label="bun">
+        ```sh
+        bun add -d typescript@npm:@typescript/typescript6
+        ```
+    </TabItem>
+</Tabs>
+
+Optionally keep TypeScript 7's own `tsc` around as well:
+
+```jsonc
+{
+    "devDependencies": {
+        "@typescript/native": "npm:typescript@^7.0.2",
+        "typescript": "npm:@typescript/typescript6@^6.0.2"
+    }
+}
+```
+
+With the alias in place, this config works unchanged. Without it, the config detects TypeScript >7 and fails fast: an explicit `typescript: true` throws with these instructions, while auto-detection prints a warning and degrades to JavaScript-only linting instead of crashing inside the parser.
+
+**Keep in mind**, this is temporary until an API is provided by TypeScript for v7.
+
+## I want it less opinionated
+
+No problem. I've extracted the things that I've deemed *very opinionated* in each integration, and made a setting that helps you disable all of it in one go.
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    lessOpinionated: true,
+});
+```
+
+:::note
+The above will also disable `functional` and `perfectionist` completely. If you want to keep these enabled, you'll have to re-enable them explicitly, as demonstrated below.
+:::
+
+```js
+{
+    // Disable opinionated rules
+    lessOpinionated: true,
+
+    // Re-enable functional - a string sets the enforcement level directly
+    functional: 'lite', // 'lite' | 'recommended' | 'strict'
+
+    // ...or as an object:
+    functional: {
+        functionalEnforcement: 'recommended',
+    },
+
+    // Re-enable `perfectionist`
+    perfectionist: true,
+}
+```
+
+## Prettier? dprint?
+
+You can still use these to format files that aren't linted with this config, however, I strongly recommend you only format your code with ESLint, as Prettier and other AST-reading-then-reprint projects tend to ignore stuff like the original line breaks and might also cause inconsistent diffs when committing code.
+
+## How to format CSS?
+
+You will need to install and configure [`stylelint`](https://stylelint.io) yourself, unfortunately.
+
+I am actively considering adding linting support for TailwindCSS, however.
+
+## I prefer *this* or *that* rule
+
+No worries, you can always override the rules locally in your project to fit your needs. If that doesn't cut it, you're welcome to fork this project and maintain your own config.
+
+## Inspiration
+
+This ESLint config is heavily inspired by (and uses some of the same logic of):
+
+- [@antfu/eslint-config](https://github.com/antfu/eslint-config)
+- [@rebeccastevens/eslint-config](https://github.com/RebeccaStevens/eslint-config-rebeccastevens)
+- [@eslint-sukka/eslint-config](https://github.com/SukkaW/eslint-config-sukka)
+
+[Anthony Fu](https://github.com/antfu)'s config inspired the journey behind this project. Especially Rebecca's config and strict(er) approach to coding has pushed it towards a stricter coding environment, with [Functional](https://github.com/eslint-functional/eslint-plugin-functional) and [Azat](https://github.com/azat-io)'s [Perfectionist](https://perfectionist.dev) and [De Morgan](https://github.com/azat-io/eslint-plugin-de-morgan) enabled.
+
+A personal thank-you to Anthony, Rebecca, Sukka, and Azat, and everyone else who contributed to their projects.

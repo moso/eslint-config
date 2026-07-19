@@ -1,0 +1,134 @@
+---
+title: Getting Started
+description: 'Install and configure @moso/eslint-config in your project.'
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Install
+
+:::important[Prerequisites]
+- Node.js >= `v22.23.x` or `v24.18.x`
+- ESLint >= `v10.x`
+:::
+
+<Tabs syncKey="pkg">
+    <TabItem label="npm">
+        ```sh
+        npm install -D eslint @moso/eslint-config
+        ```
+    </TabItem>
+    <TabItem label="pnpm">
+        ```sh
+        pnpm add -D eslint @moso/eslint-config
+        ```
+    </TabItem>
+    <TabItem label="bun">
+        ```sh
+        bun add -d eslint @moso/eslint-config
+        ```
+    </TabItem>
+</Tabs>
+
+Create `eslint.config.js` in the root of your project:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso();
+```
+
+:::tip[Pro tip]
+Add `jiti` to your `devDependencies` if you wish to use the `.ts` extension for your eslint.config-file.
+:::
+
+### Combine with legacy config
+
+If you still use some configs from the legacy `eslintrc` format, you can use the [`@eslint/eslintrc`](https://npmjs.com/package/@eslint/eslintrc) package to convert them to the flat config.
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+import { FlatCompat } from '@eslint/eslintrc';
+
+const compat = new FlatCompat()
+
+export default moso(
+    {
+        ignores: [],
+    },
+
+    // Legacy config
+    ...compat.config({
+        extends: [
+            'eslint:recommended',
+            // Other extends...
+        ],
+    })
+
+    // Other flat configs...
+);
+```
+
+:::info[Note]
+`.eslintignore` no longer works in Flat config, see [Configuration](/guides/configuration/) for more details.
+:::
+
+## Add script for package.json
+
+For example:
+
+```json
+{
+    "scripts": {
+        "lint": "eslint",
+        "lint:fix": "eslint --fix"
+    }
+}
+```
+
+## VS Code support (auto fix)
+
+Install the [VS Code ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+
+Add the following settings to your `.vscode/settings.json`:
+
+```jsonc
+{
+  // Disable the default formatter, use eslint instead
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+
+  // Auto fix
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+
+    // You can silent specific rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    { "rule": "@stylistic/*", "severity": "off", "fixable": true },
+    { "rule": "*-indent", "severity": "off", "fixable": true },
+    { "rule": "*-spacing", "severity": "off", "fixable": true },
+    { "rule": "*-spaces", "severity": "off", "fixable": true },
+    { "rule": "*-order", "severity": "off", "fixable": true },
+    { "rule": "*-dangle", "severity": "off", "fixable": true },
+    { "rule": "*-newline", "severity": "off", "fixable": true },
+    { "rule": "*quotes", "severity": "off", "fixable": true },
+    { "rule": "*semi", "severity": "off", "fixable": true }
+  ],
+
+  // Enable eslint for all supported languages
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "json",
+    "jsonc",
+    "yaml"
+  ]
+}
+```

@@ -10,5 +10,6 @@
         "skipLibCheck": true,
         "isolatedDeclarations": true
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts"],
+    "exclude": ["docs"]
 }

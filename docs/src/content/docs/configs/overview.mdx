@@ -1,0 +1,62 @@
+---
+title: Configs
+description: 'Plugins used by each @moso/eslint-config config, and the custom @moso rule set.'
+---
+
+## Plugins by config
+
+This section contains a list of the plugins used in the named configs that ship with this shareable config.
+
+- ✅ Enabled by default
+- ☑️ Enabled by auto-detect
+- 🌟 Enabled unless `lessOpinionated: true`
+- 🟨 Can be enabled manually
+- 🎨 Stylistic rules enabled
+- 💭 Type-aware rules available by setting the path to your `tsconfig.json`
+- ℹ️ Accessibility rules available with `a11y: true`
+
+| Config | Plugins | Enabled | Stylistic | Type-aware |
+| --- | --- | --- | --- | --- |
+| Astro | [`eslint-plugin-astro`](https://ota-meshi.github.io/eslint-plugin-astro), [`astro-eslint-parser`](https://github.com/ota-meshi/astro-eslint-parser), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ☑️ℹ️ | 🎨 | |
+| e18e | [`@e18e/eslint-plugin`](https://github.com/e18e/eslint-plugin) | 🌟 | | |
+| ESLint Comments | [`eslint-plugin-eslint-comments`](https://eslint-community.github.io/eslint-plugin-eslint-comments) | ✅ | | |
+| Functional | [`eslint-plugin-functional`](https://github.com/eslint-functional/eslint-plugin-functional) | 🌟 | 🎨 | |
+| Import Lite | [`eslint-plugin-import-lite`](https://github.com/9romise/eslint-plugin-import-lite) | ✅ | 🎨 | |
+| JavaScript | [`@eslint/js`](https://eslint.org), [`eslint-plugin-de-morgan`](https://github.com/azat-io/eslint-plugin-de-morgan), [`eslint-plugin-unused-imports`](https://github.com/sweepline/eslint-plugin-unused-imports) | ✅ | | |
+| JSDoc | [`eslint-plugin-jsdoc`](https://github.com/gajus/eslint-plugin-jsdoc) | 🟨 | 🎨 | |
+| JSONC | [`eslint-plugin-jsonc`](https://ota-meshi.github.io/eslint-plugin-jsonc) | 🟨 | 🎨 | |
+| JSX | [`@stylistic/eslint-plugin`](https://eslint.style), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ✅ℹ️ | 🎨 | |
+| Next.js | [`@next/eslint-plugin-next`](https://nextjs.org/docs/app/api-reference/config/eslint) | ☑️ | | |
+| Node | [`eslint-plugin-n`](https://github.com/eslint-community/eslint-plugin-n) | ✅ | | |
+| Perfectionist | [`eslint-plugin-perfectionist`](https://perfectionist.dev) | 🌟 | | |
+| Promises | [`eslint-plugin-promise`](https://github.com/eslint-community/eslint-plugin-promise) | ✅ | | |
+| React | [`@eslint-react`](https://eslint-react.xyz), [`@eslint-react/dom`](https://eslint-react.xyz), [`@eslint-react/hooks-extra`](https://eslint-react.xyz), [`@eslint-react/naming-convention`](https://eslint-react.xyz), [`@eslint-react/web-api`](https://eslint-react.xyz), [`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks), [`eslint-plugin-react-you-might-not-need-an-effect`](https://github.com/NickvanDyke/eslint-plugin-react-you-might-not-need-an-effect), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ☑️ℹ️ | 🎨 | 💭 |
+| RegExp | [`eslint-plugin-regexp`](https://ota-meshi.github.io/eslint-plugin-regexp) | ✅ | | |
+| Stylistic | [`@stylistic/eslint-plugin`](https://eslint.style) | ✅ | 🎨 | |
+| Test | [`@vitest/eslint-plugin`](https://github.com/vitest-dev/eslint-plugin-vitest), [`eslint-plugin-no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests) | ✅ | | |
+| TOML | [`eslint-plugin-toml`](https://ota-meshi.github.io/eslint-plugin-toml) | ✅ | 🎨 | |
+| TypeScript | [`@typescript-eslint`](https://typescript-eslint.io), [`eslint-plugin-erasable-syntax-only`](https://github.com/JoshuaKGoldberg/eslint-plugin-erasable-syntax-only) | ☑️ | 🎨 | 💭 |
+| Unicorn | [`eslint-plugin-unicorn`](https://github.com/sindresorhus/eslint-plugin-unicorn) | ✅ | | |
+| Vue | [`eslint-plugin-vue`](https://eslint.vuejs.org), [`eslint-plugin-vuejs-accessibility`](https://vue-a11y.github.io/eslint-plugin-vuejs-accessibility) | ☑️ℹ️ | 🎨 | 💭 |
+| YAML | [`eslint-plugin-yml`](https://ota-meshi.github.io/eslint-plugin-yml) | ✅ | 🎨 | |
+
+## Custom rules
+
+This config ships its own small plugin, registered as `@moso`. Each rule has full documentation on its own page.
+
+| Rule | Description | Default | Fixable |
+| --- | --- | --- | --- |
+| [`avoid-barrel-files`](/rules/avoid-barrel-files/) | Disallow *authoring* barrel files | ✅ | |
+| [`no-bidi`](/rules/no-bidi/) | Detect and stop trojan source attacks | ✅ | 🔧 |
+| [`no-force-cast-via-top-type`](/rules/no-force-cast-via-top-type/) | Disallow `T as any as Q` casts | ✅ | |
+| [`no-import-duplicates`](/rules/no-import-duplicates/) | Fix duplicate specifiers within an import | ✅ | 🔧 |
+| [`no-import-from-dist`](/rules/no-import-from-dist/) | Prevent importing from `dist` folders | ✅ | |
+| [`no-import-node-modules-by-path`](/rules/no-import-node-modules-by-path/) | Prevent importing `node_modules` by path | ✅ | |
+| [`no-invisible-characters`](/rules/no-invisible-characters/) | Disallow invisible characters | ✅ | 🔧 |
+| [`no-redundant-variable`](/rules/no-redundant-variable/) | Disallow variables that are immediately returned | | 🔧 |
+| [`no-string-interpolation`](/rules/no-string-interpolation/) | Disallow multiline expressions in template literals | | |
+| [`no-top-level-await`](/rules/no-top-level-await/) | Prevent top-level `await` | ✅ | |
+| [`no-unneeded-array-flat-map`](/rules/no-unneeded-array-flat-map/) | Disallow `flatMap` with identity callbacks | | 🔧 |
+| [`prefer-early-return`](/rules/prefer-early-return/) | Prefer guard clauses over wrapped function bodies | | 🔧 |
+| [`prefer-fetch`](/rules/prefer-fetch/) | Enforce `fetch` over legacy HTTP clients | | |
+| [`prefer-reduce-over-chaining`](/rules/prefer-reduce-over-chaining/) | Prefer one `.reduce()` pass over `.map().filter()` chains | ✅ | |

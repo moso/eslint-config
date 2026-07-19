@@ -1,0 +1,178 @@
+---
+title: Configuration
+description: 'Customize @moso/eslint-config with per-integration options, rule overrides, and advanced composition.'
+---
+
+Since v1.0.0, this config has been migrated to [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new). It provides much better organization and composition. And speed!
+
+Normally you only need to import the `moso` preset:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso();
+```
+
+## Configuration Options
+
+Configure integrations by passing options to the main function:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    // Stylistic rules (enabled by default)
+    stylistic: false, // disable entirely
+    stylistic: {
+        indent: 4, // 2, or 'tab'
+        jsx: true, // or false to disable JSX support
+        quotes: 'single', // or 'double'
+        semi: true, // or false
+    },
+
+    // Auto-detected, or enable explicitly
+    astro: true,
+    react: true,
+    typescript: true,
+    vue: true,
+
+    // JSDoc support
+    jsdoc: true, // enable explicitly with reasonable defaults
+
+    // File format support
+    jsonc: false,
+    yaml: false,
+
+    // Replaces .eslintignore (no longer supported)
+    ignores: [
+        '**/dist',
+        '**/node_modules',
+    ],
+});
+```
+
+## Overriding Rules
+
+Pass additional flat config objects as arguments. Rules are scoped to specific file types:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso(
+    {
+        // First argument: moso config options
+        vue: true,
+        typescript: true,
+    },
+    {
+        // Additional arguments: standard ESLint flat configs
+        files: ['**/*.vue'],
+        rules: {
+            'vue/multi-word-component-names': ['error', { ignores: [] }],
+        },
+    },
+    {
+        // You can pass multiple config objects
+        files: ['**/*.ts'],
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'warn',
+        },
+    },
+);
+```
+
+## Advanced Composition
+
+The config returns a `FlatConfigComposer` object from [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils#composer), enabling chainable methods:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso()
+    .prepend({
+        // Configs before the main config
+    })
+    .override('moso/javascript/rules', {
+        rules: {
+            'no-var': 'off',
+        },
+    })
+    .removeRules(
+        'no-console',
+        'no-debugger',
+    );
+```
+
+### Fine-grained config imports
+
+You can import and compose individual configs directly. Only use this if you need granular control:
+
+```js
+import {
+    combine,
+    comments,
+    ignores,
+    imports,
+    javascript,
+    jsdoc,
+    jsonc,
+    node,
+    sortPackageJson,
+    sortTsconfig,
+    stylistic,
+    typescript,
+    unicorn,
+    vue,
+    yaml,
+} from '@moso/eslint-config';
+
+export default combine(
+    comments(),
+    ignores(),
+    imports(),
+    javascript(/* options */),
+    jsdoc(),
+    jsonc(),
+    node(),
+    stylistic(/* options */),
+    typescript(/* options */),
+    unicorn(),
+    vue(/* options */),
+    yaml(),
+);
+```
+
+## Optional configs
+
+### JSDoc
+
+Disabled by default, will have to be enabled manually.
+
+There are many ways JSDoc support can be configured. However, the most simple way is just enabling it which will use very reasonable defaults:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    jsdoc: true,
+});
+```
+
+This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exists, and tags are formatted and styled consistently.
+
+Individual rules can be tweaked with the `overrides` property:
+
+```js
+{
+    jsdoc: {
+        overrides: {
+            'jsdoc/require-description': 'off',
+        },
+    },
+}
+```

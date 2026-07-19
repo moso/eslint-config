@@ -48,6 +48,8 @@
         "build": "bun run typegen && tsdown --clean --dts",
         "build:inspector": "bun run build && bunx @eslint/config-inspector build --config eslint.config.ts --out-dir ./.eslint-config-inspector",
         "dev": "bunx @eslint/config-inspector --config eslint.config.ts",
+        "docs:build": "bun run --cwd docs build",
+        "docs:dev": "bun run --cwd docs dev",
         "lint": "eslint",
         "prepack": "bun run build",
         "prepare": "bun run simple-git-hooks",

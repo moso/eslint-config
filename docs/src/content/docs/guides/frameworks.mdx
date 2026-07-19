@@ -1,0 +1,119 @@
+---
+title: Frameworks
+description: 'Framework-specific linting support for Astro, React, and Vue.'
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Framework support is auto-detected based on installed packages, but can be enabled explicitly. Dependencies are not bundled and will be prompted for installation.
+
+:::note[Worth noting]
+Framework support is just as opinionated as the rest of the config. If your favorite framework is missing, then you can always extend the config yourself.
+:::
+
+## Astro
+
+Auto-detected if you have [Astro](https://astro.build) installed. Enable explicitly:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    astro: true,
+});
+```
+
+Install dependencies when prompted, or manually:
+
+<Tabs syncKey="pkg">
+    <TabItem label="npm">
+        ```sh
+        npm install -D eslint-plugin-astro astro-eslint-parser
+        ```
+    </TabItem>
+    <TabItem label="pnpm">
+        ```sh
+        pnpm add -D eslint-plugin-astro astro-eslint-parser
+        ```
+    </TabItem>
+    <TabItem label="bun">
+        ```sh
+        bun add -d eslint-plugin-astro astro-eslint-parser
+        ```
+    </TabItem>
+</Tabs>
+
+:::note
+Since Astro can be plugged with other frameworks as well, you'll be prompted to install the required packages for linting those as well. Example: If you have installed `@astrojs/react`, you'll be prompted to install the required packages to lint React.
+:::
+
+## React
+
+Auto-detected if you have React, Next.js, Nextra, Remix, Gatsby, or the `@astrojs/react` Astro framework integration installed. Enable explicitly:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    react: true,
+});
+```
+
+Install dependencies when prompted, or manually:
+
+<Tabs syncKey="pkg">
+    <TabItem label="npm">
+        ```sh
+        npm install -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+        ```
+    </TabItem>
+    <TabItem label="pnpm">
+        ```sh
+        pnpm add -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+        ```
+    </TabItem>
+    <TabItem label="bun">
+        ```sh
+        bun add -d @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+        ```
+    </TabItem>
+</Tabs>
+
+## Vue
+
+Auto-detected if you have Vue, Nuxt, VitePress, or the `@astrojs/vue` Astro framework integration installed. Enable explicitly:
+
+```js
+// eslint.config.js
+import moso from '@moso/eslint-config';
+
+export default moso({
+    vue: true,
+});
+```
+
+Install dependencies when prompted, or manually (the Vue parser and SFC processors are already bundled as dependencies):
+
+<Tabs syncKey="pkg">
+    <TabItem label="npm">
+        ```sh
+        npm install -D eslint-plugin-vue
+        ```
+    </TabItem>
+    <TabItem label="pnpm">
+        ```sh
+        pnpm add -D eslint-plugin-vue
+        ```
+    </TabItem>
+    <TabItem label="bun">
+        ```sh
+        bun add -d eslint-plugin-vue
+        ```
+    </TabItem>
+</Tabs>
+
+:::danger[Deprecated Vue 2 Support]
+Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need to support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
+:::
