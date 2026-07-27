@@ -335,6 +335,7 @@
       "@moso/prefer-early-return",
       "@moso/prefer-fetch",
       "@moso/prefer-reduce-over-chaining",
+      "@moso/prefer-strict-number-guards",
       "de-morgan/no-negated-conjunction",
       "de-morgan/no-negated-disjunction",
     ],
