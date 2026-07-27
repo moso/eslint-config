@@ -66,17 +66,24 @@ const ruleNoRedundantVariables: createRuleType = createRule({
     },
     create: (context) => ({
         BlockStatement: ({ body }: TSESTree.BlockStatement) => {
-            const exit = body.find(isReturnStatement);
-            if (!exit) return;
+            let mut_previous: TSESTree.Statement | undefined;
 
-            const previous = body[body.indexOf(exit) - 1];
-            if (!isRedundantVariable(previous, exit)) return;
+            for (const statement of body) {
+                if (!isReturnStatement(statement)) {
+                    mut_previous = statement;
+                    continue;
+                }
 
-            context.report({
-                node: exit,
-                messageId: 'noRedundantVar',
-                fix: isRedundantVariableFixer(context.sourceCode, previous, exit),
-            });
+                if (isRedundantVariable(mut_previous, statement)) {
+                    context.report({
+                        node: statement,
+                        messageId: 'noRedundantVar',
+                        fix: isRedundantVariableFixer(context.sourceCode, mut_previous, statement),
+                    });
+                }
+
+                return;
+            }
         },
     }),
 });
