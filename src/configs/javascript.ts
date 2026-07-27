@@ -389,6 +389,7 @@ export const javascript = async (
                         '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
                         '@moso/prefer-fetch': 'error',
                         '@moso/prefer-reduce-over-chaining': 'error',
+                        '@moso/prefer-strict-number-guards': 'error',
 
                         // eslint-plugin-de-morgan rules
                         // @see https://github.com/azat-io/eslint-plugin-de-morgan
