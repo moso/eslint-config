@@ -13,6 +13,7 @@ import noUnneededArrayFlatMap from './no-unneeded-array-flat-map/no-unneeded-arr
 import preferEarlyReturn from './prefer-early-return/prefer-early-return';
 import preferFetch from './prefer-fetch/prefer-fetch';
 import preferReduceOverChaining from './prefer-reduce-over-chaining/prefer-reduce-over-chaining';
+import preferStrictNumberGuards from './prefer-strict-number-guards/prefer-strict-number-guards';
 
 import type { ESLint, Linter, Rule } from 'eslint';
 
@@ -39,6 +40,7 @@ type PluginConfig = {
         'prefer-early-return': Rule.RuleModule;
         'prefer-fetch': Rule.RuleModule;
         'prefer-reduce-over-chaining': Rule.RuleModule;
+        'prefer-strict-number-guards': Rule.RuleModule;
     };
 };
 
@@ -63,6 +65,7 @@ const plugin = {
         'prefer-early-return': preferEarlyReturn,
         'prefer-fetch': preferFetch,
         'prefer-reduce-over-chaining': preferReduceOverChaining,
+        'prefer-strict-number-guards': preferStrictNumberGuards,
     },
 } as unknown as ESLint.Plugin;
 

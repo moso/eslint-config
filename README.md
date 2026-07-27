@@ -309,6 +309,7 @@ This config ships its own small plugin, registered as `@moso`. Each rule has ful
 | [`prefer-early-return`](./src/rules/prefer-early-return/prefer-early-return.md) | Prefer guard clauses over wrapped function bodies | | 🔧 |
 | [`prefer-fetch`](./src/rules/prefer-fetch/prefer-fetch.md) | Enforce `fetch` over legacy HTTP clients | | |
 | [`prefer-reduce-over-chaining`](./src/rules/prefer-reduce-over-chaining/prefer-reduce-over-chaining.md) | Prefer one `.reduce()` pass over `.map().filter()` chains | ✅ | |
+| [`prefer-strict-number-guards`](./src/rules/prefer-strict-number-guards/prefer-strict-number-guards.md) | Enforce the syntactic patterns that keep numeric code analyzable | | |
 
 ## Usage
 
@@ -799,7 +800,7 @@ Optionally keep TypeScript 7's own `tsc` around as well:
 {
     "devDependencies": {
         "@typescript/native": "npm:typescript@^7.0.2",
-        "typescript": "npm:@typescript/typescript6@^6.0.2"
+        "typescript": "npm:@typescript/typescript6@^6.0.3"
     }
 }
 ```
@@ -807,6 +808,9 @@ Optionally keep TypeScript 7's own `tsc` around as well:
 With the alias in place, this config works unchanged. Without it, the config detects TypeScript >7 and fails fast: an explicit `typescript: true` throws with these instructions, while auto-detection prints a warning and degrades to JavaScript-only linting instead of crashing inside the parser.
 
 **Keep in mind**, this is temporary until an API is provided by TypeScript for v7.
+
+> [!NOTE]
+> As per v8.65.0, `@typescript-eslint` will also display a warning if TypeScript v7 is detected.
 
 ### I want it less opinionated
 
