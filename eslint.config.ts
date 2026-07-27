@@ -11,9 +11,6 @@ const config: Promise<Linter.Config[]> = moso(
     {
         astro: true,
         functional: 'lite',
-        ignores: {
-            gitignore: true,
-        },
         jsonc: true,
         mode: 'library',
         nextjs: true,

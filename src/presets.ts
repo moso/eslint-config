@@ -10,7 +10,6 @@ export const full: OptionsConfig = {
         functionalEnforcement: 'lite',
     },
     ignores: {
-        gitignore: true,
         userIgnores: false,
     },
     imports: true,

@@ -5,7 +5,7 @@ import type { OptionsIgnores, TypedFlatConfigItem } from '../types';
 
 export const ignores = async (options: Readonly<OptionsIgnores>): Promise<TypedFlatConfigItem[]> => {
     const {
-        gitignore,
+        gitignore = true,
         ignoreTypeScript,
         userIgnores,
     } = options;
