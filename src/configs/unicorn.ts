@@ -40,7 +40,7 @@ export const unicorn = async (
                         'unicorn/prefer-at': ['error', { checkAllIndexAccess: false }],
                         'unicorn/prefer-short-arrow-method': 'error',
                         // 'unicorn/prefer-temporal': 'error', // Too soon, will be enabled in the future
-                        'unicorn/try-complexity': 'error',
+                        'unicorn/try-complexity': ['error', { max: 3 }],
 
                         // Opinionated disables
                         'unicorn/consistent-boolean-name': 'off',
