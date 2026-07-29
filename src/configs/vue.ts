@@ -414,6 +414,7 @@ export const vue = async (
                     },
                 },
                 {
+                    name: 'moso/nuxt/template-rules',
                     files: [
                         `**/layouts/**/*.{${GLOB_SRC_EXT},vue}`,
                         `**/pages/**/*.{${GLOB_SRC_EXT},vue}`,
