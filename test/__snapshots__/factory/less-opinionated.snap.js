@@ -359,6 +359,7 @@
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
+    "name": "moso/node/disables/typescript",
     "rules": [
       "- node/no-unsupported-features/es-syntax",
     ],
@@ -372,6 +373,7 @@
       "**/*.?([cm])tsx",
       "**/*.vue",
     ],
+    "name": "moso/node/disables/frameworks",
     "rules": [
       "- node/no-extraneous-import",
       "- node/no-missing-import",
