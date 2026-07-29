@@ -1,8 +1,4 @@
-import {
-    createRule,
-    getFixer,
-    makeProgramListener,
-} from '../utils';
+import { createRule, getFixer, makeProgramListener } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 

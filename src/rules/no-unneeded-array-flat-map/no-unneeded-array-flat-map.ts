@@ -1,10 +1,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/utils';
 
-import {
-    createRule,
-    isIdentifierFunction,
-    isIdentifierName,
-} from '../utils';
+import { createRule, isIdentifierFunction, isIdentifierName } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 

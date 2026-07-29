@@ -72,8 +72,8 @@ export const globalIgnores = (ignorePatterns: ReadonlyArray<string>, name?: stri
 /**
  * Await a value and unwrap its `default` export when present.
  *
- * Smooths over the CJS/ESM interop difference where `import()` of a CJS
- * module yields `{ default: ... }` while an ESM module may not.
+ * Smooths over the CJS/ESM interop difference where `import()` of a CJS module
+ * yields `{ default: ... }` while an ESM module may not.
  *
  * @param value - A module (or promise of one) whose default export should be unwrapped.
  * @returns The default export when one exists, otherwise the resolved value itself.
@@ -83,7 +83,9 @@ export const interopDefault = async <T>(value: Awaitable<T>): Promise<T extends 
     return ((resolved as Record<string, unknown>).default ?? resolved) as T extends { default: infer U } ? U : T;
 };
 
-/** Whether ESLint is running from a git hook or lint-staged rather than an editor. */
+/**
+ * Whether ESLint is running from a git hook or lint-staged rather than an editor.
+ */
 const isInGitHooksOrLintStaged = (): boolean => (
     Boolean(process.env.GIT_PARAMS) ||
     Boolean(process.env.VSCODE_GIT_COMMAND) ||
@@ -146,10 +148,14 @@ export const getOverrides = (
 
 const scopeURL = import.meta.dirname;
 
-/** Whether `name` resolves from this package's own directory (not the consumer's cwd). */
+/**
+ * Whether `name` resolves from this package's own directory (not the consumer's cwd).
+ */
 const isPackageInScope = (name: string): boolean => isPackageExists(name, { paths: [scopeURL] });
 
-/** Whether an install prompt could ever be shown: a TTY outside CI. */
+/**
+ * Whether an install prompt could ever be shown: a TTY outside CI.
+ */
 const isInteractive = (): boolean => {
     if (Boolean(process.env.CI)) return false;
     return process.stdout.isTTY;
@@ -191,7 +197,6 @@ const ensurePackages = async (packages: ReadonlyArray<string>): Promise<void> =>
  * @returns The imported modules (default exports unwrapped), in input order.
  */
 export const loadPackages = async (packageIds: ReadonlyArray<string>): Promise<unknown[]> => {
-    // Existence checks cost a fs resolution each; skip them entirely when no prompt could ever be shown
     if (isInteractive()) {
         const missing = packageIds.filter((id) => !isPackageExists(id));
         if (missing.length > 0) await ensurePackages(missing);
@@ -214,10 +219,11 @@ declare global {
  * with different references. Stored realm-wide on `globalThis` so duplicated
  * copies of this package still share one store.
  *
+ * @see https://github.com/SukkaW/eslint-config-sukka/blob/master/packages/shared/src/memoize-eslint-plugin.ts
+ *
  * @param plugin - The plugin instance to register when the key is unseen.
  * @param key - Stable identifier; must be identical everywhere the same package is registered.
  * @returns The first instance ever registered under `key`.
- * @see https://github.com/SukkaW/eslint-config-sukka/blob/master/packages/shared/src/memoize-eslint-plugin.ts
  */
 export const memoize = <T extends ESLint.Plugin>(plugin: T, key: string): T => {
     // eslint-disable-next-line unicorn/no-global-object-property-assignment

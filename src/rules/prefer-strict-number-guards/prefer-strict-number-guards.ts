@@ -141,22 +141,20 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
             recommended: 'stylistic',
             url: 'https://github.com/chenglou/freerange',
         },
-        schema: [
-            {
-                type: 'object',
-                description: 'Which of the Freerange authoring rules to enforce.',
-                properties: {
-                    guards: {
-                        type: 'array',
-                        description: 'The audit codes to enforce. The heuristic `encode-input-rule` and `guard-array-index` are off by default.',
-                        items: { type: 'string', enum: [...allGuards] },
-                        uniqueItems: true,
-                        default: [...defaultGuards],
-                    },
+        schema: [{
+            type: 'object',
+            description: 'Which of the Freerange authoring rules to enforce.',
+            properties: {
+                guards: {
+                    type: 'array',
+                    description: 'The audit codes to enforce. The heuristic `encode-input-rule` and `guard-array-index` are off by default.',
+                    items: { type: 'string', enum: [...allGuards] },
+                    uniqueItems: true,
+                    default: [...defaultGuards],
                 },
-                additionalProperties: false,
             },
-        ],
+            additionalProperties: false,
+        }],
         messages: {
             checkParseResult: 'This can produce `NaN` or `±Infinity`. Check the result with `Number.isFinite` or `Number.isNaN` before using it.',
             encodeInputRule: 'The `number` parameter `{{name}}` is used as a divisor or an index without stating its rule. Open the function with `console.assert({{name}} >= 1)`, or normalise it at the use site with `Math.max`/`Math.floor`.',
