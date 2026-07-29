@@ -38,6 +38,13 @@ const allGuards: ReadonlyArray<Guard> = [
     'write-explicit-condition',
 ];
 
+const defaultGuards: ReadonlyArray<Guard> = [
+    'check-parse-result',
+    'guard-derived-value',
+    'use-direct-operands',
+    'write-explicit-condition',
+];
+
 const arithmeticOperators: ReadonlySet<string> = new Set(['%', '*', '**', '+', '-', '/']);
 const parseFunctions: ReadonlyArray<string> = ['Number', 'parseFloat', 'parseInt'];
 const indexNamePattern = /^(?:[ijk]|idx|index)$/iu;
@@ -141,10 +148,10 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
                 properties: {
                     guards: {
                         type: 'array',
-                        description: 'The audit codes to enforce. Every guard is enabled by default.',
+                        description: 'The audit codes to enforce. The heuristic `encode-input-rule` and `guard-array-index` are off by default.',
                         items: { type: 'string', enum: [...allGuards] },
                         uniqueItems: true,
-                        default: [...allGuards],
+                        default: [...defaultGuards],
                     },
                 },
                 additionalProperties: false,
@@ -159,7 +166,7 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
             writeExplicitCondition: '`0` is falsy, so a `||` fallback silently replaces a legitimate zero. Write `value === 0 ? fallback : value` instead.',
         },
     },
-    defaultOptions: [{ guards: [...allGuards] }] as [Options],
+    defaultOptions: [{ guards: [...defaultGuards] }] as [Options],
     create: (context, [{ guards }]) => {
         const enabled: ReadonlySet<Guard> = new Set(guards);
         const mut_scopes: FunctionScope[] = [];
@@ -230,8 +237,7 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
 
                 context.report({
                     node,
-                    messageId:
-                    'checkParseResult',
+                    messageId: 'checkParseResult',
                 });
             },
 
