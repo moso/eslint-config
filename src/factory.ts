@@ -4,6 +4,7 @@ import { FlatConfigComposer } from 'eslint-flat-config-utils';
 import { getPackageInfo, isPackageExists } from 'local-pkg';
 import {
     astro,
+    baseline,
     comments,
     disables,
     e18e,
@@ -35,6 +36,7 @@ import {
     GLOB_ASTRO,
     GLOB_ASTRO_TS,
     GLOB_DTS,
+    GLOB_JS,
     GLOB_JSON,
     GLOB_JSON5,
     GLOB_JSONC,
@@ -63,6 +65,7 @@ import type { Linter } from 'eslint';
 import type {
     Awaitable,
     ConfigNames,
+    OptionsBaseline,
     OptionsConfig,
     OptionsIgnores,
     OptionsProjectRoot,
@@ -148,6 +151,16 @@ export async function moso(
 
     if ('files' in options)
         throw new Error('[@moso/eslint-config] The first argument should not contain the "files" property as the options are supposed to be global. Place it in the second or later config instead.');
+
+    const baselineOptions = options.baseline === false
+        ? false
+        : typeof options.baseline === 'object'
+            ? options.baseline
+            : (typeof options.baseline === 'string' || typeof options.baseline === 'number')
+                ? {
+                    baseline: options.baseline as OptionsBaseline['baseline'],
+                }
+                : {};
 
     const e18eOptions = options.e18e === false
         ? false
@@ -248,6 +261,7 @@ export async function moso(
 
     const mut_configs: Array<Awaitable<TypedFlatConfigItem[]>> = [
         comments({
+            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             overrides: getOverrides(options, 'comments'),
         }),
         ignores({
@@ -256,6 +270,7 @@ export async function moso(
         }),
         imports({
             ...typescriptConfigOptions,
+            files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
             overrides: getOverrides(options, 'imports'),
             stylistic: stylisticOptions,
             typescript: hasTypeScript,
@@ -275,14 +290,17 @@ export async function moso(
             ...resolveSubOptions(options, 'node'),
         }),
         promise({
+            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'promise'),
             typescript: hasTypeScript,
         }),
         regexp({
+            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             overrides: getOverrides(options, 'regexp'),
         }),
         unicorn({
+            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'unicorn'),
         }),
@@ -295,6 +313,24 @@ export async function moso(
                 ...stylisticOptions,
                 lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'stylistic'),
+                typescript: hasTypeScript,
+            }),
+        );
+    }
+
+    if (baselineOptions !== false) {
+        mut_configs.push(
+            baseline({
+                ...baselineOptions,
+                ...typescriptConfigOptions,
+                files: [
+                    GLOB_JS,
+                    GLOB_JSX,
+                    ...(astroOptions === false ? [] : [GLOB_ASTRO]),
+                ],
+                filesTypeAware: [GLOB_TS, GLOB_TSX],
+                overrides: getOverrides(options, 'baseline'),
+                projectRoot: projectRootOptions,
                 typescript: hasTypeScript,
             }),
         );
@@ -316,6 +352,7 @@ export async function moso(
         mut_configs.push(
             e18e({
                 ...e18eOptions,
+                files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
                 isInEditor,
                 lessOpinionated: options.lessOpinionated,
                 mode: modeOptions,
@@ -329,6 +366,7 @@ export async function moso(
             functional({
                 ...typescriptConfigOptions,
                 ...functionalConfigOptions,
+                files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
                 mode: modeOptions,
                 projectRoot: projectRootOptions,
                 overrides: getOverrides(options, 'functional'),
