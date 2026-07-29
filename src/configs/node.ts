@@ -126,22 +126,21 @@ export const node = async (
             },
         },
         ...((options.strict
-            ? [
-                {
-                    name: 'moso/node/strict',
-                    files: options.files ?? (
-                        options.module
-                            ? [GLOB_CJS]
-                            : [GLOB_CJS, GLOB_JS]
-                    ),
-                    rules: {
-                        strict: ['warn', 'global'],
-                    },
+            ? [{
+                name: 'moso/node/strict',
+                files: options.files ?? (
+                    options.module
+                        ? [GLOB_CJS]
+                        : [GLOB_CJS, GLOB_JS]
+                ),
+                rules: {
+                    strict: ['warn', 'global'],
                 },
-            ]
+            }]
             : []) satisfies TypedFlatConfigItem[]
         ),
         {
+            name: 'moso/node/disables/typescript',
             files: [
                 GLOB_DTS,
                 GLOB_MJS,
@@ -153,6 +152,7 @@ export const node = async (
             },
         },
         {
+            name: 'moso/node/disables/frameworks',
             files: [
                 GLOB_ASTRO,
                 GLOB_DTS,
