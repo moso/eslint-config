@@ -114,18 +114,18 @@ export const isInEditorEnv = (): boolean => {
 };
 
 /**
- * Normalize a factory option that accepts `boolean | string | object`
+ * Normalize a factory option that accepts `boolean | string | number | object`
  * down to its object form.
  *
  * @param options - The full factory options object.
  * @param key - The option key to resolve.
- * @returns The option's object form; `{}` when the option was a boolean, string, or absent.
+ * @returns The option's object form; `{}` when the option was a boolean, string, number, or absent.
  */
 export const resolveSubOptions = <K extends keyof OptionsConfig>(
     options: Readonly<OptionsConfig>,
     key: K,
 ): ResolvedOptions<OptionsConfig[K]> => (
-    typeof options[key] === 'boolean' || typeof options[key] === 'string' ? {} : (options[key] ?? {})
+    typeof options[key] === 'object' ? options[key] : {}
 ) as ResolvedOptions<OptionsConfig[K]>;
 
 /**
