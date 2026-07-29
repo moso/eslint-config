@@ -56,6 +56,17 @@ This section contains a list of the plugins used in the named configs that ships
 </tr>
 <tr>
 <td valign="top">
+<details><summary><strong>Baseline</strong></summary>
+
+[`eslint-plugin-baseline-js`](https://github.com/3ru/eslint-plugin-baseline-js)
+
+</details></td>
+<td valign="top">✅</td>
+<td valign="top"></td>
+<td valign="top">💭</td>
+</tr>
+<tr>
+<td valign="top">
 <details><summary><strong>e18e</strong></summary>
 
 [`@e18e/eslint-plugin`](https://github.com/e18e/eslint-plugin)
@@ -465,6 +476,14 @@ export default moso({
     react: true,
     typescript: true,
     vue: true,
+
+    // JavaScript Baseline (enabled by default, reported as warnings)
+    baseline: false, // disable entirely
+    baseline: 'newly', // 'widely' (default), 'newly', or a year like 2023
+    baseline: {
+        baseline: 'widely',
+        ignoreFeatures: [], // skip web-features by ID, supports RegExp via '/.../'
+    },
 
     // JSDoc support
     jsdoc: true, // enable explicitly with reasonable defaults
