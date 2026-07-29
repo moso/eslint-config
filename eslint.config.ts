@@ -10,6 +10,7 @@ import type { Linter } from 'eslint';
 const config: Promise<Linter.Config[]> = moso(
     {
         astro: true,
+        baseline: true,
         functional: 'lite',
         jsonc: true,
         mode: 'library',
