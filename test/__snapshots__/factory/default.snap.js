@@ -21,41 +21,43 @@
     "ignores": [
       "**/node_modules",
       "**/dist",
-      "**/lib",
       "**/package-lock.json",
-      "**/yarn.lock",
+      "**/bun.lock?(b)",
       "**/pnpm-lock.yaml",
-      "**/bun.lockb",
-      "**/bun.lock",
+      "**/yarn.lock",
+      "**/fixtures",
+      "**/lib",
       "**/output",
       "**/coverage",
       "**/temp",
-      "**/.temp",
       "**/tmp",
-      "**/.tmp",
-      "**/.history",
-      "**/.vitepress/cache",
-      "**/.nuxt",
-      "**/.next",
-      "**/.vercel",
-      "**/.changeset",
-      "**/.idea",
       "**/.cache",
+      "**/.changeset",
+      "**/.history",
+      "**/.idea",
+      "**/.next",
+      "**/.nitro",
+      "**/.nuxt",
       "**/.output",
+      "**/.temp",
+      "**/.tmp",
+      "**/.vercel",
       "**/.vite-inspect",
+      "**/.vitepress/cache",
       "**/.yarn",
-      "**/vite.config.*.timestamp-*",
       "**/CHANGELOG*.md",
-      "**/*.min.*",
+      "**/?(.)*.min.*",
       "**/LICENSE*",
       "**/__snapshots__",
-      "**/auto-import?(s).ts",
-      "**/auto-import?(s).d.ts",
-      "**/components.ts",
-      "**/components.d.ts",
-      "**/typegen.ts",
-      "**/typegen.d.ts",
-      "**/*.css.ts",
+      "**/auto-import?(s)?(.d).ts",
+      "**/components?(.d).ts",
+      "**/typegen?(.d).ts",
+      "**/vite.config.*.timestamp-*",
+      "**/*.css.{j,t}s",
+      "**/.agents",
+      "**/.claude",
+      "**/.context",
+      "**/.*/skills",
     ],
     "name": "moso/ignores/globals",
   },
@@ -948,6 +950,35 @@
     ],
   },
   {
+    "name": "moso/baseline/setup",
+    "plugins": [
+      "baseline-js",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])js",
+      "**/*.?([cm])jsx",
+    ],
+    "name": "moso/baseline/rules",
+    "rules": [
+      "baseline-js/use-baseline",
+    ],
+  },
+  {
+    "files": [
+      "**/__tests__/**/?(.)*.?([cm])[jt]s?(x)",
+      "**/?(.)*.spec.?([cm])[jt]s?(x)",
+      "**/?(.)*.test.?([cm])[jt]s?(x)",
+      "**/?(.)*.bench.?([cm])[jt]s?(x)",
+      "**/?(.)*.benchmark.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/baseline/disables/test",
+    "rules": [
+      "- baseline-js/use-baseline",
+    ],
+  },
+  {
     "files": [
       "**/*.?([cm])[jt]s?(x)",
       "**/*.astro",
@@ -1202,6 +1233,12 @@
     ],
   },
   {
+    "files": [
+      "**/*.toml",
+    ],
+    "languageOptions": {
+      "parser": "toml-eslint-parser",
+    },
     "name": "moso/toml/setup",
     "plugins": [
       "toml",
@@ -1211,9 +1248,6 @@
     "files": [
       "**/*.toml",
     ],
-    "languageOptions": {
-      "parser": "toml-eslint-parser",
-    },
     "name": "moso/toml/rules",
     "rules": [
       "- @stylistic/spaced-comment",
@@ -1416,6 +1450,13 @@
     ],
   },
   {
+    "files": [
+      "**/*.y?(a)ml",
+    ],
+    "language": "yml/yaml",
+    "languageOptions": {
+      "parser": "yaml-eslint-parser",
+    },
     "name": "moso/yaml/setup",
     "plugins": [
       "yml",
@@ -1425,10 +1466,6 @@
     "files": [
       "**/*.y?(a)ml",
     ],
-    "language": "yml/yaml",
-    "languageOptions": {
-      "parser": "yaml-eslint-parser",
-    },
     "name": "moso/yaml/rules",
     "rules": [
       "- @stylistic/spaced-comment",
