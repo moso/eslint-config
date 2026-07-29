@@ -4,6 +4,7 @@ import type { OptionsConfig } from './types';
 
 export const full: OptionsConfig = {
     astro: true,
+    baseline: true,
     comments: true,
     e18e: true,
     functional: {
@@ -45,6 +46,7 @@ export const full: OptionsConfig = {
 
 export const off: OptionsConfig = {
     astro: false,
+    baseline: false,
     comments: false,
     e18e: false,
     functional: false,
