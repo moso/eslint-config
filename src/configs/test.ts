@@ -33,19 +33,19 @@ export const test = async (
     return [
         {
             name: 'moso/test/setup',
-            plugins: {
-                'no-only-tests': memoize(noOnlyTestsPlugin, 'eslint-plugin-no-only-tests'),
-                'vitest': memoize(vitestPlugin, '@vitest/eslint-plugin'),
+            languageOptions: {
+                globals: {
+                    ...vitestPlugin.environments.env.globals,
+                },
             },
             settings: {
                 vitest: {
                     typecheck: true,
                 },
             },
-            languageOptions: {
-                globals: {
-                    ...vitestPlugin.environments.env.globals,
-                },
+            plugins: {
+                'no-only-tests': memoize(noOnlyTestsPlugin, 'eslint-plugin-no-only-tests'),
+                'vitest': memoize(vitestPlugin, '@vitest/eslint-plugin'),
             },
         },
         {

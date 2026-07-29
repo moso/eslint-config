@@ -15,11 +15,7 @@ export const toml = async (
         Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        overrides,
-        stylistic,
-    } = options;
+    const { files, overrides, stylistic } = options;
 
     const { indent = 2 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
@@ -30,6 +26,10 @@ export const toml = async (
     return [
         {
             name: 'moso/toml/setup',
+            files,
+            languageOptions: {
+                parser: memoize(tomlParser, 'toml-eslint-parser'),
+            },
             plugins: {
                 toml: memoize(tomlPlugin, 'eslint-plugin-toml'),
             },
@@ -37,9 +37,6 @@ export const toml = async (
         {
             name: 'moso/toml/rules',
             files,
-            languageOptions: {
-                parser: memoize(tomlParser, 'toml-eslint-parser'),
-            },
             rules: {
                 '@stylistic/spaced-comment': 'off',
 

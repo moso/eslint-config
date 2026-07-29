@@ -10,13 +10,12 @@ import type {
 } from '../types';
 
 export const yaml = async (
-    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+    options: Readonly<
+        OptionsOverrides &
+        Required<OptionsFiles & RequiredOptionsStylistic>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        overrides,
-        stylistic,
-    } = options;
+    const { files, overrides, stylistic } = options;
 
     const { quotes = 'single' } = typeof stylistic === 'boolean' ? {} : stylistic;
 
@@ -27,17 +26,18 @@ export const yaml = async (
     return [
         {
             name: 'moso/yaml/setup',
-            plugins: {
-                'yml': memoize(yamlPlugin, 'eslint-plugin-yml'),
-            },
-        },
-        {
             files,
             language: 'yml/yaml',
             languageOptions: {
                 parser: memoize(yamlParser, 'yaml-eslint-parser'),
             },
+            plugins: {
+                'yml': memoize(yamlPlugin, 'eslint-plugin-yml'),
+            },
+        },
+        {
             name: 'moso/yaml/rules',
+            files,
             rules: {
                 '@stylistic/spaced-comment': 'off',
 

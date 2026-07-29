@@ -58,11 +58,7 @@ const renameNodeRules = (
 );
 
 export const node = async (
-    options: Readonly<
-        OptionsLessOpinionated &
-        OptionsNode &
-        OptionsOverrides
-    > = {},
+    options: Readonly<OptionsLessOpinionated & OptionsNode & OptionsOverrides> = {},
 ): Promise<TypedFlatConfigItem[]> => {
     const { lessOpinionated, overrides } = options;
 

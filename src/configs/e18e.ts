@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
 import type {
     OptionsE18e,
+    OptionsFiles,
     OptionsIsInEditor,
     OptionsLessOpinionated,
     OptionsMode,
@@ -18,10 +18,12 @@ export const e18e = async (
         OptionsIsInEditor &
         OptionsLessOpinionated &
         OptionsMode &
-        OptionsOverrides
+        OptionsOverrides &
+        Required<OptionsFiles>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        files,
         isInEditor,
         lessOpinionated,
         mode,
@@ -40,7 +42,7 @@ export const e18e = async (
     return [
         {
             name: 'moso/e18e/rules',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
+            files,
             plugins: {
                 'e18e': memoize(e18ePlugin, '@e18e/eslint-plugin'),
             },
@@ -74,15 +76,13 @@ export const e18e = async (
         },
         ...((mode === 'library'
             ? []
-            : [
-                {
-                    name: 'moso/e18e/library-disables',
-                    files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
-                    rules: {
-                        'e18e/prefer-static-regex': 'off',
-                    },
+            : [{
+                name: 'moso/e18e/library-disables',
+                files,
+                rules: {
+                    'e18e/prefer-static-regex': 'off',
                 },
-            ]) satisfies TypedFlatConfigItem[]
+            }]) satisfies TypedFlatConfigItem[]
         ),
     ];
 };

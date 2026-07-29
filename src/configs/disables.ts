@@ -1,10 +1,6 @@
 import assert from 'node:assert/strict';
 
-import {
-    GLOB_SRC,
-    GLOB_SRC_EXT,
-    GLOB_TYPINGS,
-} from '../globs';
+import { GLOB_SRC, GLOB_SRC_EXT, GLOB_TYPINGS } from '../globs';
 import { loadPackages } from '../utils';
 
 import type { TypedFlatConfigItem } from '../types';

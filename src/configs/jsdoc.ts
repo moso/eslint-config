@@ -16,11 +16,7 @@ export const jsdoc = async (
         Required<RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        lessOpinionated,
-        overrides,
-        stylistic,
-    } = options;
+    const { lessOpinionated, overrides, stylistic } = options;
 
     const [jsdocPlugin] = (await loadPackages(['eslint-plugin-jsdoc'])) as [ESLint.Plugin];
 

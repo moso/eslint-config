@@ -1,11 +1,7 @@
 import { isPackageExists } from 'local-pkg';
 
 import { GLOB_SRC_EXT } from '../globs';
-import {
-    loadPackages,
-    memoize,
-    vueInlineElements,
-} from '../utils';
+import { loadPackages, memoize, vueInlineElements } from '../utils';
 
 import type { ESLint, Linter } from 'eslint';
 
@@ -90,6 +86,7 @@ export const vue = async (
     return [
         {
             name: 'moso/vue/setup',
+            files,
             languageOptions: {
                 globals: {
                     computed: 'readonly',
@@ -375,8 +372,9 @@ export const vue = async (
         ...((vueA11yPlugin
             ? [{
                 name: 'moso/vue/a11y',
+                files,
                 plugins: {
-                    'vue-a11y': memoize(vueA11yPlugin, 'eslint-plugin-vuejs-accessibility'),
+                    'vuejs-accessibility': memoize(vueA11yPlugin, 'eslint-plugin-vuejs-accessibility'),
                 },
                 rules: {
                     // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vue-a11y is structured

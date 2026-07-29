@@ -1,25 +1,29 @@
 import assert from 'node:assert/strict';
 
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
 import type {
+    OptionsFiles,
     OptionsLessOpinionated,
     OptionsOverrides,
     TypedFlatConfigItem,
 } from '../types';
 
 export const unicorn = async (
-    options: Readonly<OptionsLessOpinionated & OptionsOverrides>,
+    options: Readonly<
+        OptionsLessOpinionated &
+        OptionsOverrides &
+        Required<OptionsFiles>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const { lessOpinionated, overrides } = options;
+    const { files, lessOpinionated, overrides } = options;
 
     const [unicornPlugin] = (await loadPackages(['eslint-plugin-unicorn'])) as [(typeof import('eslint-plugin-unicorn'))['default']];
 
     return [
         {
             name: 'moso/unicorn',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
+            files,
             plugins: {
                 'unicorn': memoize(unicornPlugin, 'eslint-plugin-unicorn'),
             },

@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
 import type {
+    OptionsFiles,
     OptionsFunctional,
     OptionsMode,
     OptionsOverrides,
@@ -18,6 +18,7 @@ export const functional = async (
         OptionsOverrides &
         OptionsTypeScriptWithTypes &
         Required<
+            OptionsFiles &
             OptionsFunctional &
             OptionsMode &
             OptionsTypeScriptParserOptions &
@@ -26,6 +27,7 @@ export const functional = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        files,
         functionalEnforcement,
         ignoreNamePattern,
         mode,
@@ -157,7 +159,7 @@ export const functional = async (
     return [
         {
             name: 'moso/functional',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
+            files,
             plugins: {
                 'functional': memoize(functionalPlugin, 'eslint-plugin-functional'),
             },
@@ -186,24 +188,22 @@ export const functional = async (
         },
         ...((isTypeAware
             ? []
-            : [
-                {
-                    name: 'moso/functional/disable-type-aware',
-                    files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
-                    rules: {
-                        ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
-                        functionalPlugin.configs.disableTypeChecked.rules),
+            : [{
+                name: 'moso/functional/disable-type-aware',
+                files,
+                rules: {
+                    ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
+                    functionalPlugin.configs.disableTypeChecked.rules),
 
-                        'functional/no-let': [
-                            'error',
-                            {
-                                allowInForLoopInit: true,
-                                ignoreIdentifierPattern: ignoreNamePattern,
-                            },
-                        ],
-                    },
+                    'functional/no-let': [
+                        'error',
+                        {
+                            allowInForLoopInit: true,
+                            ignoreIdentifierPattern: ignoreNamePattern,
+                        },
+                    ],
                 },
-            ]) satisfies TypedFlatConfigItem[]
+            }]) satisfies TypedFlatConfigItem[]
         ),
     ];
 };

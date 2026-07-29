@@ -125,20 +125,18 @@ export const astro = async (
         },
 
         ...((jsxA11yPlugin
-            ? [
-                {
-                    name: 'moso/astro/a11y',
-                    files,
-                    plugins: {
-                        'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y'),
-                    },
-                    rules: {
-                        ...flattenRules(astroPlugin.configs[lessOpinionated ? 'jsx-a11y-recommended' : 'jsx-a11y-strict']),
-
-                        ...overridesA11y,
-                    },
+            ? [{
+                name: 'moso/astro/a11y',
+                files,
+                plugins: {
+                    'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y'),
                 },
-            ]
+                rules: {
+                    ...flattenRules(astroPlugin.configs[lessOpinionated ? 'jsx-a11y-recommended' : 'jsx-a11y-strict']),
+
+                    ...overridesA11y,
+                },
+            }]
             : []) satisfies TypedFlatConfigItem[]
         ),
     ];

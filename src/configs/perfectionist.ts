@@ -2,11 +2,7 @@ import assert from 'node:assert/strict';
 
 import { loadPackages, memoize } from '../utils';
 
-import type {
-    OptionsLessOpinionated,
-    OptionsPerfectionist,
-    TypedFlatConfigItem,
-} from '../types';
+import type { OptionsLessOpinionated, OptionsPerfectionist, TypedFlatConfigItem } from '../types';
 
 const commonOptions = {
     fallbackSort: { order: 'asc', type: 'alphabetical' },

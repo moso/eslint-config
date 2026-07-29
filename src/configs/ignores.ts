@@ -4,11 +4,7 @@ import { globalIgnores, loadPackages } from '../utils';
 import type { OptionsIgnores, TypedFlatConfigItem } from '../types';
 
 export const ignores = async (options: Readonly<OptionsIgnores>): Promise<TypedFlatConfigItem[]> => {
-    const {
-        gitignore = true,
-        ignoreTypeScript,
-        userIgnores,
-    } = options;
+    const { gitignore = true, ignoreTypeScript, userIgnores } = options;
 
     const [eslintConfigFlatGitIgnore] =
         (await loadPackages(['eslint-config-flat-gitignore'])) as

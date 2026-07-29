@@ -20,10 +20,7 @@ export const stylistic = async (
     options: Readonly<
         OptionsLessOpinionated &
         OptionsOverrides &
-        Required<
-            OptionsHasTypeScript &
-            StylisticConfig
-        >
+        Required<OptionsHasTypeScript & StylisticConfig>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
@@ -263,11 +260,7 @@ export const stylistic = async (
                         {
                             block: {
                                 balanced: true,
-                                exceptions: [
-                                    '-',
-                                    '+',
-                                    '*',
-                                ],
+                                exceptions: ['-', '+', '*'],
                                 markers: [
                                     '*package',
                                     '!',
@@ -279,11 +272,7 @@ export const stylistic = async (
                                 ],
                             },
                             line: {
-                                exceptions: [
-                                    '-',
-                                    '+',
-                                    '*',
-                                ],
+                                exceptions: ['-', '+', '*'],
                                 markers: [
                                     '*package',
                                     '!',

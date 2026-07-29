@@ -15,11 +15,7 @@ export const jsonc = async (
         Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        overrides,
-        stylistic,
-    } = options;
+    const { files, overrides, stylistic } = options;
 
     const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 

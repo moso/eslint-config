@@ -1,21 +1,23 @@
 import assert from 'node:assert/strict';
 
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
-import type { OptionsOverrides, TypedFlatConfigItem } from '../types';
+import type { OptionsFiles, OptionsOverrides, TypedFlatConfigItem } from '../types';
 
 export const regexp = async (
-    options: Readonly<OptionsOverrides>,
+    options: Readonly<
+        OptionsOverrides &
+        Required<OptionsFiles>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const { overrides } = options;
+    const { files, overrides } = options;
 
     const [regexpPlugin] = (await loadPackages(['eslint-plugin-regexp'])) as [typeof import('eslint-plugin-regexp')];
 
     return [
         {
             name: 'moso/regexp',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
+            files,
             plugins: {
                 'regexp': memoize(regexpPlugin, 'eslint-plugin-regexp'),
             },

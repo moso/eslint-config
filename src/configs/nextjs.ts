@@ -2,20 +2,15 @@ import assert from 'node:assert/strict';
 
 import { loadPackages, memoize } from '../utils';
 
-import type {
-    OptionsFiles,
-    OptionsNextJS,
-    TypedFlatConfigItem,
-} from '../types';
+import type { OptionsFiles, OptionsNextJS, TypedFlatConfigItem } from '../types';
 
 export const nextjs = async (
-    options: Readonly<OptionsFiles & OptionsNextJS>,
+    options: Readonly<
+        OptionsNextJS &
+        Required<OptionsFiles>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        mode,
-        overrides,
-    } = options;
+    const { files, mode, overrides } = options;
 
     const [nextjsPlugin] = (await loadPackages(['@next/eslint-plugin-next'])) as [typeof import('@next/eslint-plugin-next')];
 

@@ -2,10 +2,7 @@ import assert from 'node:assert/strict';
 
 import { isPackageExists } from 'local-pkg';
 
-import {
-    loadPackages,
-    memoize,
-} from '../utils';
+import { loadPackages, memoize } from '../utils';
 
 import type { ESLint, Linter } from 'eslint';
 
@@ -79,7 +76,7 @@ export const react = async (
         (typeof import('eslint-plugin-react-you-might-not-need-an-effect'))['default'],
     ];
 
-    const isTypeAware = typeof projectRoot === 'string';
+    const isTypeAware = typescript && typeof projectRoot === 'string';
 
     const isAllowConstantExport = ReactRefreshAllowConstantExportPackages.some((x) => isPackageExists(x));
     const isUsingNextJS = nextjs !== false;
@@ -96,12 +93,6 @@ export const react = async (
         {
             name: 'moso/react',
             files,
-            plugins: {
-                '@eslint-react': memoize(reactPlugin, '@eslint-react'),
-                'react-hooks': memoize(reactHooksPlugin, 'eslint-plugin-react-hooks'),
-                'react-refresh': memoize(reactRefreshPlugin, 'eslint-plugin-react-refresh'),
-                'react-you-might-not-need-an-effect': memoize(reactYouMightNotNeedAnEffect, 'eslint-plugin-react-you-might-not-need-an-effect'),
-            },
             languageOptions: {
                 parser: typescript ? typescriptParser : undefined,
                 parserOptions: {
@@ -116,6 +107,12 @@ export const react = async (
                 '@eslint-react': {
                     version: 'detect',
                 },
+            },
+            plugins: {
+                '@eslint-react': memoize(reactPlugin, '@eslint-react'),
+                'react-hooks': memoize(reactHooksPlugin, 'eslint-plugin-react-hooks'),
+                'react-refresh': memoize(reactRefreshPlugin, 'eslint-plugin-react-refresh'),
+                'react-you-might-not-need-an-effect': memoize(reactYouMightNotNeedAnEffect, 'eslint-plugin-react-you-might-not-need-an-effect'),
             },
             rules: {
                 ...(lessOpinionated

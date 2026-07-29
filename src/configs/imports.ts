@@ -1,14 +1,10 @@
-import {
-    GLOB_DTS,
-    GLOB_TS,
-    GLOB_TSX,
-} from '../globs';
 import mosoPlugin from '../rules';
 import { loadPackages, memoize } from '../utils';
 
 import type { ESLint } from 'eslint';
 
 import type {
+    OptionsFiles,
     OptionsHasTypeScript,
     OptionsOverrides,
     OptionsTypeScriptParserOptions,
@@ -21,10 +17,11 @@ export const imports = async (
         OptionsHasTypeScript &
         OptionsOverrides &
         OptionsTypeScriptParserOptions &
-        Required<RequiredOptionsStylistic>
+        Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        files,
         overrides,
         stylistic,
         typescript,
@@ -60,24 +57,22 @@ export const imports = async (
             },
         },
         ...((typescript
-            ? [
-                {
-                    name: 'moso/imports/typescript',
-                    files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
-                    rules: {
-                        '@typescript-eslint/no-import-type-side-effects': 'error',
-                        '@typescript-eslint/consistent-type-imports': [
-                            stylisticEnabled ? 'error' : 'off',
-                            {
-                                disallowTypeAnnotations: false,
-                                fixStyle: 'inline-type-imports',
-                                prefer: 'type-imports',
+            ? [{
+                name: 'moso/imports/typescript',
+                files,
+                rules: {
+                    '@typescript-eslint/no-import-type-side-effects': 'error',
+                    '@typescript-eslint/consistent-type-imports': [
+                        stylisticEnabled ? 'error' : 'off',
+                        {
+                            disallowTypeAnnotations: false,
+                            fixStyle: 'inline-type-imports',
+                            prefer: 'type-imports',
 
-                            },
-                        ],
-                    },
+                        },
+                    ],
                 },
-            ]
+            }]
             : []) satisfies TypedFlatConfigItem[]
         ),
     ];
