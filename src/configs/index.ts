@@ -1,4 +1,5 @@
 export * from './astro';
+export * from './baseline';
 export * from './disables';
 export * from './e18e';
 export * from './eslint-comments';

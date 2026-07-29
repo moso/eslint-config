@@ -157,6 +157,16 @@ export type FrameworkOptions = {
 
 export type LanguageOptions = {
     /**
+     * Enforce the JavaScript Baseline.
+     *
+     * Pass `'newly'`, `'widely'`, or a year as shorthand for `baseline`.
+     *
+     * @see https://github.com/3ru/eslint-plugin-baseline-js
+     * @default true
+     */
+    baseline?: boolean | OptionsBaseline | OptionsBaseline['baseline'];
+
+    /**
      * Core rules. Can't be disabled.
      */
     javascript?: OptionsOverrides;
@@ -233,6 +243,29 @@ export type OptionsAstro = OptionsOverrides & {
      * Overrides for accessibility rules.
      */
     overridesA11y?: TypedFlatConfigItem['rules'];
+};
+
+export type OptionsBaseline = OptionsOverrides & {
+    /**
+     * Baseline level or year.
+     * Acts as alias for `available` within the config.
+     *
+     * @default 'widely'
+     */
+    baseline?: 'newly' | 'widely' | number;
+
+    /**
+     * Skip specific web-features by ID.
+     * Supports RegExp via `/.../`.
+     * Appended to the config's built-in false-positive ignores.
+     */
+    ignoreFeatures?: string[];
+
+    /**
+     * Suppress reports by ESTree `node.type`.
+     * Supports RegExp via `/.../`.
+     */
+    ignoreNodeTypes?: string[];
 };
 
 export type OptionsE18e = OptionsOverrides & {
@@ -594,7 +627,7 @@ export type RequiredOptionsStylistic = {
 
 export type ResolvedOptions<T> = T extends boolean
     ? never
-    : T extends string
+    : T extends number | string
         ? never
         : NonNullable<T>;
 
