@@ -1,6 +1,17 @@
 import { runTest } from '../tests';
 import module from './prefer-strict-number-guards';
 
+import type { Guard } from './prefer-strict-number-guards';
+
+const allGuards: Guard[] = [
+    'check-parse-result',
+    'encode-input-rule',
+    'guard-array-index',
+    'guard-derived-value',
+    'use-direct-operands',
+    'write-explicit-condition',
+];
+
 runTest({
     module,
     valid: [
@@ -11,12 +22,12 @@ runTest({
         'const w = (frameWidth * imageHeight) / imageWidth;',
 
         // guard-array-index
-        'const v = values[index] ?? 0;',
-        'const v = values[index]!;',
-        'const v = values[0];',
-        'const v = record[\'key\'];',
-        'const v = obj[someName];',
-        'values[index] = 1;',
+        { code: 'const v = values[index] ?? 0;', options: [{ guards: allGuards }] },
+        { code: 'const v = values[index]!;', options: [{ guards: allGuards }] },
+        { code: 'const v = values[0];', options: [{ guards: allGuards }] },
+        { code: 'const v = record[\'key\'];', options: [{ guards: allGuards }] },
+        { code: 'const v = obj[someName];', options: [{ guards: allGuards }] },
+        { code: 'values[index] = 1;', options: [{ guards: allGuards }] },
 
         // write-explicit-condition
         'const w = width === 0 ? 1 : width;',
@@ -27,12 +38,16 @@ runTest({
         'const n = Math.max(0, size);',
 
         // encode-input-rule
-        'function f(columnCount: number) { console.assert(columnCount >= 1); return 100 / columnCount; }',
-        'function f(columnCount: number) { return 100 / Math.max(1, columnCount); }',
-        'function f(label: string) { return 100 / other; }',
-        'const f = (columnCount: number) => 100 / Math.floor(columnCount);',
+        { code: 'function f(columnCount: number) { console.assert(columnCount >= 1); return 100 / columnCount; }', options: [{ guards: allGuards }] },
+        { code: 'function f(columnCount: number) { return 100 / Math.max(1, columnCount); }', options: [{ guards: allGuards }] },
+        { code: 'function f(label: string) { return 100 / other; }', options: [{ guards: allGuards }] },
+        { code: 'const f = (columnCount: number) => 100 / Math.floor(columnCount);', options: [{ guards: allGuards }] },
 
-        // disabled guards do not fire
+        // the heuristic guards do not fire by default
+        'const v = values[i + 1];',
+        'const v = values[columnIndex];',
+        'function f(columnCount: number) { return 100 / columnCount; }',
+        'function f(items: Array<number>, index: number) { return items[index]; }',
         { code: 'const x = total / (oldMax - oldMin);', options: [{ guards: ['check-parse-result'] }] },
         { code: 'const w = frameWidth / (imageWidth / imageHeight);', options: [{ guards: ['guard-derived-value'] }] },
         { code: 'const w = width || 1;', options: [{ guards: ['guard-array-index'] }] },
@@ -55,22 +70,27 @@ runTest({
         {
             code: 'function f(columnCount: number) { return 100 / columnCount; }',
             errors: [{ messageId: 'encodeInputRule' }],
+            options: [{ guards: allGuards }],
         },
         {
             code: 'function f(values: Array<number>, columnCount: number) { return values[columnCount]; }',
             errors: [{ messageId: 'encodeInputRule' }],
+            options: [{ guards: allGuards }],
         },
         {
             code: 'function f(items: Array<number>, index: number) { return items[index]; }',
             errors: [{ messageId: 'guardArrayIndex' }, { messageId: 'encodeInputRule' }],
+            options: [{ guards: allGuards }],
         },
         {
             code: 'const v = values[i + 1];',
             errors: [{ messageId: 'guardArrayIndex' }],
+            options: [{ guards: allGuards }],
         },
         {
             code: 'const v = values[Math.floor(offset)];',
             errors: [{ messageId: 'guardArrayIndex' }],
+            options: [{ guards: allGuards }],
         },
         {
             code: 'const v = values[columnIndex];',
@@ -94,7 +114,6 @@ runTest({
             errors: [{ messageId: 'checkParseResult' }],
         },
         {
-            // A seed argument does not prove the spread is non-empty - intentional strictness.
             code: 'const n = Math.max(0, ...sizes);',
             errors: [{ messageId: 'checkParseResult' }],
         },
