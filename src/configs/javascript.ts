@@ -370,34 +370,32 @@ export const javascript = async (
         },
         ...((lessOpinionated
             ? []
-            : [
-                {
-                    name: 'moso/javascript/opinionated',
-                    plugins: {
-                        '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
-                        'de-morgan': memoize(deMorganPlugin, 'eslint-plugin-de-morgan'),
-                    },
-                    rules: {
-                        // Own rules
-                        '@moso/avoid-barrel-files': ['error', { amountOfExportsToConsiderModuleAsBarrel: 5 }],
-                        '@moso/no-bidi': 'error',
-                        '@moso/no-invisible-characters': 'error',
-                        '@moso/no-redundant-variable': 'error',
-                        '@moso/no-string-interpolation': 'error',
-                        '@moso/no-top-level-await': 'error',
-                        '@moso/no-unneeded-array-flat-map': 'error',
-                        '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
-                        '@moso/prefer-fetch': 'error',
-                        '@moso/prefer-reduce-over-chaining': 'error',
-                        '@moso/prefer-strict-number-guards': 'error',
-
-                        // eslint-plugin-de-morgan rules
-                        // @see https://github.com/azat-io/eslint-plugin-de-morgan
-                        'de-morgan/no-negated-conjunction': 'error',
-                        'de-morgan/no-negated-disjunction': 'error',
-                    },
+            : [{
+                name: 'moso/javascript/opinionated',
+                plugins: {
+                    '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
+                    'de-morgan': memoize(deMorganPlugin, 'eslint-plugin-de-morgan'),
                 },
-            ]) satisfies TypedFlatConfigItem[]
+                rules: {
+                    // Own rules
+                    '@moso/avoid-barrel-files': ['error', { amountOfExportsToConsiderModuleAsBarrel: 5 }],
+                    '@moso/no-bidi': 'error',
+                    '@moso/no-invisible-characters': 'error',
+                    '@moso/no-redundant-variable': 'error',
+                    '@moso/no-string-interpolation': 'error',
+                    '@moso/no-top-level-await': 'error',
+                    '@moso/no-unneeded-array-flat-map': 'error',
+                    '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
+                    '@moso/prefer-fetch': 'error',
+                    '@moso/prefer-reduce-over-chaining': 'error',
+                    '@moso/prefer-strict-number-guards': 'error',
+
+                    // eslint-plugin-de-morgan rules
+                    // @see https://github.com/azat-io/eslint-plugin-de-morgan
+                    'de-morgan/no-negated-conjunction': 'error',
+                    'de-morgan/no-negated-disjunction': 'error',
+                },
+            }]) satisfies TypedFlatConfigItem[]
         ),
     ];
 };
