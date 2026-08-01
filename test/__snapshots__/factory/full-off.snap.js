@@ -377,34 +377,6 @@
   },
   {
     "files": [
-      "**/?(.)*.d.?([cm])ts",
-      "**/*.mjs",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-    ],
-    "name": "moso/node/disables/typescript",
-    "rules": [
-      "- node/no-unsupported-features/es-syntax",
-    ],
-  },
-  {
-    "files": [
-      "**/*.astro",
-      "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-      "**/*.vue",
-    ],
-    "name": "moso/node/disables/frameworks",
-    "rules": [
-      "- node/no-extraneous-import",
-      "- node/no-missing-import",
-      "- node/no-restricted-import",
-    ],
-  },
-  {
-    "files": [
       "**/*.?([cm])[jt]s?(x)",
       "**/*.astro",
       "**/*.vue",
@@ -860,6 +832,20 @@
   },
   {
     "files": [
+      "**/config*.?([cm])[jt]s?(x)",
+      "**/{api,helpers,middleware,modules,pages,plugins,routes,views}/**/*.?([cm])[jt]s?(x)",
+      "**/{esbuild,farm,index,next,nuxt,rolldown,rollup,rspack,vite,webpack}.?([cm])[jt]s?(x)",
+      "**/*.md/**",
+      "**/*.d.ts",
+      "**/.prettierrc",
+    ],
+    "name": "moso/disables/allow-default-export",
+    "rules": [
+      "- import-lite/no-default-export",
+    ],
+  },
+  {
+    "files": [
       "**/bin/**/*",
       "**/bin.?([cm])[jt]s?(x)",
     ],
@@ -887,13 +873,24 @@
     "name": "moso/disables/cli",
     "rules": [
       "- @moso/no-top-level-await",
+      "- baseline-js/use-baseline",
       "- no-console",
     ],
   },
   {
     "files": [
+      "**/*.?([cm])jsx",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/disables/components",
+    "rules": [
+      "- unicorn/no-anonymous-default-export",
+    ],
+  },
+  {
+    "files": [
       "**/*.config.?([cm])[jt]s?(x)",
-      "**/*.config.*.?([cm])[jt]s?(x)",
+      "**/{esbuild,farm,index,next,nuxt,rolldown,rollup,rspack,vite,webpack}.?([cm])[jt]s?(x)",
     ],
     "name": "moso/disables/config-files",
     "rules": [
@@ -908,10 +905,47 @@
     ],
     "name": "moso/disables/dts",
     "rules": [
+      "- no-restricted-syntax",
       "- @eslint-community/eslint-comments/no-unlimited-disable",
       "- import-lite/no-duplicates",
       "- unused-imports/no-unused-vars",
-      "- no-restricted-syntax",
+    ],
+  },
+  {
+    "files": [
+      "**/ISSUES_TEMPLATE/**",
+    ],
+    "name": "moso/disables/github",
+    "rules": [
+      "- unicorn/filename-case",
+    ],
+  },
+  {
+    "files": [
+      "**/*.astro",
+      "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+      "**/*.vue",
+    ],
+    "name": "moso/disables/node-frameworks",
+    "rules": [
+      "- node/no-extraneous-import",
+      "- node/no-missing-import",
+      "- node/no-restricted-import",
+    ],
+  },
+  {
+    "files": [
+      "**/?(.)*.d.?([cm])ts",
+      "**/*.mjs",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/disables/node-typescript",
+    "rules": [
+      "- node/no-unsupported-features/es-syntax",
     ],
   },
   {
@@ -921,6 +955,8 @@
     "name": "moso/disables/scripts",
     "rules": [
       "- @moso/no-top-level-await",
+      "- baseline-js/use-baseline",
+      "- no-console",
       "- @typescript-eslint/explicit-function-return-type",
       "- functional/no-conditional-statements",
       "- functional/no-expression-statements",
@@ -929,7 +965,23 @@
       "- functional/no-throw-statements",
       "- node/no-sync",
       "- node/no-unpublished-import",
-      "- no-console",
+    ],
+  },
+  {
+    "files": [
+      [
+        "**/__tests__/**/?(.)*.?([cm])[jt]s?(x)",
+        "**/?(.)*.spec.?([cm])[jt]s?(x)",
+        "**/?(.)*.test.?([cm])[jt]s?(x)",
+        "**/?(.)*.bench.?([cm])[jt]s?(x)",
+        "**/?(.)*.benchmark.?([cm])[jt]s?(x)",
+      ],
+    ],
+    "name": "moso/disables/tests",
+    "rules": [
+      "- no-unused-expressions",
+      "- baseline-js/use-baseline",
+      "- unicorn/consistent-function-scoping",
     ],
   },
   {
