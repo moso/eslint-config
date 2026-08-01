@@ -2,17 +2,7 @@ import assert from 'node:assert/strict';
 
 import globals from 'globals';
 
-import {
-    GLOB_ASTRO,
-    GLOB_CJS,
-    GLOB_DTS,
-    GLOB_JS,
-    GLOB_JSX,
-    GLOB_MJS,
-    GLOB_TS,
-    GLOB_TSX,
-    GLOB_VUE,
-} from '../globs';
+import { GLOB_CJS, GLOB_JS } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
 import type { Linter } from 'eslint';
@@ -139,33 +129,5 @@ export const node = async (
             }]
             : []) satisfies TypedFlatConfigItem[]
         ),
-        {
-            name: 'moso/node/disables/typescript',
-            files: [
-                GLOB_DTS,
-                GLOB_MJS,
-                GLOB_TS,
-                GLOB_TSX,
-            ],
-            rules: {
-                'node/no-unsupported-features/es-syntax': 'off',
-            },
-        },
-        {
-            name: 'moso/node/disables/frameworks',
-            files: [
-                GLOB_ASTRO,
-                GLOB_DTS,
-                GLOB_JSX,
-                GLOB_TS,
-                GLOB_TSX,
-                GLOB_VUE,
-            ],
-            rules: {
-                'node/no-extraneous-import': 'off',
-                'node/no-missing-import': 'off',
-                'node/no-restricted-import': 'off',
-            },
-        },
     ];
 };

@@ -1,4 +1,3 @@
-import { GLOB_TESTS } from '../globs';
 import { loadPackages, memoize } from '../utils';
 
 import type { ESLint } from 'eslint';
@@ -86,12 +85,5 @@ export const baseline = async (
             }]
             : []) satisfies TypedFlatConfigItem[]
         ),
-        {
-            name: 'moso/baseline/disables/test',
-            files: GLOB_TESTS,
-            rules: {
-                'baseline-js/use-baseline': 'off',
-            },
-        },
     ];
 };
