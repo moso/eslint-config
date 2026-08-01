@@ -227,18 +227,13 @@ export const javascript = async (
                         selector: 'LabeledStatement',
                     },
                     {
-                        message: 'Const enums are forbidden to increase interoperability. Use regular enums instead.',
-                        selector: 'TSEnumDeclaration[const=true]',
-                    },
-                    {
                         message: 'TypeScript\'s own parser uses `ExportAssignment` for both `export default` and `export =`.',
                         selector: 'TSExportAssignment',
                     },
                     {
-                        message: '`with` is disallowed in strict mode because it makes code impossoble to predict and optimize.',
+                        message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
                         selector: 'WithStatement',
                     },
-
                 ],
                 'no-return-assign': 'off',
                 'no-sequences': 'error',
