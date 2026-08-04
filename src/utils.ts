@@ -1,9 +1,7 @@
 import process from 'node:process';
 
-import { isPackageExists } from 'local-pkg';
-
 import type { SharedConfig } from '@typescript-eslint/utils/ts-eslint';
-import type { ESLint } from 'eslint';
+import type { ESLint, Linter } from 'eslint';
 
 import type { RuleOptions } from './typegen';
 import type {
@@ -44,10 +42,25 @@ export const checkFilePath = (path: string): string => {
     return path;
 };
 
-/** Auto-numbering for unnamed `globalIgnores` items; the counter lives in the closure. */
+/**
+ * Merge the `rules` of a shared flat-config array into a single rule map.
+ *
+ * Plugins ship their presets as an array (a setup item, then one item per rule layer),
+ * this keeps only the rules so they can be spread into a config item
+ * that declares its own `files`, `plugins`, and parser.
+ *
+ * @param configs - A plugin's exported flat config array.
+ * @returns Every config's rules merged in order.
+ */
+export const flattenRules = (configs: ReadonlyArray<Linter.Config>): NonNullable<Linter.Config['rules']> =>
+    configs.reduce<NonNullable<Linter.Config['rules']>>((acc, config) => Object.assign(acc, config.rules), {});
+
+/**
+ * Auto-numbering for unnamed `globalIgnores` items.
+ */
 const nextGlobalIgnoresName = ((): (() => string) => {
-    let mut_count = 0;
-    return () => `globalIgnores ${mut_count++}`;
+    const mut_counter = { count: 0 };
+    return () => `globalIgnores ${String(mut_counter.count++)}`;
 })();
 
 /**
@@ -144,65 +157,6 @@ export const getOverrides = (
 ): (Partial<Record<string, SharedConfig.RuleEntry>> & RuleOptions) => {
     const sub = resolveSubOptions(options, key);
     return ('overrides' in sub ? sub.overrides : {}) ?? {};
-};
-
-const scopeURL = import.meta.dirname;
-
-/**
- * Whether `name` resolves from this package's own directory (not the consumer's cwd).
- */
-const isPackageInScope = (name: string): boolean => isPackageExists(name, { paths: [scopeURL] });
-
-/**
- * Whether an install prompt could ever be shown: a TTY outside CI.
- */
-const isInteractive = (): boolean => {
-    if (Boolean(process.env.CI)) return false;
-    return process.stdout.isTTY;
-};
-
-/**
- * Offer to install missing packages through an interactive prompt.
- * No-op in CI or when stdout is not a TTY.
- *
- * @param packages - Package names to check and offer for installation.
- */
-const ensurePackages = async (packages: ReadonlyArray<string>): Promise<void> => {
-    if (!isInteractive()) return;
-
-    const missingPackages = packages.filter((x) => !isPackageInScope(x));
-    if (missingPackages.length === 0) return;
-
-    const prompt = await import('@clack/prompts');
-    const result = await prompt.confirm({
-        message: missingPackages.length === 1
-            ? `${missingPackages[0]} is required. Do you want to install it?`
-            : `These packages are required: ${missingPackages.join(', ')}.\nDo you want to install them?`,
-    });
-
-    if (result === true) {
-        const { installPackage } = await import('@antfu/install-pkg');
-        await installPackage(missingPackages, { dev: true });
-    }
-};
-
-/**
- * Dynamically import a list of packages, unwrapping default exports.
- *
- * In interactive sessions, missing packages trigger an install prompt first
- * (see `ensurePackages`). Call sites destructure the result as a tuple:
- * `const [plugin] = (await loadPackages(['pkg'])) as [Type]`.
- *
- * @param packageIds - Package names to import, in order.
- * @returns The imported modules (default exports unwrapped), in input order.
- */
-export const loadPackages = async (packageIds: ReadonlyArray<string>): Promise<unknown[]> => {
-    if (isInteractive()) {
-        const missing = packageIds.filter((id) => !isPackageExists(id));
-        if (missing.length > 0) await ensurePackages(missing);
-    }
-
-    return Promise.all(packageIds.map(async (id): Promise<unknown> => interopDefault(import(id))));
 };
 
 declare global {
