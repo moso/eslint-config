@@ -3,7 +3,9 @@ import path from 'node:path';
 import type { OptionsConfig } from './types';
 
 export const full: OptionsConfig = {
-    astro: true,
+    astro: {
+        a11y: true,
+    },
     baseline: true,
     comments: true,
     e18e: true,
@@ -25,12 +27,17 @@ export const full: OptionsConfig = {
     projectRoot: path.resolve(import.meta.dirname, '..'),
     promise: true,
     react: {
+        a11y: true,
         reactRefresh: {
             allowConstantExport: true,
         },
     },
     regexp: true,
     stylistic: true,
+    tailwind: {
+        entryPoint: 'src/styles/app.css',
+        version: 4,
+    },
     test: true,
     toml: true,
     typescript: {
@@ -55,6 +62,7 @@ export const off: OptionsConfig = {
     jsdoc: false,
     jsonc: false,
     jsx: false,
+    lessOpinionated: true,
     nextjs: false,
     node: false,
     perfectionist: false,
@@ -62,6 +70,7 @@ export const off: OptionsConfig = {
     react: false,
     regexp: false,
     stylistic: false,
+    tailwind: false,
     test: false,
     toml: false,
     typescript: false,
