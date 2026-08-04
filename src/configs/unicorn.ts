@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -18,15 +19,18 @@ export const unicorn = async (
 ): Promise<TypedFlatConfigItem[]> => {
     const { files, lessOpinionated, overrides } = options;
 
-    const [unicornPlugin] = (await loadPackages(['eslint-plugin-unicorn'])) as [(typeof import('eslint-plugin-unicorn'))['default']];
+    const [unicornPlugin] = await loadPackages(['eslint-plugin-unicorn']);
 
     return [
         {
-            name: 'moso/unicorn',
-            files,
+            name: 'moso/unicorn/setup',
             plugins: {
                 'unicorn': memoize(unicornPlugin, 'eslint-plugin-unicorn'),
             },
+        },
+        {
+            name: 'moso/unicorn/rules',
+            files,
             rules: {
                 // Unopinionated rules for everyone
                 ...(assert.ok(!Array.isArray(unicornPlugin.configs.unopinionated)),
