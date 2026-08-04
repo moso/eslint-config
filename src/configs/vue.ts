@@ -1,9 +1,8 @@
 import { isPackageExists } from 'local-pkg';
 
 import { GLOB_SRC_EXT } from '../globs';
-import { loadPackages, memoize, vueInlineElements } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { flattenRules, memoize, vueInlineElements } from '../utils';
 
 import type {
     OptionsFiles,
@@ -15,13 +14,6 @@ import type {
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
-
-type VuePlugin = ESLint.Plugin & Omit<VuePluginImportedType, 'processors'> & {
-    configs: VuePluginImportedType['configs'];
-    processors: Record<keyof VuePluginImportedType['processors'], Linter.Processor>;
-};
-
-type VuePluginImportedType = typeof import('eslint-plugin-vue');
 
 const NuxtPackages = ['nuxt'];
 
@@ -41,36 +33,26 @@ export const vue = async (
     const {
         a11y,
         files,
-        filesTypeAware,
         overrides,
         overridesA11y,
-        overridesTypeAware,
         parserOptions,
-        projectRoot,
         stylistic,
         typescript,
     } = options;
 
-    const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
+    const { braceStyle = '1tbs', indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
     const [
         vuePlugin,
         vueParser,
         processorVueBlocks,
         { mergeProcessors },
-    ] = (await loadPackages([
+    ] = await loadPackages([
         'eslint-plugin-vue',
         'vue-eslint-parser',
         'eslint-processor-vue-blocks',
         'eslint-merge-processors',
-    ])) as [
-        VuePlugin,
-        Linter.Parser,
-        (typeof import('eslint-processor-vue-blocks'))['default'],
-        typeof import('eslint-merge-processors'),
-    ];
-
-    const isTypeAware = typeof projectRoot === 'string';
+    ]);
 
     const isUsingNuxt = NuxtPackages.some((x) => isPackageExists(x));
 
@@ -78,15 +60,17 @@ export const vue = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const [typescriptParser] = typescript ? (await loadPackages(['@typescript-eslint/parser'])) as [Linter.Parser] : [undefined];
+    const [typescriptParser] = typescript
+        ? await loadPackages(['@typescript-eslint/parser'])
+        : [undefined];
+
     const [vueA11yPlugin] = a11y
-        ? (await loadPackages(['eslint-plugin-vuejs-accessibility'])) as [typeof import('eslint-plugin-vuejs-accessibility')]
+        ? await loadPackages(['eslint-plugin-vuejs-accessibility'])
         : [undefined];
 
     return [
         {
             name: 'moso/vue/setup',
-            files,
             languageOptions: {
                 globals: {
                     computed: 'readonly',
@@ -107,6 +91,7 @@ export const vue = async (
             },
             plugins: {
                 'vue': memoize(vuePlugin, 'eslint-plugin-vue'),
+                ...vueA11yPlugin && { 'vuejs-accessibility': memoize(vueA11yPlugin, 'eslint-plugin-vuejs-accessibility') },
             },
         },
         {
@@ -115,9 +100,7 @@ export const vue = async (
             languageOptions: {
                 parser: memoize(vueParser, 'vue-eslint-parser'),
                 parserOptions: {
-                    ecmaFeatures: {
-                        jsx: true,
-                    },
+                    ecmaFeatures: { jsx: true },
                     extraFileExtensions: ['.vue'],
                     parser: typescript ? typescriptParser : null,
                     ...(typescript && parserOptions),
@@ -137,22 +120,7 @@ export const vue = async (
                     }),
                 ]),
             rules: {
-                ...vuePlugin.configs.base.rules,
-
-                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vuePlugin is structured
-                ...vuePlugin.configs['flat/essential']
-                    .map((config) => config.rules ?? {})
-                    .reduce((acc, rules) => Object.assign(acc, rules), {}),
-
-                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vuePlugin is structured
-                ...vuePlugin.configs['flat/strongly-recommended']
-                    .map((config) => config.rules ?? {})
-                    .reduce((acc, rules) => Object.assign(acc, rules), {}),
-
-                // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vuePlugin is structured
-                ...vuePlugin.configs['flat/recommended']
-                    .map((config) => config.rules ?? {})
-                    .reduce((acc, rules) => Object.assign(acc, rules), {}),
+                ...flattenRules(vuePlugin.configs['flat/recommended']),
 
                 'node/prefer-global/process': 'off',
 
@@ -226,7 +194,7 @@ export const vue = async (
                             singleline: 'always',
                         },
                     ],
-                    'vue/brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
+                    'vue/brace-style': ['error', braceStyle, { allowSingleLine: true }],
                     'vue/comma-dangle': ['error', 'always-multiline'],
                     'vue/comma-spacing': ['error', { after: true, before: false }],
                     'vue/comma-style': ['error', 'last'],
@@ -290,104 +258,15 @@ export const vue = async (
                     'vue/template-curly-spacing': 'error',
                 }),
 
-                ...(typescript && {
-                    // Rules specifically for Vue + TypeScript. See `isTypeAware`-section for type-aware rules
-                    'no-undef': 'off',
-                    'no-dupe-class-members': 'off',
-                    'no-redeclare': 'off',
-                    'no-unused-vars': 'off',
+                ...(vueA11yPlugin && {
+                    ...flattenRules(vueA11yPlugin.configs['flat/recommended']),
 
-                    'no-array-constructor': 'off',
-                    '@typescript-eslint/no-array-constructor': 'error',
-
-                    'no-unused-expressions': 'off',
-                    '@typescript-eslint/no-unused-expressions': 'error',
-
-                    'no-useless-constructor': 'off',
-                    '@typescript-eslint/no-useless-constructor': 'error',
-
-                    'camelcase': 'off',
-                    'vue/camelcase': 'off',
-                    '@typescript-eslint/naming-convention': [
-                        'error',
-                        {
-                            format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-                            leadingUnderscore: 'allow',
-                            selector: 'variableLike',
-                            trailingUnderscore: 'allow',
-                        },
-                    ],
-
-                    'no-use-before-define': 'off',
-                    '@typescript-eslint/no-use-before-define': [
-                        'error',
-                        {
-                            classes: false,
-                            enums: false,
-                            functions: false,
-                            typedefs: false,
-                            variables: false,
-                        },
-                    ],
+                    ...overridesA11y,
                 }),
 
                 ...overrides,
             },
         },
-        ...((isTypeAware
-            ? [{
-                name: 'moso/vue/rules-type-aware',
-                files: filesTypeAware,
-                rules: {
-                    // Rules merged from @vue/eslint-config-standard-with-typescript
-
-                    // 'dot-notation': 'off',
-                    // 'vue/dot-notation': 'off',
-                    // '@typescript-eslint/dot-notation': ['error', { allowKeywords: true }],
-
-                    'no-implied-eval': 'off',
-                    '@typescript-eslint/no-implied-eval': 'error',
-
-                    'no-unused-vars': 'off',
-                    'vue/no-unused-vars': 'off',
-                    '@typescript-eslint/no-unused-vars': [
-                        'error',
-                        {
-                            argsIgnorePattern: '^_',
-                            args: 'none',
-                            caughtErrors: 'none',
-                            ignoreRestSiblings: true,
-                            vars: 'all',
-                        },
-                    ],
-
-                    'prefer-promise-reject-errors': 'off',
-                    '@typescript-eslint/prefer-promise-reject-errors': 'error',
-
-                    ...overridesTypeAware,
-                },
-            }]
-            : []) satisfies TypedFlatConfigItem[]
-        ),
-        ...((vueA11yPlugin
-            ? [{
-                name: 'moso/vue/a11y',
-                files,
-                plugins: {
-                    'vuejs-accessibility': memoize(vueA11yPlugin, 'eslint-plugin-vuejs-accessibility'),
-                },
-                rules: {
-                    // eslint-disable-next-line @moso/prefer-reduce-over-chaining -- mismatch because of the way vue-a11y is structured
-                    ...vueA11yPlugin.configs['flat/recommended']
-                        .map((config) => ('rules' in config ? config.rules : undefined) ?? {})
-                        .reduce((acc, rules) => Object.assign(acc, rules), {}),
-
-                    ...overridesA11y,
-                },
-            }]
-            : []) satisfies TypedFlatConfigItem[]
-        ),
-
         ...((isUsingNuxt
             ? [
                 {
