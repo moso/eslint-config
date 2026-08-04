@@ -18,6 +18,7 @@ export * from './react';
 export * from './regexp';
 export * from './sort';
 export * from './stylistic';
+export * from './tailwind';
 export * from './test';
 export * from './toml';
 export * from './typescript';

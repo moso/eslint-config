@@ -24,6 +24,7 @@ import {
     sortPackageJson,
     sortTsconfig,
     stylistic,
+    tailwind,
     test,
     toml,
     typescript,
@@ -61,7 +62,9 @@ import {
     isInEditorEnv,
     resolveSubOptions,
 } from './utils';
+
 import type { Linter } from 'eslint';
+
 import type {
     Awaitable,
     ConfigNames,
@@ -69,10 +72,12 @@ import type {
     OptionsConfig,
     OptionsIgnores,
     OptionsProjectRoot,
+    OptionsTailwind,
     OptionsTypeScript,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
     ProjectMode,
+    RequiredOptionsTailwind,
     TypedFlatConfigItem,
 } from './types';
 
@@ -145,6 +150,7 @@ export async function moso(
     const astroOptions = options.astro ?? AstroPackages.some((x) => isPackageExists(x));
     const nextjsOptions = options.nextjs ?? NextJSPackages.some((x) => isPackageExists(x));
     const reactOptions = options.react ?? ReactPackages.some((x) => isPackageExists(x));
+    const tailwindOptions = options.tailwind ?? isPackageExists('tailwindcss');
     const vueOptions = options.vue ?? VuePackages.some((x) => isPackageExists(x));
 
     if (vueOptions !== false) componentExts.push('vue');
@@ -157,9 +163,7 @@ export async function moso(
         : typeof options.baseline === 'object'
             ? options.baseline
             : (typeof options.baseline === 'string' || typeof options.baseline === 'number')
-                ? {
-                    baseline: options.baseline as OptionsBaseline['baseline'],
-                }
+                ? { baseline: options.baseline as OptionsBaseline['baseline'] }
                 : {};
 
     const e18eOptions = options.e18e === false
@@ -188,7 +192,9 @@ export async function moso(
         ? options.ignores
         : {};
 
-    const modeOptions: ProjectMode = typeof options.mode === 'string' ? options.mode : 'none';
+    const modeOptions: ProjectMode = typeof options.mode === 'string'
+        ? options.mode
+        : 'none';
 
     const perfectionistOptions = typeof options.perfectionist === 'boolean'
         ? options.perfectionist
@@ -261,7 +267,6 @@ export async function moso(
 
     const mut_configs: Array<Awaitable<TypedFlatConfigItem[]>> = [
         comments({
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             overrides: getOverrides(options, 'comments'),
         }),
         ignores({
@@ -283,6 +288,7 @@ export async function moso(
             overrides: getOverrides(options, 'javascript'),
         }),
         node({
+            files: [GLOB_SRC],
             hasReact: Boolean(reactOptions),
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'node'),
@@ -290,17 +296,15 @@ export async function moso(
             ...resolveSubOptions(options, 'node'),
         }),
         promise({
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'promise'),
             typescript: hasTypeScript,
         }),
         regexp({
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             overrides: getOverrides(options, 'regexp'),
         }),
         unicorn({
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
+            files: [GLOB_SRC],
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'unicorn'),
         }),
@@ -352,7 +356,6 @@ export async function moso(
         mut_configs.push(
             e18e({
                 ...e18eOptions,
-                files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
                 isInEditor,
                 lessOpinionated: options.lessOpinionated,
                 mode: modeOptions,
@@ -364,11 +367,9 @@ export async function moso(
     if (functionalEnforcement !== 'none') {
         mut_configs.push(
             functional({
-                ...typescriptConfigOptions,
                 ...functionalConfigOptions,
-                files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
+                ...typescriptConfigOptions,
                 mode: modeOptions,
-                projectRoot: projectRootOptions,
                 overrides: getOverrides(options, 'functional'),
                 stylistic: stylisticOptions,
             }),
@@ -378,6 +379,7 @@ export async function moso(
     if (jsdocOptions !== false) {
         mut_configs.push(
             jsdoc({
+                files: [GLOB_SRC],
                 overrides: getOverrides(options, 'jsdoc'),
                 stylistic: stylisticOptions,
             }),
@@ -421,7 +423,6 @@ export async function moso(
     if (perfectionistOptions) {
         mut_configs.push(
             perfectionist({
-                lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'perfectionist'),
             }),
         );
@@ -431,7 +432,7 @@ export async function moso(
         mut_configs.push(
             react({
                 ...typescriptConfigOptions,
-                files: [GLOB_JSX, GLOB_TS, GLOB_TSX],
+                files: [GLOB_SRC],
                 filesTypeAware: [
                     GLOB_DTS,
                     GLOB_JSX,
@@ -453,6 +454,7 @@ export async function moso(
     if (options.test !== false) {
         mut_configs.push(
             test({
+                ...functionalConfigOptions,
                 files: GLOB_TESTS,
                 isInEditor,
                 overrides: getOverrides(options, 'test'),
@@ -491,17 +493,34 @@ export async function moso(
             vue({
                 ...typescriptConfigOptions,
                 files: [GLOB_VUE],
-                filesTypeAware: [
-                    GLOB_TS,
-                    GLOB_TSX,
-                    GLOB_VUE,
-                ],
                 overrides: getOverrides(options, 'vue'),
-                projectRoot: projectRootOptions,
                 sfcBlocks: true,
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
                 ...resolveSubOptions(options, 'vue'),
+            }),
+        );
+    }
+
+    if (tailwindOptions !== false) {
+        const resolvedTailwind: OptionsTailwind = tailwindOptions === true ? {} : tailwindOptions;
+        const tailwindConfigOptions: Omit<RequiredOptionsTailwind, 'overrides'> = 'entryPoint' in resolvedTailwind
+            ? {
+                config: undefined,
+                entryPoint: resolvedTailwind.entryPoint,
+                version: resolvedTailwind.version ?? 4,
+            }
+            : {
+                config: resolvedTailwind.config ?? 'tailwind.config.js',
+                entryPoint: undefined,
+                version: resolvedTailwind.version ?? 3,
+            };
+
+        mut_configs.push(
+            tailwind({
+                ...tailwindConfigOptions,
+                overrides: getOverrides(options, 'tailwind'),
+                stylistic: stylisticOptions,
             }),
         );
     }

@@ -151,6 +151,13 @@ export type FrameworkOptions = {
     react?: boolean | OptionsReact;
 
     /**
+     * Enable TailwindCSS support.
+     *
+     * @default auto-detect based on dependencies
+     */
+    tailwind?: boolean | OptionsTailwind;
+
+    /**
      * Enable Vue support.
      *
      * @default auto-detect based on the dependencies
@@ -541,6 +548,27 @@ export type OptionsStylistic = {
     stylistic?: boolean | StylisticConfig;
 };
 
+export type OptionsTailwind = OptionsOverrides & (
+    | {
+        /**
+         * Path to the entry file of the CSS-based Tailwind config.
+         *
+         * @example `src/global.css`
+         */
+        entryPoint: string;
+        version?: 4;
+    }
+    | {
+        /**
+         * The path to the entry file of the JS-based Tailwind config.
+         *
+         * @example `tailwind.config.js`
+         */
+        config?: string;
+        version?: 3;
+    }
+);
+
 export type OptionsTypeScript = OptionsOverrides & OptionsTypeScriptErasableOnly & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
 
 export type OptionsTypeScriptErasableOnly = {
@@ -638,6 +666,12 @@ export type RequiredOptionsStylistic = {
     stylistic: false | Required<StylisticConfig>;
 };
 
+export type RequiredOptionsTailwind = Required<OptionsOverrides> & {
+    config: string | undefined;
+    entryPoint: string | undefined;
+    version: 3 | 4;
+};
+
 export type ResolvedOptions<T> = T extends boolean
     ? never
     : T extends number | string
@@ -676,8 +710,18 @@ export type StyleOptions = {
     stylistic?: boolean | (OptionsOverrides & StylisticConfig);
 };
 
-export type StylisticConfig = Omit<Pick<StylisticCustomizeOptions, 'experimental' | 'indent' | 'jsx' | 'quotes' | 'semi'>, 'indent'> & {
+export type StylisticConfig = Omit<Pick<
+    StylisticCustomizeOptions,
+    | 'braceStyle'
+    | 'experimental'
+    | 'indent'
+    | 'jsx'
+    | 'quotes'
+    | 'semi'
+>, 'indent'> & {
     indent?: 'tab' | number;
+    quotes?: 'backtick' | 'double' | 'single';
+    semi?: boolean;
 };
 
 export type TypedFlatConfigItem = Omit<(ConfigWithExtends | Linter.Config), 'ignores' | 'plugins' | 'rules'> & {
