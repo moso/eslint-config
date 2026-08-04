@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 
 import {
     GLOB_ASTRO,
+    GLOB_ASTRO_TS,
     GLOB_DTS,
     GLOB_JSX,
     GLOB_MARKDOWN,
@@ -14,14 +15,12 @@ import {
     GLOB_TYPINGS,
     GLOB_VUE,
 } from '../globs';
-import { loadPackages } from '../utils';
+import { loadPackages } from '../tools';
 
 import type { TypedFlatConfigItem } from '../types';
 
 export const disables = async (): Promise<TypedFlatConfigItem[]> => {
-    const [functionalPlugin] = (await loadPackages(['eslint-plugin-functional'])) as [
-        (typeof import('eslint-plugin-functional'))['default'],
-    ];
+    const [functionalPlugin] = await loadPackages(['eslint-plugin-functional']);
 
     return [
         {
@@ -108,6 +107,7 @@ export const disables = async (): Promise<TypedFlatConfigItem[]> => {
             name: 'moso/disables/node-frameworks',
             files: [
                 GLOB_ASTRO,
+                GLOB_ASTRO_TS,
                 GLOB_DTS,
                 GLOB_JSX,
                 GLOB_TS,
@@ -155,13 +155,36 @@ export const disables = async (): Promise<TypedFlatConfigItem[]> => {
         },
         {
             name: 'moso/disables/tests',
-            files: [GLOB_TESTS],
+            files: GLOB_TESTS,
             rules: {
-                'no-unused-expressions': 'off',
+                '@moso/no-top-level-await': 'off',
 
                 'baseline-js/use-baseline': 'off',
 
+                'e18e/prefer-static-regex': 'off',
+
+                'no-unused-expressions': 'off',
+
+                'jsdoc/require-jsdoc': 'off',
+
+                'node/no-sync': 'off',
+                'node/prefer-global/process': 'off',
+
+                'regexp/no-super-linear-backtracking': 'off',
+
                 'unicorn/consistent-function-scoping': 'off',
+                'unicorn/prefer-module': 'off',
+
+                '@typescript-eslint/consistent-type-definitions': 'off',
+                '@typescript-eslint/explicit-function-return-type': 'off',
+                '@typescript-eslint/no-unsafe-argument': 'off',
+                '@typescript-eslint/no-unsafe-assignment': 'off',
+                '@typescript-eslint/no-unsafe-call': 'off',
+                '@typescript-eslint/no-unsafe-member-access': 'off',
+                '@typescript-eslint/no-unsafe-return': 'off',
+                '@typescript-eslint/no-unused-expressions': 'off',
+                '@typescript-eslint/no-unused-vars': 'off',
+                '@typescript-eslint/strict-boolean-expressions': 'off',
             },
         },
         {
