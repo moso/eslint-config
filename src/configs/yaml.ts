@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -21,16 +20,11 @@ export const yaml = async (
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
-    const [yamlPlugin, yamlParser] = (await loadPackages(['eslint-plugin-yml', 'yaml-eslint-parser'])) as [ESLint.Plugin, Linter.Parser];
+    const [yamlPlugin, yamlParser] = await loadPackages(['eslint-plugin-yml', 'yaml-eslint-parser']);
 
     return [
         {
             name: 'moso/yaml/setup',
-            files,
-            language: 'yml/yaml',
-            languageOptions: {
-                parser: memoize(yamlParser, 'yaml-eslint-parser'),
-            },
             plugins: {
                 'yml': memoize(yamlPlugin, 'eslint-plugin-yml'),
             },
@@ -38,6 +32,10 @@ export const yaml = async (
         {
             name: 'moso/yaml/rules',
             files,
+            language: 'yml/yaml',
+            languageOptions: {
+                parser: memoize(yamlParser, 'yaml-eslint-parser'),
+            },
             rules: {
                 '@stylistic/spaced-comment': 'off',
 
