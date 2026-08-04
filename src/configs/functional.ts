@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict';
 
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
-    OptionsFiles,
     OptionsFunctional,
     OptionsMode,
     OptionsOverrides,
     OptionsTypeScriptParserOptions,
-    OptionsTypeScriptWithTypes,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
@@ -16,9 +15,7 @@ import type {
 export const functional = async (
     options: Readonly<
         OptionsOverrides &
-        OptionsTypeScriptWithTypes &
         Required<
-            OptionsFiles &
             OptionsFunctional &
             OptionsMode &
             OptionsTypeScriptParserOptions &
@@ -27,22 +24,17 @@ export const functional = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
-        files,
+        filesTypeAware,
         functionalEnforcement,
         ignoreNamePattern,
         mode,
         overrides,
-        projectRoot,
         stylistic,
     } = options;
 
-    const [functionalPlugin] = (await loadPackages(['eslint-plugin-functional'])) as [
-        (typeof import('eslint-plugin-functional'))['default'],
-    ];
+    const [functionalPlugin] = await loadPackages(['eslint-plugin-functional']);
 
     const stylisticEnabled = stylistic !== false;
-
-    const isTypeAware = typeof projectRoot === 'string';
 
     const commonRules = {
         'functional/functional-parameters': [
@@ -159,10 +151,6 @@ export const functional = async (
     return [
         {
             name: 'moso/functional',
-            files,
-            plugins: {
-                'functional': memoize(functionalPlugin, 'eslint-plugin-functional'),
-            },
             settings: {
                 immutability: {
                     overrides: [
@@ -172,11 +160,13 @@ export const functional = async (
                     ],
                 },
             },
+            plugins: {
+                'functional': memoize(functionalPlugin, 'eslint-plugin-functional'),
+            },
             rules: {
                 ...(assert.ok(!Array.isArray(functionalPlugin.configs.off)),
                 functionalPlugin.configs.off.rules),
 
-                // The factory never invokes this config with 'none'
                 ...(functionalEnforcement === 'lite'
                     ? liteRules
                     : functionalEnforcement === 'strict'
@@ -186,24 +176,21 @@ export const functional = async (
                 ...overrides,
             },
         },
-        ...((isTypeAware
-            ? []
-            : [{
-                name: 'moso/functional/disable-type-aware',
-                files,
-                rules: {
-                    ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
-                    functionalPlugin.configs.disableTypeChecked.rules),
+        {
+            name: 'moso/functional/disable-type-aware',
+            ignores: filesTypeAware,
+            rules: {
+                ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
+                functionalPlugin.configs.disableTypeChecked.rules),
 
-                    'functional/no-let': [
-                        'error',
-                        {
-                            allowInForLoopInit: true,
-                            ignoreIdentifierPattern: ignoreNamePattern,
-                        },
-                    ],
-                },
-            }]) satisfies TypedFlatConfigItem[]
-        ),
+                'functional/no-let': [
+                    'error',
+                    {
+                        allowInForLoopInit: true,
+                        ignoreIdentifierPattern: ignoreNamePattern,
+                    },
+                ],
+            },
+        },
     ];
 };

@@ -1,25 +1,18 @@
 import assert from 'node:assert/strict';
 
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
-import type { ESLint } from 'eslint';
+import type { OptionsOverrides, TypedFlatConfigItem } from '../types';
 
-import type { OptionsFiles, OptionsOverrides, TypedFlatConfigItem } from '../types';
+export const comments = async (options: Readonly<OptionsOverrides>): Promise<TypedFlatConfigItem[]> => {
+    const { overrides } = options;
 
-export const comments = async (
-    options: Readonly<
-        OptionsOverrides &
-        Required<OptionsFiles>
-    >,
-): Promise<TypedFlatConfigItem[]> => {
-    const { files, overrides } = options;
-
-    const [eslintComments] = (await loadPackages(['@eslint-community/eslint-plugin-eslint-comments'])) as [ESLint.Plugin];
+    const [eslintComments] = await loadPackages(['@eslint-community/eslint-plugin-eslint-comments']);
 
     return [
         {
             name: 'moso/eslint-comments',
-            files,
             plugins: {
                 '@eslint-community/eslint-comments': memoize(eslintComments, '@eslint-community/eslint-comments'),
             },

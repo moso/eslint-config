@@ -1,7 +1,5 @@
-import mosoPlugin from '../rules';
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -14,10 +12,11 @@ import type {
 
 export const imports = async (
     options: Readonly<
+        OptionsFiles &
         OptionsHasTypeScript &
         OptionsOverrides &
         OptionsTypeScriptParserOptions &
-        Required<OptionsFiles & RequiredOptionsStylistic>
+        Required<RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
@@ -27,7 +26,7 @@ export const imports = async (
         typescript,
     } = options;
 
-    const [importLite] = (await loadPackages(['eslint-plugin-import-lite'])) as [ESLint.Plugin];
+    const [importLite] = await loadPackages(['eslint-plugin-import-lite']);
 
     const stylisticEnabled = stylistic !== false;
 
@@ -35,7 +34,6 @@ export const imports = async (
         {
             name: 'moso/imports',
             plugins: {
-                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
                 'import-lite': memoize(importLite, 'eslint-plugin-import-lite'),
             },
             rules: {

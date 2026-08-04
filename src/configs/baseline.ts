@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsBaseline,
@@ -36,7 +35,7 @@ export const baseline = async (
 
     const isTypeAware = typescript && typeof projectRoot === 'string';
 
-    const [baselinePlugin] = (await loadPackages(['eslint-plugin-baseline-js'])) as [ESLint.Plugin];
+    const [baselinePlugin] = await loadPackages(['eslint-plugin-baseline-js']);
 
     return [
         {
@@ -46,8 +45,9 @@ export const baseline = async (
             },
         },
         {
-            name: 'moso/baseline/rules',
-            files,
+            name: `moso/baseline/${isTypeAware ? 'type-aware-rules' : 'rules'}`,
+            files: isTypeAware ? filesTypeAware : files,
+            ignores: isTypeAware ? ignoresTypeAware : {},
             rules: {
                 'baseline-js/use-baseline': [
                     'warn',
@@ -55,35 +55,16 @@ export const baseline = async (
                         available: baseline ?? 'widely',
                         ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
                         ignoreNodeTypes,
-                        includeJsBuiltins: { preset: 'auto' },
-                        includeWebApis: { preset: 'auto' },
+                        includeJsBuiltins: { preset: isTypeAware ? 'type-aware' : 'auto' },
+                        includeWebApis: { preset: isTypeAware ? 'type-aware' : 'auto' },
                     },
                 ],
 
-                ...overrides,
+                ...(isTypeAware
+                    ? { ...overridesTypeAware }
+                    : { ...overrides }
+                ),
             },
         },
-        ...((isTypeAware
-            ? [{
-                name: 'moso/baseline/type-aware-rules',
-                files: filesTypeAware,
-                ignores: ignoresTypeAware,
-                rules: {
-                    'baseline-js/use-baseline': [
-                        'warn',
-                        {
-                            available: baseline ?? 'widely',
-                            ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
-                            ignoreNodeTypes,
-                            includeJsBuiltins: { preset: 'type-aware' },
-                            includeWebApis: { preset: 'type-aware' },
-                        },
-                    ],
-
-                    ...overridesTypeAware,
-                },
-            }]
-            : []) satisfies TypedFlatConfigItem[]
-        ),
     ];
 };

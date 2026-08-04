@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -19,19 +18,20 @@ export const jsonc = async (
 
     const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
-    const [jsoncPlugin, jsoncParser] =
-        (await loadPackages(['eslint-plugin-jsonc', 'jsonc-eslint-parser'])) as
-            [ESLint.Plugin, Linter.Parser];
+    const [jsoncPlugin, jsoncParser] = await loadPackages(['eslint-plugin-jsonc', 'jsonc-eslint-parser']);
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
     return [
         {
-            name: 'moso/jsonc',
-            files,
+            name: 'moso/jsonc/setup',
             plugins: {
                 'jsonc': memoize(jsoncPlugin, 'eslint-plugin-jsonc'),
             },
+        },
+        {
+            name: 'moso/jsonc/rules',
+            files,
             languageOptions: {
                 parser: memoize(jsoncParser, 'jsonc-eslint-parser'),
             },

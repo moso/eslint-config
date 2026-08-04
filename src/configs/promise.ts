@@ -1,9 +1,7 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
-    OptionsFiles,
     OptionsHasTypeScript,
     OptionsLessOpinionated,
     OptionsOverrides,
@@ -14,23 +12,20 @@ export const promise = async (
     options: Readonly<
         OptionsHasTypeScript &
         OptionsLessOpinionated &
-        OptionsOverrides &
-        Required<OptionsFiles>
+        OptionsOverrides
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
-        files,
         lessOpinionated,
         overrides,
         typescript,
     } = options;
 
-    const [promisePlugin] = (await loadPackages(['eslint-plugin-promise'])) as [ESLint.Plugin];
+    const [promisePlugin] = await loadPackages(['eslint-plugin-promise']);
 
     return [
         {
             name: 'moso/promise',
-            files,
             plugins: {
                 'promise': memoize(promisePlugin, 'eslint-plugin-promise'),
             },

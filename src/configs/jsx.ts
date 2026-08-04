@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -27,7 +28,7 @@ export const jsx = async (
     } = options;
 
     const [jsxA11yPlugin] = a11y
-        ? ((await loadPackages(['eslint-plugin-jsx-a11y'])) as [typeof import('eslint-plugin-jsx-a11y')])
+        ? await loadPackages(['eslint-plugin-jsx-a11y'])
         : [undefined];
 
     const stylisticEnabled = stylistic !== false;
@@ -35,18 +36,18 @@ export const jsx = async (
     return [
         {
             name: 'moso/jsx/setup',
-            files,
-            languageOptions: {
-                parserOptions: {
-                    ecmaFeatures: {
-                        jsx: true,
-                    },
-                },
+            plugins: {
+                ...jsxA11yPlugin && { 'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y') },
             },
         },
         {
             name: 'moso/jsx/rules',
             files,
+            languageOptions: {
+                parserOptions: {
+                    ecmaFeatures: { jsx: true },
+                },
+            },
             rules: {
                 ...(stylisticEnabled && {
                     '@stylistic/jsx-curly-spacing': [
@@ -63,17 +64,7 @@ export const jsx = async (
                     '@stylistic/jsx-one-expression-per-line': 'off',
                 }),
 
-                ...overrides,
-            },
-        },
-        ...((jsxA11yPlugin
-            ? [{
-                name: 'moso/jsx/a11y',
-                files,
-                plugins: {
-                    'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y'),
-                },
-                rules: {
+                ...(jsxA11yPlugin && {
                     ...(lessOpinionated
                         ? {
                             ...(assert.ok(!Array.isArray(jsxA11yPlugin.flatConfigs.recommended)),
@@ -125,9 +116,10 @@ export const jsx = async (
                     ),
 
                     ...overridesA11y,
-                },
-            }]
-            : []) satisfies TypedFlatConfigItem[]
-        ),
+                }),
+
+                ...overrides,
+            },
+        },
     ];
 };

@@ -5,9 +5,7 @@ import type { OptionsOverrides, TypedFlatConfigItem } from '../types';
  *
  * Requires `jsonc` config
  */
-export const sortPackageJson = (
-    options: Readonly<OptionsOverrides> = {},
-): TypedFlatConfigItem[] => {
+export const sortPackageJson = (options: Readonly<OptionsOverrides> = {}): TypedFlatConfigItem[] => {
     const { overrides } = options;
 
     return [
@@ -127,9 +125,7 @@ export const sortPackageJson = (
  *
  * Requires `jsonc` config
  */
-export const sortTsconfig = (
-    options: Readonly<OptionsOverrides> = {},
-): TypedFlatConfigItem[] => {
+export const sortTsconfig = (options: Readonly<OptionsOverrides> = {}): TypedFlatConfigItem[] => {
     const { overrides } = options;
 
     return [

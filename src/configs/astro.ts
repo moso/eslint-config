@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { flattenRules, memoize } from '../utils';
 
 import type {
     OptionsAstro,
@@ -37,26 +36,30 @@ export const astro = async (
         typescript,
     } = options;
 
-    const [jsxA11yPlugin] = a11y
-        ? (await loadPackages(['eslint-plugin-jsx-a11y'])) as [typeof import('eslint-plugin-jsx-a11y')]
-        : [undefined];
-
     const stylisticEnabled = stylistic !== false;
 
-    const [typescriptParser] = typescript ? (await loadPackages(['@typescript-eslint/parser'])) as [Linter.Parser] : [undefined];
+    const [astroParser, astroPlugin] = await loadPackages(['astro-eslint-parser', 'eslint-plugin-astro']);
 
-    const [astroParser, astroPlugin] =
-        (await loadPackages(['astro-eslint-parser', 'eslint-plugin-astro'])) as
-            [Linter.Parser, (typeof import('eslint-plugin-astro'))['default']];
+    const [jsxA11yPlugin] = a11y
+        ? await loadPackages(['eslint-plugin-jsx-a11y'])
+        : [undefined];
+
+    const [typescriptParser] = typescript
+        ? await loadPackages(['@typescript-eslint/parser'])
+        : [undefined];
 
     const { projectService, ...typeAwareParserOptions } = parserOptions ?? {};
-
-    const flattenRules = (configs: ReadonlyArray<Linter.Config>): NonNullable<Linter.Config['rules']> =>
-        configs.reduce<NonNullable<Linter.Config['rules']>>((acc, config) => Object.assign(acc, config.rules), {});
 
     return [
         {
             name: 'moso/astro/setup',
+            plugins: {
+                'astro': memoize(astroPlugin, 'eslint-plugin-astro'),
+                ...jsxA11yPlugin && { 'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y') },
+            },
+        },
+        {
+            name: 'moso/astro/rules',
             files,
             languageOptions: {
                 globals: {
@@ -74,13 +77,6 @@ export const astro = async (
                 sourceType: 'module',
             },
             processor: 'astro/client-side-ts',
-            plugins: {
-                'astro': memoize(astroPlugin, 'eslint-plugin-astro'),
-            },
-        },
-        {
-            name: 'moso/astro/rules',
-            files,
             rules: {
                 // Astro uses top level await for e.g. data fetching
                 // @see https://docs.astro.build/en/guides/data-fetching/#fetch-in-astro
@@ -120,24 +116,14 @@ export const astro = async (
                     'astro/semi': ['error', stylistic.semi ? 'always' : 'never'],
                 }),
 
-                ...overrides,
-            },
-        },
-
-        ...((jsxA11yPlugin
-            ? [{
-                name: 'moso/astro/a11y',
-                files,
-                plugins: {
-                    'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y'),
-                },
-                rules: {
+                ...(jsxA11yPlugin && {
                     ...flattenRules(astroPlugin.configs[lessOpinionated ? 'jsx-a11y-recommended' : 'jsx-a11y-strict']),
 
                     ...overridesA11y,
-                },
-            }]
-            : []) satisfies TypedFlatConfigItem[]
-        ),
+                }),
+
+                ...overrides,
+            },
+        },
     ];
 };

@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -21,15 +20,11 @@ export const toml = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const [tomlParser, tomlPlugin] = (await loadPackages(['toml-eslint-parser', 'eslint-plugin-toml'])) as [Linter.Parser, ESLint.Plugin];
+    const [tomlParser, tomlPlugin] = await loadPackages(['toml-eslint-parser', 'eslint-plugin-toml']);
 
     return [
         {
             name: 'moso/toml/setup',
-            files,
-            languageOptions: {
-                parser: memoize(tomlParser, 'toml-eslint-parser'),
-            },
             plugins: {
                 toml: memoize(tomlPlugin, 'eslint-plugin-toml'),
             },
@@ -37,6 +32,9 @@ export const toml = async (
         {
             name: 'moso/toml/rules',
             files,
+            languageOptions: {
+                parser: memoize(tomlParser, 'toml-eslint-parser'),
+            },
             rules: {
                 '@stylistic/spaced-comment': 'off',
 

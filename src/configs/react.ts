@@ -2,9 +2,8 @@ import assert from 'node:assert/strict';
 
 import { isPackageExists } from 'local-pkg';
 
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -45,6 +44,7 @@ export const react = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        a11y,
         additionalHooks = 'useIsomorphicLayoutEffect',
         files,
         filesTypeAware,
@@ -52,6 +52,7 @@ export const react = async (
         lessOpinionated,
         nextjs,
         overrides,
+        overridesA11y,
         overridesTypeAware,
         parserOptions,
         projectRoot,
@@ -64,17 +65,12 @@ export const react = async (
         reactHooksPlugin,
         reactRefreshPlugin,
         reactYouMightNotNeedAnEffect,
-    ] = (await loadPackages([
+    ] = await loadPackages([
         '@eslint-react/eslint-plugin',
         'eslint-plugin-react-hooks',
         'eslint-plugin-react-refresh',
         'eslint-plugin-react-you-might-not-need-an-effect',
-    ])) as [
-        (typeof import('@eslint-react/eslint-plugin'))['default'],
-        ESLint.Plugin,
-        ESLint.Plugin,
-        (typeof import('eslint-plugin-react-you-might-not-need-an-effect'))['default'],
-    ];
+    ]);
 
     const isTypeAware = typescript && typeof projectRoot === 'string';
 
@@ -83,36 +79,42 @@ export const react = async (
     const isUsingRemix = RemixPackages.some((x) => isPackageExists(x));
     const isUsingReactRouter = ReactRouterPackages.some((x) => isPackageExists(x));
 
+    const [jsxA11yPlugin] = a11y
+        ? await loadPackages(['eslint-plugin-jsx-a11y'])
+        : [undefined];
+
     const reactHooks = additionalHooks ? additionalHooks.replaceAll(',', '|') : undefined;
 
     const stylisticEnabled = stylistic !== false;
 
-    const [typescriptParser] = typescript ? (await loadPackages(['@typescript-eslint/parser'])) as [Linter.Parser] : [undefined];
+    const [typescriptParser] = typescript
+        ? await loadPackages(['@typescript-eslint/parser'])
+        : [undefined];
 
     return [
         {
-            name: 'moso/react',
-            files,
-            languageOptions: {
-                parser: typescript ? typescriptParser : undefined,
-                parserOptions: {
-                    ecmaFeatures: {
-                        jsx: true,
-                    },
-                    ...(typescript && parserOptions),
-                },
-                sourceType: 'module',
-            },
-            settings: {
-                '@eslint-react': {
-                    version: 'detect',
-                },
-            },
+            name: 'moso/react/setup',
             plugins: {
                 '@eslint-react': memoize(reactPlugin, '@eslint-react'),
                 'react-hooks': memoize(reactHooksPlugin, 'eslint-plugin-react-hooks'),
                 'react-refresh': memoize(reactRefreshPlugin, 'eslint-plugin-react-refresh'),
                 'react-you-might-not-need-an-effect': memoize(reactYouMightNotNeedAnEffect, 'eslint-plugin-react-you-might-not-need-an-effect'),
+                ...jsxA11yPlugin && { 'jsx-a11y': memoize(jsxA11yPlugin, 'eslint-plugin-jsx-a11y') },
+            },
+        },
+        {
+            name: 'moso/react/rules',
+            files,
+            languageOptions: {
+                parser: typescript ? typescriptParser : undefined,
+                parserOptions: {
+                    ecmaFeatures: { jsx: true },
+                    ...(typescript && parserOptions),
+                },
+                sourceType: 'module',
+            },
+            settings: {
+                '@eslint-react': { version: 'detect' },
             },
             rules: {
                 ...(lessOpinionated
@@ -198,16 +200,20 @@ export const react = async (
                                     'dynamicParams',
                                     'experimental_ppr',
                                     'fetchCache',
+                                    'generateImageMetaData',
                                     'generateMetadata',
+                                    'generateSitemaps',
                                     'generateStaticParams',
                                     'generateViewport',
                                     'maxDuration',
                                     'metadata',
                                     'preferredRegion',
+                                    'revalidate',
                                     'runtime',
                                     'viewport',
                                 ]
-                                : []),
+                                : []
+                            ),
                             ...(isUsingReactRouter || isUsingRemix
                                 ? [
                                     'action',
@@ -222,10 +228,57 @@ export const react = async (
                                     'ErrorBoundary',
                                     'HydrateFallback',
                                 ]
-                                : []),
+                                : []
+                            ),
                         ],
                     },
                 ],
+
+                ...(jsxA11yPlugin && {
+                    // Minimal rules, inspired by SukkaW
+                    // @see https://github.com/SukkaW/eslint-config-sukka/tree/master/packages/eslint-plugin-react-jsx-a11y
+                    'jsx-a11y/alt-text': ['warn', { elements: ['img'], img: ['Image'] }],
+                    'jsx-a11y/aria-props': 'warn',
+                    'jsx-a11y/aria-proptypes': 'warn',
+                    'jsx-a11y/aria-role': 'warn',
+                    'jsx-a11y/aria-unsupported-elements': 'warn',
+                    'jsx-a11y/iframe-has-title': 'warn',
+                    'jsx-a11y/no-access-key': 'warn',
+                    'jsx-a11y/no-static-element-interactions': 'warn',
+                    'jsx-a11y/role-has-required-aria-props': 'warn',
+                    'jsx-a11y/role-supports-aria-props': 'warn',
+                    'jsx-a11y/tabindex-no-positive': 'warn',
+
+                    // Opinionated additions
+                    'jsx-a11y/anchor-ambiguous-text': 'off',
+                    'jsx-a11y/interactive-supports-focus': [
+                        'error',
+                        {
+                            tabbable: [
+                                'button',
+                                'checkbox',
+                                'link',
+                                'progressbar',
+                                'searchbox',
+                                'slider',
+                                'spinbutton',
+                                'switch',
+                                'textbox',
+                            ],
+                        },
+                    ],
+                    'jsx-a11y/label-has-for': 'off',
+                    'jsx-a11y/no-noninteractive-element-interactions': [
+                        'error',
+                        {
+                            body: ['onError', 'onLoad'],
+                            iframe: ['onError', 'onLoad'],
+                            img: ['onError', 'onLoad'],
+                        },
+                    ],
+
+                    ...overridesA11y,
+                }),
 
                 ...overrides,
             },

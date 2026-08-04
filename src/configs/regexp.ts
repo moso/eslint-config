@@ -1,23 +1,18 @@
 import assert from 'node:assert/strict';
 
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
-import type { OptionsFiles, OptionsOverrides, TypedFlatConfigItem } from '../types';
+import type { OptionsOverrides, TypedFlatConfigItem } from '../types';
 
-export const regexp = async (
-    options: Readonly<
-        OptionsOverrides &
-        Required<OptionsFiles>
-    >,
-): Promise<TypedFlatConfigItem[]> => {
-    const { files, overrides } = options;
+export const regexp = async (options: Readonly<OptionsOverrides>): Promise<TypedFlatConfigItem[]> => {
+    const { overrides } = options;
 
-    const [regexpPlugin] = (await loadPackages(['eslint-plugin-regexp'])) as [typeof import('eslint-plugin-regexp')];
+    const [regexpPlugin] = await loadPackages(['eslint-plugin-regexp']);
 
     return [
         {
             name: 'moso/regexp',
-            files,
             plugins: {
                 'regexp': memoize(regexpPlugin, 'eslint-plugin-regexp'),
             },

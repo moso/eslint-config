@@ -3,9 +3,8 @@ import assert from 'node:assert/strict';
 import globals from 'globals';
 
 import mosoPlugin from '../rules';
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFunctional,
@@ -37,19 +36,9 @@ export const javascript = async (
         perfectionist,
     } = options;
 
-    const [
-        deMorganPlugin,
-        eslintJs,
-        unusedImportsPlugin,
-    ] = (await loadPackages([
-        'eslint-plugin-de-morgan',
-        '@eslint/js',
-        'eslint-plugin-unused-imports',
-    ])) as [
-        (typeof import('eslint-plugin-de-morgan')),
-        typeof import('@eslint/js'),
-        ESLint.Plugin,
-    ];
+    const [deMorganPlugin, eslintJs, unusedImportsPlugin] = await loadPackages(
+        ['eslint-plugin-de-morgan', '@eslint/js', 'eslint-plugin-unused-imports']
+    );
 
     return [
         {
@@ -75,7 +64,6 @@ export const javascript = async (
                 reportUnusedDisableDirectives: true,
             },
             plugins: {
-                '@eslint/js': memoize(eslintJs, '@eslint/js'),
                 'unused-imports': memoize(unusedImportsPlugin, 'eslint-plugin-unused-imports'),
             },
             rules: {
