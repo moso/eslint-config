@@ -1,4 +1,5 @@
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsHasTypeScript,
@@ -9,6 +10,7 @@ import type {
 } from '../types';
 
 export const StylisticConfigDefaults: Required<StylisticConfig> = {
+    braceStyle: '1tbs',
     experimental: false,
     indent: 4,
     jsx: true,
@@ -24,6 +26,7 @@ export const stylistic = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        braceStyle,
         experimental,
         indent,
         jsx,
@@ -37,9 +40,10 @@ export const stylistic = async (
         ...options,
     };
 
-    const [stylisticPlugin] = (await loadPackages(['@stylistic/eslint-plugin'])) as [typeof import('@stylistic/eslint-plugin')['default']];
+    const [stylisticPlugin] = await loadPackages(['@stylistic/eslint-plugin']);
 
     const config = stylisticPlugin.configs.customize({
+        braceStyle,
         experimental,
         indent,
         jsx,
@@ -90,7 +94,7 @@ export const stylistic = async (
                     '@stylistic/block-spacing': ['error', 'always'],
                     '@stylistic/brace-style': [
                         'error',
-                        '1tbs',
+                        braceStyle,
                         {
                             allowSingleLine: true,
                         },
