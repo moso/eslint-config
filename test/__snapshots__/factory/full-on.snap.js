@@ -1,10 +1,5 @@
 [
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/eslint-comments",
     "plugins": [
       "@eslint-community/eslint-comments",
@@ -111,7 +106,6 @@
   {
     "name": "moso/imports",
     "plugins": [
-      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -155,7 +149,6 @@
     },
     "name": "moso/javascript",
     "plugins": [
-      "@eslint/js",
       "unused-imports",
     ],
     "rules": [
@@ -341,11 +334,17 @@
     ],
   },
   {
-    "languageOptions": {},
-    "name": "moso/node",
+    "name": "moso/node/setup",
     "plugins": [
       "node",
     ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "languageOptions": {},
+    "name": "moso/node/rules",
     "rules": [
       "node/no-deprecated-api",
       "node/no-exports-assign",
@@ -382,16 +381,11 @@
     ],
     "settings": {
       "node": {
-        "version": "^22.22.2 || >=24",
+        "version": "^22.22.3 || >=24",
       },
     },
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/promise",
     "plugins": [
       "promise",
@@ -412,11 +406,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/regexp",
     "plugins": [
       "regexp",
@@ -492,15 +481,16 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
-    "name": "moso/unicorn",
+    "name": "moso/unicorn/setup",
     "plugins": [
       "unicorn",
     ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/unicorn/rules",
     "rules": [
       "- no-negated-condition",
       "- no-process-exit",
@@ -508,6 +498,7 @@
       "unicorn/catch-error-name",
       "unicorn/class-reference-in-static-methods",
       "- unicorn/comment-content",
+      "- unicorn/consistent-arrow-return-style",
       "unicorn/consistent-assert",
       "- unicorn/consistent-boolean-name",
       "unicorn/consistent-class-member-order",
@@ -537,6 +528,7 @@
       "- unicorn/id-match",
       "- unicorn/import-style",
       "- unicorn/isolated-functions",
+      "- unicorn/iteration-fallback-style",
       "- unicorn/logical-assignment-operators",
       "- unicorn/max-nested-calls",
       "- unicorn/name-replacements",
@@ -560,6 +552,7 @@
       "- unicorn/no-async-promise-finally",
       "unicorn/no-await-expression-member",
       "unicorn/no-await-in-promise-methods",
+      "- unicorn/no-barrel-files",
       "unicorn/no-blob-to-file",
       "unicorn/no-boolean-sort-comparator",
       "- unicorn/no-break-in-nested-loop",
@@ -658,6 +651,7 @@
       "unicorn/no-unsafe-dom-html",
       "unicorn/no-unsafe-promise-all-settled-values",
       "unicorn/no-unsafe-property-key",
+      "unicorn/no-unsafe-sqlite-interpolation",
       "- unicorn/no-unsafe-string-replacement",
       "unicorn/no-unused-array-method-return",
       "- unicorn/no-unused-properties",
@@ -830,6 +824,7 @@
       "unicorn/require-passive-events",
       "- unicorn/require-post-message-target-origin",
       "unicorn/require-proxy-trap-boolean-return",
+      "unicorn/single-line-block-comment-style",
       "- unicorn/string-content",
       "unicorn/switch-case-braces",
       "unicorn/switch-case-break-position",
@@ -931,17 +926,6 @@
   },
   {
     "files": [
-      "**/*.?([cm])js",
-      "**/*.?([cm])jsx",
-      "**/*.astro",
-    ],
-    "name": "moso/baseline/rules",
-    "rules": [
-      "baseline-js/use-baseline",
-    ],
-  },
-  {
-    "files": [
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -949,6 +933,12 @@
     "name": "moso/baseline/type-aware-rules",
     "rules": [
       "baseline-js/use-baseline",
+    ],
+  },
+  {
+    "name": "moso/astro/setup",
+    "plugins": [
+      "astro",
     ],
   },
   {
@@ -965,17 +955,8 @@
       },
       "sourceType": "module",
     },
-    "name": "moso/astro/setup",
-    "plugins": [
-      "astro",
-    ],
-    "processor": "astro/client-side-ts",
-  },
-  {
-    "files": [
-      "**/*.astro",
-    ],
     "name": "moso/astro/rules",
+    "processor": "astro/client-side-ts",
     "rules": [
       "- @moso/no-top-level-await",
       "- node/no-top-level-await",
@@ -1005,11 +986,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/e18e/rules",
     "plugins": [
       "e18e",
@@ -1035,22 +1011,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
-    "name": "moso/e18e/library-disables",
-    "rules": [
-      "- e18e/prefer-static-regex",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/functional",
     "plugins": [
       "functional",
@@ -1098,10 +1058,40 @@
     },
   },
   {
-    "name": "moso/jsdoc",
+    "ignores": [
+      "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/functional/disable-type-aware",
+    "rules": [
+      "- functional/functional-parameters",
+      "- functional/immutable-data",
+      "- functional/no-conditional-statements",
+      "- functional/no-expression-statements",
+      "- functional/no-mixed-types",
+      "- functional/no-return-void",
+      "- functional/no-throw-statements",
+      "- functional/prefer-immutable-types",
+      "- functional/prefer-property-signatures",
+      "- functional/prefer-readonly-type",
+      "- functional/prefer-tacit",
+      "- functional/readonly-type",
+      "- functional/type-declaration-immutability",
+      "functional/no-let",
+    ],
+  },
+  {
+    "name": "moso/jsdoc/setup",
     "plugins": [
       "jsdoc",
     ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/jsdoc/rules",
     "rules": [
       "jsdoc/check-access",
       "jsdoc/check-alignment",
@@ -1149,6 +1139,12 @@
     ],
   },
   {
+    "name": "moso/jsonc/setup",
+    "plugins": [
+      "jsonc",
+    ],
+  },
+  {
     "files": [
       "**/*.json",
       "**/*.json5",
@@ -1157,10 +1153,7 @@
     "languageOptions": {
       "parser": "jsonc-eslint-parser",
     },
-    "name": "moso/jsonc",
-    "plugins": [
-      "jsonc",
-    ],
+    "name": "moso/jsonc/rules",
     "rules": [
       "jsonc/no-bigint-literals",
       "jsonc/no-binary-expression",
@@ -1221,6 +1214,12 @@
     ],
   },
   {
+    "name": "moso/jsx/setup",
+    "plugins": [
+      "jsx-a11y",
+    ],
+  },
+  {
     "files": [
       "**/*.?([cm])jsx",
       "**/*.?([cm])tsx",
@@ -1232,29 +1231,10 @@
         },
       },
     },
-    "name": "moso/jsx/setup",
-  },
-  {
-    "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])tsx",
-    ],
     "name": "moso/jsx/rules",
     "rules": [
       "@stylistic/jsx-curly-spacing",
       "- @stylistic/jsx-one-expression-per-line",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])tsx",
-    ],
-    "name": "moso/jsx/a11y",
-    "plugins": [
-      "jsx-a11y",
-    ],
-    "rules": [
       "jsx-a11y/alt-text",
       "jsx-a11y/aria-props",
       "jsx-a11y/aria-proptypes",
@@ -1273,6 +1253,15 @@
     ],
   },
   {
+    "name": "moso/nextjs/setup",
+    "plugins": [
+      "@next/next",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
     "languageOptions": {
       "parserOptions": {
         "ecmaFeatures": {
@@ -1281,20 +1270,6 @@
       },
       "sourceType": "module",
     },
-    "name": "moso/nextjs/setup",
-    "plugins": [
-      "@next/next",
-    ],
-    "settings": {
-      "react": {
-        "version": "detect",
-      },
-    },
-  },
-  {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-    ],
     "name": "moso/nextjs/rules",
     "rules": [
       "@next/next/google-font-display",
@@ -1306,6 +1281,7 @@
       "@next/next/no-head-element",
       "@next/next/no-html-link-for-pages",
       "@next/next/no-img-element",
+      "@next/next/no-location-assign-relative-destination",
       "@next/next/no-page-custom-font",
       "@next/next/no-styled-jsx-in-document",
       "@next/next/no-sync-scripts",
@@ -1319,6 +1295,11 @@
       "@next/next/no-head-import-in-document",
       "@next/next/no-script-component-in-head",
     ],
+    "settings": {
+      "react": {
+        "version": "detect",
+      },
+    },
   },
   {
     "name": "moso/perfectionist",
@@ -1351,10 +1332,18 @@
     ],
   },
   {
+    "name": "moso/react/setup",
+    "plugins": [
+      "@eslint-react",
+      "react-hooks",
+      "react-refresh",
+      "react-you-might-not-need-an-effect",
+      "jsx-a11y",
+    ],
+  },
+  {
     "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
+      "**/*.?([cm])[jt]s?(x)",
     ],
     "languageOptions": {
       "parser": "typescript-eslint/parser",
@@ -1365,13 +1354,7 @@
       },
       "sourceType": "module",
     },
-    "name": "moso/react",
-    "plugins": [
-      "@eslint-react",
-      "react-hooks",
-      "react-refresh",
-      "react-you-might-not-need-an-effect",
-    ],
+    "name": "moso/react/rules",
     "rules": [
       "@eslint-react/error-boundaries",
       "@eslint-react/exhaustive-deps",
@@ -1475,6 +1458,21 @@
       "react-hooks/exhaustive-deps",
       "react-hooks/rules-of-hooks",
       "react-refresh/only-export-components",
+      "jsx-a11y/alt-text",
+      "jsx-a11y/aria-props",
+      "jsx-a11y/aria-proptypes",
+      "jsx-a11y/aria-role",
+      "jsx-a11y/aria-unsupported-elements",
+      "jsx-a11y/iframe-has-title",
+      "jsx-a11y/no-access-key",
+      "jsx-a11y/no-static-element-interactions",
+      "jsx-a11y/role-has-required-aria-props",
+      "jsx-a11y/role-supports-aria-props",
+      "jsx-a11y/tabindex-no-positive",
+      "- jsx-a11y/anchor-ambiguous-text",
+      "jsx-a11y/interactive-supports-focus",
+      "- jsx-a11y/label-has-for",
+      "jsx-a11y/no-noninteractive-element-interactions",
     ],
     "settings": {
       "@eslint-react": {
@@ -1630,22 +1628,6 @@
       "- functional/prefer-tacit",
       "- functional/readonly-type",
       "- functional/type-declaration-immutability",
-      "- @moso/no-top-level-await",
-      "- jsdoc/require-jsdoc",
-      "- node/no-sync",
-      "- node/prefer-global/process",
-      "- regexp/no-super-linear-backtracking",
-      "- unicorn/consistent-function-scoping",
-      "- unicorn/prefer-module",
-      "- @typescript-eslint/consistent-type-definitions",
-      "- @typescript-eslint/no-unsafe-argument",
-      "- @typescript-eslint/no-unsafe-assignment",
-      "- @typescript-eslint/no-unsafe-call",
-      "- @typescript-eslint/no-unsafe-member-access",
-      "- @typescript-eslint/no-unsafe-return",
-      "- @typescript-eslint/no-unused-expressions",
-      "- @typescript-eslint/no-unused-vars",
-      "- @typescript-eslint/strict-boolean-expressions",
       "no-only-tests/no-only-tests",
       "vitest/expect-expect",
       "vitest/no-commented-out-tests",
@@ -1670,12 +1652,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.toml",
-    ],
-    "languageOptions": {
-      "parser": "toml-eslint-parser",
-    },
     "name": "moso/toml/setup",
     "plugins": [
       "toml",
@@ -1685,6 +1661,9 @@
     "files": [
       "**/*.toml",
     ],
+    "languageOptions": {
+      "parser": "toml-eslint-parser",
+    },
     "name": "moso/toml/rules",
     "rules": [
       "- @stylistic/spaced-comment",
@@ -1982,13 +1961,11 @@
     ],
   },
   {
-    "files": [
-      "**/*.vue",
-    ],
     "languageOptions": {},
     "name": "moso/vue/setup",
     "plugins": [
       "vue",
+      "vuejs-accessibility",
     ],
   },
   {
@@ -2167,49 +2144,6 @@
       "vue/quote-props",
       "vue/space-in-parens",
       "vue/template-curly-spacing",
-      "- no-undef",
-      "- no-dupe-class-members",
-      "- no-redeclare",
-      "- no-unused-vars",
-      "- no-array-constructor",
-      "@typescript-eslint/no-array-constructor",
-      "- no-unused-expressions",
-      "@typescript-eslint/no-unused-expressions",
-      "- no-useless-constructor",
-      "@typescript-eslint/no-useless-constructor",
-      "- camelcase",
-      "- vue/camelcase",
-      "@typescript-eslint/naming-convention",
-      "- no-use-before-define",
-      "@typescript-eslint/no-use-before-define",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-      "**/*.vue",
-    ],
-    "name": "moso/vue/rules-type-aware",
-    "rules": [
-      "- no-implied-eval",
-      "@typescript-eslint/no-implied-eval",
-      "- no-unused-vars",
-      "- vue/no-unused-vars",
-      "@typescript-eslint/no-unused-vars",
-      "- prefer-promise-reject-errors",
-      "@typescript-eslint/prefer-promise-reject-errors",
-    ],
-  },
-  {
-    "files": [
-      "**/*.vue",
-    ],
-    "name": "moso/vue/a11y",
-    "plugins": [
-      "vuejs-accessibility",
-    ],
-    "rules": [
       "vuejs-accessibility/alt-text",
       "vuejs-accessibility/anchor-has-content",
       "vuejs-accessibility/aria-props",
@@ -2233,13 +2167,31 @@
     ],
   },
   {
-    "files": [
-      "**/*.y?(a)ml",
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
     ],
-    "language": "yml/yaml",
-    "languageOptions": {
-      "parser": "yaml-eslint-parser",
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "entryPoint": "src/styles/app.css",
+      },
     },
+  },
+  {
     "name": "moso/yaml/setup",
     "plugins": [
       "yml",
@@ -2249,6 +2201,10 @@
     "files": [
       "**/*.y?(a)ml",
     ],
+    "language": "yml/yaml",
+    "languageOptions": {
+      "parser": "yaml-eslint-parser",
+    },
     "name": "moso/yaml/rules",
     "rules": [
       "- @stylistic/spaced-comment",
@@ -2365,6 +2321,7 @@
   {
     "files": [
       "**/*.astro",
+      "**/*.astro/*.ts",
       "**/?(.)*.d.?([cm])ts",
       "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
@@ -2411,19 +2368,34 @@
   },
   {
     "files": [
-      [
-        "**/__tests__/**/?(.)*.?([cm])[jt]s?(x)",
-        "**/?(.)*.spec.?([cm])[jt]s?(x)",
-        "**/?(.)*.test.?([cm])[jt]s?(x)",
-        "**/?(.)*.bench.?([cm])[jt]s?(x)",
-        "**/?(.)*.benchmark.?([cm])[jt]s?(x)",
-      ],
+      "**/__tests__/**/?(.)*.?([cm])[jt]s?(x)",
+      "**/?(.)*.spec.?([cm])[jt]s?(x)",
+      "**/?(.)*.test.?([cm])[jt]s?(x)",
+      "**/?(.)*.bench.?([cm])[jt]s?(x)",
+      "**/?(.)*.benchmark.?([cm])[jt]s?(x)",
     ],
     "name": "moso/disables/tests",
     "rules": [
-      "- no-unused-expressions",
+      "- @moso/no-top-level-await",
       "- baseline-js/use-baseline",
+      "- e18e/prefer-static-regex",
+      "- no-unused-expressions",
+      "- jsdoc/require-jsdoc",
+      "- node/no-sync",
+      "- node/prefer-global/process",
+      "- regexp/no-super-linear-backtracking",
       "- unicorn/consistent-function-scoping",
+      "- unicorn/prefer-module",
+      "- @typescript-eslint/consistent-type-definitions",
+      "- @typescript-eslint/explicit-function-return-type",
+      "- @typescript-eslint/no-unsafe-argument",
+      "- @typescript-eslint/no-unsafe-assignment",
+      "- @typescript-eslint/no-unsafe-call",
+      "- @typescript-eslint/no-unsafe-member-access",
+      "- @typescript-eslint/no-unsafe-return",
+      "- @typescript-eslint/no-unused-expressions",
+      "- @typescript-eslint/no-unused-vars",
+      "- @typescript-eslint/strict-boolean-expressions",
     ],
   },
   {
