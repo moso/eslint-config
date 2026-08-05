@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { loadPackages } from '../tools';
-import { memoize } from '../utils';
+import { interopDefault, memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -25,11 +25,13 @@ export const test = async (
         overrides,
     } = options;
 
-    const [noOnlyTestsPlugin, vitestPlugin] = await loadPackages(['eslint-plugin-no-only-tests', '@vitest/eslint-plugin']);
-
     const [functionalPlugin] = functionalEnforcement === 'none'
         ? [undefined]
         : await loadPackages(['eslint-plugin-functional']);
+
+    const [noOnlyTestsPlugin] = await loadPackages(['eslint-plugin-no-only-tests']);
+
+    const vitestPlugin = await interopDefault(import('@vitest/eslint-plugin'));
 
     return [
         {
