@@ -43,6 +43,7 @@ export const unicorn = async (
 
                     // Opinionated additions
                     'unicorn/custom-error-definition': 'error',
+                    'unicorn/iteration-fallback-style': ['error', 'fallback'],
                     'unicorn/no-instanceof-builtins': ['error', { strategy: 'strict', useErrorIsError: true }],
                     'unicorn/no-unsafe-dom-html': 'error',
                     'unicorn/prefer-at': ['error', { checkAllIndexAccess: false }],
@@ -128,6 +129,7 @@ export const unicorn = async (
                     'unicorn/require-css-escape': 'off',
                     'unicorn/require-module-attributes': 'off',
                     'unicorn/require-module-specifiers': 'off',
+                    'unicorn/single-line-block-comment-style': 'off',
                 }),
 
                 ...overrides,
