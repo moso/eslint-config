@@ -9,26 +9,11 @@ import type { Linter } from 'eslint';
  */
 const config: Promise<Linter.Config[]> = moso(
     {
-        astro: true,
-        baseline: true,
-        functional: 'lite',
-        jsonc: true,
         mode: 'library',
-        nextjs: true,
-        react: true,
-        stylistic: {
-            experimental: true,
-            indent: 4,
-            jsx: true,
-            quotes: 'single',
-            semi: true,
-        },
         toml: true,
         typescript: {
             projectRoot: import.meta.dirname,
         },
-        vue: true,
-        yaml: true,
     },
     {
         files: ['src/**/*.ts'],
