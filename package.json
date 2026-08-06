@@ -46,8 +46,8 @@
     },
     "scripts": {
         "build": "bun run typegen && tsdown --clean --dts",
-        "build:inspector": "bun run build && bunx @eslint/config-inspector build --config eslint.config.ts --out-dir ./.eslint-config-inspector",
-        "dev": "bunx @eslint/config-inspector --config eslint.config.ts",
+        "build:inspector": "bun run build && bunx @eslint/config-inspector build --config eslint-inspector.config.ts --out-dir ./.eslint-config-inspector",
+        "dev": "bunx @eslint/config-inspector --config eslint-inspector.config.ts",
         "lint": "eslint",
         "prepack": "bun run build",
         "prepare": "bun run simple-git-hooks",
@@ -62,7 +62,7 @@
         "src/rules"
     ],
     "peerDependencies": {
-        "@eslint-react/eslint-plugin": "^5.18.2",
+        "@eslint-react/eslint-plugin": "^5.18.3",
         "@next/eslint-plugin-next": "^16.3.0",
         "astro-eslint-parser": "^3.0.0",
         "eslint": "^10.0.0",
@@ -156,7 +156,7 @@
         "yaml-eslint-parser": "^2.1.0"
     },
     "devDependencies": {
-        "@eslint-react/eslint-plugin": "^5.18.2",
+        "@eslint-react/eslint-plugin": "^5.18.3",
         "@eslint/compat": "^2.1.0",
         "@eslint/config-inspector": "^3.2.0",
         "@moso/eslint-plugin": "workspace:*",
@@ -182,7 +182,7 @@
         "simple-git-hooks": "^2.13.1",
         "ts-dedent": "^2.3.0",
         "tsdown": "^0.22.14",
-        "tsx": "^4.23.8",
+        "tsx": "^4.23.9",
         "typescript": "^6.0.3",
         "vitest": "^4.1.10"
     },
