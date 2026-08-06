@@ -45,7 +45,14 @@ const defaultGuards: ReadonlyArray<Guard> = [
     'write-explicit-condition',
 ];
 
-const arithmeticOperators: ReadonlySet<string> = new Set(['%', '*', '**', '+', '-', '/']);
+const arithmeticOperators: ReadonlySet<string> = new Set([
+    '%',
+    '*',
+    '**',
+    '+',
+    '-',
+    '/',
+]);
 const parseFunctions: ReadonlyArray<string> = ['Number', 'parseFloat', 'parseInt'];
 const indexNamePattern = /^(?:[ijk]|idx|index)$/iu;
 const indexSuffixPattern = /(?:Idx|Index)$/u;
