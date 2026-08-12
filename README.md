@@ -15,7 +15,8 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - Ships its own small [`@moso`](#custom-rules)-ruleset with security and hygiene rules
 - Every config can be enabled/disabled
 - Respects `.gitignore` by default
-- Requires Node.js >= v22.23.x/v24.18.x, ESLint v10+
+- Requires Node.js >= v22.22.3/v24.x, ESLint v10+
+- Enhanced security by [Socket's Bun Security Scanner](https://npmx.dev/package/@socketsecurity/bun-security-scanner)
 
 > [!NOTE]
 > **Note regarding TypeScript v7**
@@ -228,6 +229,17 @@ This section contains a list of the plugins used in the named configs that ships
 
 </details></td>
 <td valign="top">✅</td>
+<td valign="top">🎨</td>
+<td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>TailwindCSS</strong></summary>
+
+[`eslint-plugin-better-tailwindcss`](https://github.com/schoero/eslint-plugin-better-tailwindcss)
+
+</details></td>
+<td valign="top">☑️</td>
 <td valign="top">🎨</td>
 <td valign="top"></td>
 </tr>
