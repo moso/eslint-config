@@ -24,7 +24,6 @@ export const full: OptionsConfig = {
     nextjs: true,
     node: true,
     perfectionist: true,
-    projectRoot: path.resolve(import.meta.dirname, '..'),
     promise: true,
     react: {
         a11y: true,
@@ -41,7 +40,7 @@ export const full: OptionsConfig = {
     test: true,
     toml: true,
     typescript: {
-        projectRoot: 'tsconfig.json',
+        projectRoot: path.resolve(import.meta.dirname, '..'),
     },
     unicorn: true,
     vue: {
