@@ -714,7 +714,7 @@ bun add --dev eslint-plugin-vue
 
 You can optionally enable [typed linting](https://typescript-eslint.io/getting-started/typed-linting). These are also known as "rules that require types", or simply "type-aware rules". This enables for much deeper insight into your code.
 
-You enable them by passing the path of your `tsconfig.json` to the `projectRoot` option.
+You enable them by passing your project's root directory to the `projectRoot` option inside `typescript`.
 
 > [!WARNING]
 > Enabling these rules will come with a slight performance cost, [explained here](https://typescript-eslint.io/getting-started/typed-linting/#performance).
@@ -727,10 +727,10 @@ import moso from '@moso/eslint-config';
 
 export default moso(
     {
-        projectRoot: import.meta.dirname,
-
-        // If you wish to override any of these rules, use `overridesTypeAware`:
         typescript: {
+            projectRoot: import.meta.dirname,
+
+            // If you wish to override any of these rules, use `overridesTypeAware`:
             overridesTypeAware: {
                 '@typescript-eslint/no-deprecated': 'off',
             },
@@ -751,9 +751,9 @@ You can disable the type-aware layer entirely, or exclude certain globs or speci
 import moso from '@moso/eslint-config';
 
 export default moso({
-    projectRoot: import.meta.dirname,
-
     typescript: {
+        projectRoot: import.meta.dirname,
+
         // Kill switch: keep regular TypeScript rules, drop the type-aware layer
         disableTypeAwareRules: true,
 
