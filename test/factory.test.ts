@@ -1,4 +1,4 @@
-import { it } from 'vitest';
+import { it, vi } from 'vitest';
 
 import { moso } from '../src/factory';
 import { full, off } from '../src/presets';
@@ -114,4 +114,30 @@ it.concurrent.for(configPresets)('factory $name', async ({ configs, name }, { ex
     const config = await moso(configs);
     await expect(serializeConfigPresets(config))
         .toMatchFileSnapshot(`./__snapshots__/factory/${name}.snap.js`);
+});
+
+it('prefers `typescript.projectRoot` over the deprecated top-level `projectRoot` and warns', async ({ expect, onTestFinished }) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    onTestFinished(() => warn.mockRestore());
+
+    const configs = await moso({
+        projectRoot: 'deprecated-root',
+        typescript: { projectRoot: import.meta.dirname },
+    });
+
+    expect(warn).toHaveBeenCalledOnce();
+    expect(warn.mock.calls[0][0]).toContain('`projectRoot` option is deprecated');
+
+    const rootDirs = configs.flatMap((config) => {
+        const parserOptions: unknown = config.languageOptions?.parserOptions;
+        return typeof parserOptions === 'object' &&
+            parserOptions !== null &&
+            'tsconfigRootDir' in parserOptions &&
+            typeof parserOptions.tsconfigRootDir === 'string'
+            ? [parserOptions.tsconfigRootDir]
+            : [];
+    });
+
+    expect(rootDirs.length).toBeGreaterThan(0);
+    expect(new Set(rootDirs)).toEqual(new Set([import.meta.dirname]));
 });

@@ -116,6 +116,9 @@ export type CoreOptions = {
     /**
      * Root of the project directory.
      *
+     * @deprecated Move this inside the `typescript` options instead. It only serves type-aware linting, which implies TypeScript.
+     * `typescript.projectRoot` takes precedence when both are set.
+     *
      * @example 'import.meta.dirname'
      */
     projectRoot?: OptionsProjectRoot['projectRoot'];
@@ -616,9 +619,12 @@ export type OptionsTypeScriptWithTypes = {
     overridesTypeAware?: TypedFlatConfigItem['rules'];
 
     /**
-     * When this options is provided, type-aware rules will be enabled.
+     * Root of the project directory. Your `tsconfig.json` will automatically be detected within the directory provided.
+     * When this option is provided, typed linting and type-aware rules will be enabled.
      *
      * @see https://typescript-eslint.io/linting/typed-linting/
+     *
+     * @example 'import.meta.dirname'
      */
     projectRoot?: OptionsProjectRoot['projectRoot'];
 
@@ -628,7 +634,7 @@ export type OptionsTypeScriptWithTypes = {
     unsafe?: 'error' | 'off' | 'warn';
 
     /**
-     * Any easy way to disable the default project.
+     * An easy way to disable the default project.
      * Has no effect if `parserOptions.projectService` is set.
      *
      * @default true

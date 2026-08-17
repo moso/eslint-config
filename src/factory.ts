@@ -200,12 +200,6 @@ export async function moso(
         ? options.perfectionist
         : options.lessOpinionated !== true;
 
-    const projectRootOptions: OptionsProjectRoot['projectRoot'] = typeof options.projectRoot === 'string'
-        ? checkFilePath(options.projectRoot)
-        : typeof options.typescript === 'object' && typeof options.typescript.projectRoot === 'string'
-            ? checkFilePath(options.typescript.projectRoot)
-            : undefined;
-
     const stylisticOptions = options.stylistic === false
         ? false
         : {
@@ -218,10 +212,23 @@ export async function moso(
         filesTypeAware,
         ignoresTypeAware,
         parserOptions,
+        projectRoot: typescriptProjectRoot,
         useDefaultDefaultProject,
         ...typescriptSubOptions
     } = resolveSubOptions(options, 'typescript') as
         OptionsTypeScript & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
+
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- compat shim for the deprecated top-level option
+    const deprecatedProjectRoot = options.projectRoot;
+
+    if (deprecatedProjectRoot !== undefined)
+        console.warn('[@moso/eslint-config] The top-level `projectRoot` option is deprecated. Move it inside the `typescript` options instead: `typescript: { projectRoot: import.meta.dirname }`.');
+
+    const projectRootOptions: OptionsProjectRoot['projectRoot'] = typeof typescriptProjectRoot === 'string'
+        ? checkFilePath(typescriptProjectRoot)
+        : typeof deprecatedProjectRoot === 'string'
+            ? checkFilePath(deprecatedProjectRoot)
+            : undefined;
 
     const projectServiceUserConfig = {
         defaultProject: './tsconfig.json',
