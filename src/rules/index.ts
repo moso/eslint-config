@@ -1,4 +1,4 @@
-import version from '../../package.json' with { type: 'json' };
+import packageJson from '../../package.json' with { type: 'json' };
 import avoidBarrelFiles from './avoid-barrel-files/avoid-barrel-files';
 import noBidi from './no-bidi/no-bidi';
 import noForceCastViaTopType from './no-force-cast-via-top-type/no-force-cast-via-top-type';
@@ -48,7 +48,7 @@ type PluginConfig = {
 const plugin = {
     meta: {
         name: '@moso/eslint-plugin',
-        version,
+        version: packageJson.version,
     },
     rules: {
         'avoid-barrel-files': avoidBarrelFiles,
