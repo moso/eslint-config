@@ -29,6 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/prepare
+      - run: bun run build
       - run: bun run lint
   typecheck:
     name: Type Check
