@@ -4,10 +4,8 @@ import type { TSESTree } from '@typescript-eslint/utils';
 
 import type { createRuleType } from '../utils';
 
-const combinePattern = (...patterns: ReadonlyArray<string | RegExp>) => {
-    const source = patterns
-        .map((pattern) => (typeof pattern === 'string' ? pattern : pattern.source))
-        .join('');
+const combinePattern = (...patterns: ReadonlyArray<RegExp>) => {
+    const source = patterns.map((pattern) => pattern.source).join('');
     return new RegExp(`[${source}]`, 'u');
 };
 
