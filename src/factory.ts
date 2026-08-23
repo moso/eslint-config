@@ -355,6 +355,7 @@ export async function moso(
                 overrides: getOverrides(options, 'astro'),
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
+                ...resolveSubOptions(options, 'astro'),
             }),
         );
     }
