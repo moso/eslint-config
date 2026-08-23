@@ -26,5 +26,10 @@ runTest({
             errors: [{ messageId: 'noImportDuplicates' }],
             output: 'import { a, b } from \'foo\'',
         },
+        {
+            code: 'import { a, /* keep */ b as a } from \'foo\'',
+            errors: [{ messageId: 'noImportDuplicates' }],
+            output: 'import { a, /* keep */  } from \'foo\'',
+        },
     ],
 });

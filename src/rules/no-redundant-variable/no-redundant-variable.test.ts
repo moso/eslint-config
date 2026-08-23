@@ -8,6 +8,8 @@ runTest({
         'function example() { const foo = \'bar\'; return foo + \'baz\' }',
         'function example() { const [foo] = bar; return foo }',
         'function example() { return \'bar\' }',
+        'function example() { return foo }',
+        'function example() { let foo; return foo }',
     ],
     invalid: [
         {

@@ -28,20 +28,28 @@ runTest({
         { code: 'const v = record[\'key\'];', options: [{ guards: allGuards }] },
         { code: 'const v = obj[someName];', options: [{ guards: allGuards }] },
         { code: 'values[index] = 1;', options: [{ guards: allGuards }] },
+        { code: 'values[index]++;', options: [{ guards: allGuards }] },
+        { code: 'delete values[index];', options: [{ guards: allGuards }] },
 
         // write-explicit-condition
         'const w = width === 0 ? 1 : width;',
         'const label = name || \'unknown\';',
+        'const w = width || fallback;',
 
         // check-parse-result
         'const n = Number.isFinite(raw) ? raw * 2 : 0;',
         'const n = Math.max(0, size);',
+        'const ok = parseInt(raw) > 2;',
+        'const n = parseInt(raw);',
+        'const s = parseInt(raw).toString();',
+        'const v = parseInt(raw)[0];',
 
         // encode-input-rule
         { code: 'function f(columnCount: number) { console.assert(columnCount >= 1); return 100 / columnCount; }', options: [{ guards: allGuards }] },
         { code: 'function f(columnCount: number) { return 100 / Math.max(1, columnCount); }', options: [{ guards: allGuards }] },
         { code: 'function f(label: string) { return 100 / other; }', options: [{ guards: allGuards }] },
         { code: 'const f = (columnCount: number) => 100 / Math.floor(columnCount);', options: [{ guards: allGuards }] },
+        { code: 'function f({ size }: { size: number }) { return 100 / size; }', options: [{ guards: allGuards }] },
 
         // the heuristic guards do not fire by default
         'const v = values[i + 1];',
@@ -104,6 +112,15 @@ runTest({
         {
             code: 'const n = parseInt(raw) * 2;',
             errors: [{ messageId: 'checkParseResult' }],
+        },
+        {
+            code: 'const v = values[parseInt(raw)];',
+            errors: [{ messageId: 'checkParseResult' }],
+        },
+        {
+            code: 'function f(columnCount: number) { columnCount; return 100 / columnCount; }',
+            errors: [{ messageId: 'encodeInputRule' }],
+            options: [{ guards: allGuards }],
         },
         {
             code: 'const n = Number(raw) / total;',
