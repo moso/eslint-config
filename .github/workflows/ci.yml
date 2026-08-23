@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/prepare
-      - run: bun run typecheck
+      - run: bun run typegen && bun run typecheck
   coverage:
     runs-on: ubuntu-latest
     steps:
