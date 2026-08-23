@@ -16,60 +16,46 @@ env:
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: 1
 
 jobs:
-  lint:
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
-
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install packages
-        run: bun install --frozen-lockfile
-
-      - name: Build
-        run: bun run build
-
-      - name: Lint
-        run: bun run lint
-
-      - name: Typecheck
-        run: bun run typecheck
-
+      - uses: ./.github/actions/prepare
+      - run: bun run build
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/prepare
+      - run: bun run lint
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/prepare
+      - run: bun run typecheck
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/prepare
+      - run: bun run test --coverage
+      - env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: always()
+        uses: codecov/codecov-action@v7
   test:
+    name: Test
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         node: [lts/*]
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
-
     steps:
       - uses: actions/checkout@v7
-
-      - name: Setup Node ${{ matrix.os }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install packages
-        run: bun install --frozen-lockfile
-
-      - name: Build
-        run: bun run build
-
-      - name: Test
+      - uses: ./.github/actions/prepare
         run: bun run test
