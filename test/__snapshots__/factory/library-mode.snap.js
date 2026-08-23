@@ -53,6 +53,7 @@
       "**/.claude",
       "**/.context",
       "**/.*/skills",
+      "custom-ignored/**",
     ],
     "name": "moso/ignores/globals",
   },
@@ -384,6 +385,15 @@
         "version": "^22.22.3 || >=24",
       },
     },
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/node/strict",
+    "rules": [
+      "strict",
+    ],
   },
   {
     "name": "moso/promise",
@@ -951,12 +961,13 @@
       "e18e/prefer-object-has-own",
       "e18e/prefer-spread-syntax",
       "e18e/prefer-url-canparse",
+      "e18e/ban-dependencies",
       "e18e/prefer-array-from-map",
       "e18e/prefer-timer-args",
       "e18e/prefer-date-now",
       "e18e/prefer-regex-test",
       "e18e/prefer-array-some",
-      "e18e/prefer-static-regex",
+      "- e18e/prefer-static-regex",
       "e18e/prefer-string-fromcharcode",
     ],
   },
@@ -968,10 +979,10 @@
     "rules": [
       "functional/functional-parameters",
       "functional/immutable-data",
-      "- functional/no-classes",
+      "functional/no-classes",
       "functional/no-class-inheritance",
-      "- functional/no-conditional-statements",
-      "- functional/no-expression-statements",
+      "functional/no-conditional-statements",
+      "functional/no-expression-statements",
       "functional/no-let",
       "functional/no-loop-statements",
       "functional/no-mixed-types",
@@ -1052,6 +1063,55 @@
       "@stylistic/jsx-curly-spacing",
       "- @stylistic/jsx-one-expression-per-line",
     ],
+  },
+  {
+    "name": "moso/nextjs/setup",
+    "plugins": [
+      "@next/next",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "languageOptions": {
+      "parserOptions": {
+        "ecmaFeatures": {
+          "jsx": true,
+        },
+      },
+      "sourceType": "module",
+    },
+    "name": "moso/nextjs/rules",
+    "rules": [
+      "@next/next/google-font-display",
+      "@next/next/google-font-preconnect",
+      "@next/next/next-script-for-ga",
+      "@next/next/no-async-client-component",
+      "@next/next/no-before-interactive-script-outside-document",
+      "@next/next/no-css-tags",
+      "@next/next/no-head-element",
+      "- @next/next/no-html-link-for-pages",
+      "@next/next/no-img-element",
+      "@next/next/no-location-assign-relative-destination",
+      "@next/next/no-page-custom-font",
+      "@next/next/no-styled-jsx-in-document",
+      "@next/next/no-sync-scripts",
+      "@next/next/no-title-in-document-head",
+      "@next/next/no-typos",
+      "@next/next/no-unwanted-polyfillio",
+      "@next/next/inline-script-id",
+      "@next/next/no-assign-module-variable",
+      "@next/next/no-document-import-in-page",
+      "@next/next/no-duplicate-head",
+      "@next/next/no-head-import-in-document",
+      "@next/next/no-script-component-in-head",
+    ],
+    "settings": {
+      "react": {
+        "version": "detect",
+      },
+    },
   },
   {
     "name": "moso/perfectionist",
@@ -1302,11 +1362,6 @@
       "- @typescript-eslint/no-invalid-this",
       "@typescript-eslint/no-use-before-define",
       "- @typescript-eslint/parameter-properties",
-      "functional/no-mixed-types",
-      "functional/prefer-property-signatures",
-      "functional/readonly-type",
-      "functional/type-declaration-immutability",
-      "@typescript-eslint/naming-convention",
     ],
   },
   {
@@ -1363,6 +1418,31 @@
       "- @typescript-eslint/ban-ts-comment",
       "- @typescript-eslint/no-require-imports",
     ],
+  },
+  {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "config": "tailwind.config.cjs",
+      },
+    },
   },
   {
     "name": "moso/yaml/setup",
