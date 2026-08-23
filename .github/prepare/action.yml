@@ -1,0 +1,13 @@
+name: Prepare
+description: Prepares the repository for a typical CI job
+
+runs:
+  steps:
+    - uses: actions/setup-node@v7
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+        node-version: lts/*
+    - run: bun install --frozen-lockfile
+      shell: bash
+  using: composite
