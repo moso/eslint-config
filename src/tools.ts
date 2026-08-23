@@ -82,13 +82,11 @@ const isInteractive = (): boolean => {
 
 /**
  * Offer to install missing packages through an interactive prompt.
- * No-op in CI or when stdout is not a TTY.
+ * Only called from `loadPackages` after it has verified the session is interactive.
  *
  * @param packages - Package names to check and offer for installation.
  */
 const ensurePackages = async (packages: ReadonlyArray<string>): Promise<void> => {
-    if (!isInteractive()) return;
-
     const missingPackages = packages.filter((x) => !isPackageInScope(x));
     if (missingPackages.length === 0) return;
 
