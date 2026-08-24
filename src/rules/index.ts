@@ -1,4 +1,4 @@
-import version from '../../package.json' with { type: 'json' };
+import packageJson from '../../package.json' with { type: 'json' };
 import avoidBarrelFiles from './avoid-barrel-files/avoid-barrel-files';
 import noBidi from './no-bidi/no-bidi';
 import noForceCastViaTopType from './no-force-cast-via-top-type/no-force-cast-via-top-type';
@@ -13,6 +13,7 @@ import noUnneededArrayFlatMap from './no-unneeded-array-flat-map/no-unneeded-arr
 import preferEarlyReturn from './prefer-early-return/prefer-early-return';
 import preferFetch from './prefer-fetch/prefer-fetch';
 import preferReduceOverChaining from './prefer-reduce-over-chaining/prefer-reduce-over-chaining';
+import preferStrictNumberGuards from './prefer-strict-number-guards/prefer-strict-number-guards';
 
 import type { ESLint, Linter, Rule } from 'eslint';
 
@@ -39,6 +40,7 @@ type PluginConfig = {
         'prefer-early-return': Rule.RuleModule;
         'prefer-fetch': Rule.RuleModule;
         'prefer-reduce-over-chaining': Rule.RuleModule;
+        'prefer-strict-number-guards': Rule.RuleModule;
     };
 };
 
@@ -46,7 +48,7 @@ type PluginConfig = {
 const plugin = {
     meta: {
         name: '@moso/eslint-plugin',
-        version,
+        version: packageJson.version,
     },
     rules: {
         'avoid-barrel-files': avoidBarrelFiles,
@@ -63,6 +65,7 @@ const plugin = {
         'prefer-early-return': preferEarlyReturn,
         'prefer-fetch': preferFetch,
         'prefer-reduce-over-chaining': preferReduceOverChaining,
+        'prefer-strict-number-guards': preferStrictNumberGuards,
     },
 } as unknown as ESLint.Plugin;
 

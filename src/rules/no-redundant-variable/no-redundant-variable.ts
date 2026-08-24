@@ -31,19 +31,19 @@ const isRedundantVariableFixer = (
     variable: TSESTree.VariableDeclaration,
     exit: TSESTree.ReturnStatement,
 ): ReportFixFunction => (fixer) => {
-        const { init, id } = variable.declarations[0];
-        if (!init || !exit.argument) return null;
+    const { init, id } = variable.declarations[0];
+    if (!init || !exit.argument) return null;
 
-        const replaced = getReturnExpression(init);
-        const modified = wrap(source.getText(replaced), (input) => {
-            if (!id.typeAnnotation) return input;
+    const replaced = getReturnExpression(init);
+    const modified = wrap(source.getText(replaced), (input) => {
+        if (!id.typeAnnotation) return input;
 
-            const annotation = source.getText(id.typeAnnotation.typeAnnotation);
-            return `(${input}) as ${init.type === AST_NODE_TYPES.AwaitExpression ? `Promise<${annotation}>` : annotation}`;
-        });
+        const annotation = source.getText(id.typeAnnotation.typeAnnotation);
+        return `(${input}) as ${init.type === AST_NODE_TYPES.AwaitExpression ? `Promise<${annotation}>` : annotation}`;
+    });
 
-        return [fixer.remove(variable), fixer.replaceText(exit.argument, modified)];
-    };
+    return [fixer.remove(variable), fixer.replaceText(exit.argument, modified)];
+};
 
 const isReturnStatement = (node: TSESTree.Node): node is TSESTree.ReturnStatement & { argument: TSESTree.Identifier } => (
     node.type === AST_NODE_TYPES.ReturnStatement && isIdentifier(node.argument)
@@ -66,17 +66,24 @@ const ruleNoRedundantVariables: createRuleType = createRule({
     },
     create: (context) => ({
         BlockStatement: ({ body }: TSESTree.BlockStatement) => {
-            const exit = body.find(isReturnStatement);
-            if (!exit) return;
+            let mut_previous: TSESTree.Statement | undefined;
 
-            const previous = body[body.indexOf(exit) - 1];
-            if (!isRedundantVariable(previous, exit)) return;
+            for (const statement of body) {
+                if (!isReturnStatement(statement)) {
+                    mut_previous = statement;
+                    continue;
+                }
 
-            context.report({
-                node: exit,
-                messageId: 'noRedundantVar',
-                fix: isRedundantVariableFixer(context.sourceCode, previous, exit),
-            });
+                if (isRedundantVariable(mut_previous, statement)) {
+                    context.report({
+                        node: statement,
+                        messageId: 'noRedundantVar',
+                        fix: isRedundantVariableFixer(context.sourceCode, mut_previous, statement),
+                    });
+                }
+
+                return;
+            }
         },
     }),
 });

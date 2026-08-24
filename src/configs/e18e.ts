@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict';
 
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsE18e,
     OptionsIsInEditor,
     OptionsLessOpinionated,
     OptionsMode,
-    OptionsOverrides,
     TypedFlatConfigItem,
 } from '../types';
 
@@ -17,8 +16,7 @@ export const e18e = async (
         OptionsE18e &
         OptionsIsInEditor &
         OptionsLessOpinionated &
-        OptionsMode &
-        OptionsOverrides
+        OptionsMode
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
@@ -31,7 +29,7 @@ export const e18e = async (
         performanceImprovements,
     } = options;
 
-    const [e18ePlugin] = (await loadPackages(['@e18e/eslint-plugin'])) as [typeof import('@e18e/eslint-plugin')['default']];
+    const [e18ePlugin] = await loadPackages(['@e18e/eslint-plugin']);
 
     const enableModernization = modernization !== false;
     const enableModuleReplacements = moduleReplacements !== false && mode === 'library' && isInEditor;
@@ -40,7 +38,6 @@ export const e18e = async (
     return [
         {
             name: 'moso/e18e/rules',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             plugins: {
                 'e18e': memoize(e18ePlugin, '@e18e/eslint-plugin'),
             },
@@ -60,6 +57,10 @@ export const e18e = async (
                     e18ePlugin.configs.performanceImprovements.rules),
                 }),
 
+                ...(mode === 'library' && {
+                    'e18e/prefer-static-regex': 'off',
+                }),
+
                 ...(lessOpinionated && {
                     'e18e/prefer-array-at': 'off',
                     'e18e/prefer-array-from-map': 'off',
@@ -72,17 +73,5 @@ export const e18e = async (
                 ...overrides,
             },
         },
-        ...((mode === 'library'
-            ? []
-            : [
-                {
-                    name: 'moso/e18e/library-disables',
-                    files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
-                    rules: {
-                        'e18e/prefer-static-regex': 'off',
-                    },
-                },
-            ]) satisfies TypedFlatConfigItem[]
-        ),
     ];
 };

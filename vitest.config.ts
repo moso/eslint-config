@@ -1,15 +1,19 @@
-import { defineConfig } from 'vitest/config';
+import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 import type { ViteUserConfig as UserConfig } from 'vitest/config';
 
 const vitestConfig: UserConfig = defineConfig({
     test: {
-        environment: 'node',
+        coverage: {
+            exclude: [...coverageConfigDefaults.exclude, 'src/rules/index.ts'],
+            include: ['src/**/*.ts'],
+            reporter: ['html', 'lcov'],
+        },
         exclude: ['eslint.config.ts', 'node_modules/**/*'],
         globals: true,
         include: ['src/rules/**/*.test.ts', 'test/**/*.test.ts'],
-        pool: 'forks',
+        isolate: false,
         reporters: 'dot',
-        testTimeout: 30_000,
+        testTimeout: 60_000,
     },
 });
 

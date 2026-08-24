@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 
-import { interopDefault, loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { interopDefault, memoize } from '../utils';
 
 import type {
     OptionsFiles,
+    OptionsFunctional,
     OptionsIsInEditor,
     OptionsOverrides,
     TypedFlatConfigItem,
@@ -15,66 +15,46 @@ export const test = async (
     options: Readonly<
         OptionsIsInEditor &
         OptionsOverrides &
-        Required<OptionsFiles>
+        Required<OptionsFiles & OptionsFunctional>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        functionalEnforcement,
         isInEditor,
         files,
         overrides,
     } = options;
 
-    const [functionalPlugin, noOnlyTestsPlugin] = (
-        await loadPackages(['eslint-plugin-functional', 'eslint-plugin-no-only-tests'])
-    ) as [(typeof import('eslint-plugin-functional'))['default'], ESLint.Plugin];
+    const [functionalPlugin] = functionalEnforcement === 'none'
+        ? [undefined]
+        : await loadPackages(['eslint-plugin-functional']);
+
+    const [noOnlyTestsPlugin] = await loadPackages(['eslint-plugin-no-only-tests']);
 
     const vitestPlugin = await interopDefault(import('@vitest/eslint-plugin'));
 
     return [
         {
             name: 'moso/test/setup',
-            plugins: {
-                'no-only-tests': memoize(noOnlyTestsPlugin, 'eslint-plugin-no-only-tests'),
-                'vitest': memoize(vitestPlugin, '@vitest/eslint-plugin'),
-            },
-            settings: {
-                vitest: {
-                    typecheck: true,
-                },
-            },
             languageOptions: {
                 globals: {
                     ...vitestPlugin.environments.env.globals,
                 },
+            },
+            settings: {
+                vitest: { typecheck: true },
+            },
+            plugins: {
+                'no-only-tests': memoize(noOnlyTestsPlugin, 'eslint-plugin-no-only-tests'),
+                'vitest': memoize(vitestPlugin, '@vitest/eslint-plugin'),
             },
         },
         {
             name: 'moso/test/rules',
             files,
             rules: {
-                ...functionalPlugin.configs.off.rules,
-
-                '@moso/no-top-level-await': 'off',
-
-                'jsdoc/require-jsdoc': 'off',
-
-                'node/no-sync': 'off',
-                'node/prefer-global/process': 'off',
-
-                'regexp/no-super-linear-backtracking': 'off',
-
-                'unicorn/consistent-function-scoping': 'off',
-                'unicorn/prefer-module': 'off',
-
-                '@typescript-eslint/consistent-type-definitions': 'off',
-                '@typescript-eslint/no-unsafe-argument': 'off',
-                '@typescript-eslint/no-unsafe-assignment': 'off',
-                '@typescript-eslint/no-unsafe-call': 'off',
-                '@typescript-eslint/no-unsafe-member-access': 'off',
-                '@typescript-eslint/no-unsafe-return': 'off',
-                '@typescript-eslint/no-unused-expressions': 'off',
-                '@typescript-eslint/no-unused-vars': 'off',
-                '@typescript-eslint/strict-boolean-expressions': 'off',
+                ...(assert.ok(!Array.isArray(functionalPlugin?.configs.off)),
+                functionalPlugin?.configs.off.rules),
 
                 'no-only-tests/no-only-tests': isInEditor ? 'warn' : 'error',
 

@@ -54,15 +54,13 @@ const rulePreferEarlyReturns: createRuleType = createRule({
             url: 'https://dimensiondev.github.io/eslint-plugin/src/rules/prefer-early-return',
         },
         fixable: 'code',
-        schema: [
-            {
-                type: 'object',
-                properties: {
-                    maximumStatements: { type: 'integer', minimum: 0 },
-                },
-                additionalProperties: false,
+        schema: [{
+            type: 'object',
+            properties: {
+                maximumStatements: { type: 'integer', minimum: 0 },
             },
-        ],
+            additionalProperties: false,
+        }],
         messages: {
             preferEarlyReturn: 'Prefer an early return to a conditionally-wrapped function body.',
         },

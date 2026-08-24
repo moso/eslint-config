@@ -3,14 +3,16 @@ import path from 'node:path';
 import type { OptionsConfig } from './types';
 
 export const full: OptionsConfig = {
-    astro: true,
+    astro: {
+        a11y: true,
+    },
+    baseline: true,
     comments: true,
     e18e: true,
     functional: {
         functionalEnforcement: 'lite',
     },
     ignores: {
-        gitignore: true,
         userIgnores: false,
     },
     imports: true,
@@ -22,19 +24,23 @@ export const full: OptionsConfig = {
     nextjs: true,
     node: true,
     perfectionist: true,
-    projectRoot: path.resolve(import.meta.dirname, '..'),
     promise: true,
     react: {
+        a11y: true,
         reactRefresh: {
             allowConstantExport: true,
         },
     },
     regexp: true,
     stylistic: true,
+    tailwind: {
+        entryPoint: 'src/styles/app.css',
+        version: 4,
+    },
     test: true,
     toml: true,
     typescript: {
-        projectRoot: 'tsconfig.json',
+        projectRoot: path.resolve(import.meta.dirname, '..'),
     },
     unicorn: true,
     vue: {
@@ -46,6 +52,7 @@ export const full: OptionsConfig = {
 
 export const off: OptionsConfig = {
     astro: false,
+    baseline: false,
     comments: false,
     e18e: false,
     functional: false,
@@ -54,6 +61,7 @@ export const off: OptionsConfig = {
     jsdoc: false,
     jsonc: false,
     jsx: false,
+    lessOpinionated: true,
     nextjs: false,
     node: false,
     perfectionist: false,
@@ -61,6 +69,7 @@ export const off: OptionsConfig = {
     react: false,
     regexp: false,
     stylistic: false,
+    tailwind: false,
     test: false,
     toml: false,
     typescript: false,

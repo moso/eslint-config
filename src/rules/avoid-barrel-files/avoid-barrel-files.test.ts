@@ -7,6 +7,10 @@ const valids = [
     `const a = 1; const b = 2; const c = 3; const d = 4; export { a } from 'a'; export { b } from 'b'; export { c } from 'c'; export { d } from 'd';`,
     `export type * from './a'; export type * from './b'; export type * from './c'; export type * from './d';`,
     'export function foo() {}; export const bar = 1; export class Baz {}',
+    'function foo() {} class Bar {} interface Baz {} type Qux = 1;',
+    'export default function foo() {}',
+    'export default createThing();',
+    'export default foo;',
 ];
 
 runTest({
@@ -32,6 +36,10 @@ runTest({
         },
         {
             code: `const helper = () => {}; export { a } from 'a'; export { b } from 'b'; export { c } from 'c'; export { d } from 'd';`,
+            errors: [{ messageId: 'avoidBarrelFiles' }],
+        },
+        {
+            code: 'export default { a, b, c, d };',
             errors: [{ messageId: 'avoidBarrelFiles' }],
         },
     ],

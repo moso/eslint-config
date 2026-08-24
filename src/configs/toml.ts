@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -15,17 +14,13 @@ export const toml = async (
         Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        overrides,
-        stylistic,
-    } = options;
+    const { files, overrides, stylistic } = options;
 
     const { indent = 2 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
     const stylisticEnabled = stylistic !== false;
 
-    const [tomlParser, tomlPlugin] = (await loadPackages(['toml-eslint-parser', 'eslint-plugin-toml'])) as [Linter.Parser, ESLint.Plugin];
+    const [tomlParser, tomlPlugin] = await loadPackages(['toml-eslint-parser', 'eslint-plugin-toml']);
 
     return [
         {
@@ -54,9 +49,9 @@ export const toml = async (
                 'toml/vue-custom-block/no-parsing-error': 'error',
 
                 ...(stylisticEnabled && {
-                    'toml/array-bracket-newline': 'error',
-                    'toml/array-bracket-spacing': 'error',
-                    'toml/array-element-newline': 'error',
+                    'toml/array-bracket-newline': ['error', { minItems: 4, multiline: true }],
+                    'toml/array-bracket-spacing': ['error', 'never'],
+                    'toml/array-element-newline': ['error', { minItems: 4, multiline: true }],
                     'toml/indent': ['error', typeof indent === 'number' || typeof indent === 'string' ? indent : 2],
                     'toml/inline-table-curly-spacing': 'error',
                     'toml/key-spacing': 'error',

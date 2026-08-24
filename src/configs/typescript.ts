@@ -6,9 +6,10 @@ import {
     GLOB_JSX,
     GLOB_TESTS,
 } from '../globs';
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
-import type { ESLint, Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import type {
     OptionsComponentExts,
@@ -57,11 +58,13 @@ export const typescript = async (
         unsafe,
     } = options;
 
-    const [tsEslintPlugin, tsEslintParser] = (await loadPackages(['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'])) as [ESLint.Plugin, Linter.Parser];
+    const [tsEslintPlugin, tsEslintParser] = await loadPackages(
+        ['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser']
+    );
 
     // Enforcing Erasable Syntax Only unless explicitly disabled or `lessOpinionated`
     const [erasableSyntaxPlugin] = erasableOnly !== false && !lessOpinionated
-        ? (await loadPackages(['eslint-plugin-erasable-syntax-only'])) as [ESLint.Plugin]
+        ? await loadPackages(['eslint-plugin-erasable-syntax-only'])
         : [undefined];
 
     const isTypeAware = typeof projectRoot === 'string';

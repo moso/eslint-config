@@ -9,31 +9,15 @@ import type { Linter } from 'eslint';
  */
 const config: Promise<Linter.Config[]> = moso(
     {
-        astro: true,
-        functional: 'lite',
-        ignores: {
-            gitignore: true,
-        },
-        jsonc: true,
         mode: 'library',
-        nextjs: true,
-        react: true,
-        stylistic: {
-            experimental: true,
-            indent: 4,
-            jsx: true,
-            quotes: 'single',
-            semi: true,
-        },
         toml: true,
         typescript: {
             projectRoot: import.meta.dirname,
         },
-        vue: true,
-        yaml: true,
     },
     {
         files: ['src/**/*.ts'],
+        name: 'moso/config/disables/perfectionist-in-typescript',
         rules: {
             'perfectionist/sort-exports': 'off',
             'perfectionist/sort-objects': [
@@ -47,18 +31,21 @@ const config: Promise<Linter.Config[]> = moso(
     },
     {
         files: ['src/index.ts', 'src/configs/index.ts'],
+        name: 'moso/config/disables/avoid-barrel-files-in-config-indexes',
         rules: {
             '@moso/avoid-barrel-files': 'off',
         },
     },
     {
         files: ['src/utils.ts'],
+        name: 'moso/config/disables/functional-no-throw-statements-in-utils',
         rules: {
             'functional/no-throw-statements': 'off',
         },
     },
     {
         files: ['src/rules/**/*.ts'],
+        name: 'moso/config/disables/functional-no-loop-statements-in-custom-rules',
         rules: {
             'functional/no-loop-statements': 'off',
         },

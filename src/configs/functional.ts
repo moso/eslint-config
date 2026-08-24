@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict';
 
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFunctional,
     OptionsMode,
     OptionsOverrides,
     OptionsTypeScriptParserOptions,
-    OptionsTypeScriptWithTypes,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
@@ -16,7 +15,6 @@ import type {
 export const functional = async (
     options: Readonly<
         OptionsOverrides &
-        OptionsTypeScriptWithTypes &
         Required<
             OptionsFunctional &
             OptionsMode &
@@ -26,21 +24,17 @@ export const functional = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        filesTypeAware,
         functionalEnforcement,
         ignoreNamePattern,
         mode,
         overrides,
-        projectRoot,
         stylistic,
     } = options;
 
-    const [functionalPlugin] = (await loadPackages(['eslint-plugin-functional'])) as [
-        (typeof import('eslint-plugin-functional'))['default'],
-    ];
+    const [functionalPlugin] = await loadPackages(['eslint-plugin-functional']);
 
     const stylisticEnabled = stylistic !== false;
-
-    const isTypeAware = typeof projectRoot === 'string';
 
     const commonRules = {
         'functional/functional-parameters': [
@@ -157,10 +151,6 @@ export const functional = async (
     return [
         {
             name: 'moso/functional',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
-            plugins: {
-                'functional': memoize(functionalPlugin, 'eslint-plugin-functional'),
-            },
             settings: {
                 immutability: {
                     overrides: [
@@ -170,11 +160,13 @@ export const functional = async (
                     ],
                 },
             },
+            plugins: {
+                'functional': memoize(functionalPlugin, 'eslint-plugin-functional'),
+            },
             rules: {
                 ...(assert.ok(!Array.isArray(functionalPlugin.configs.off)),
                 functionalPlugin.configs.off.rules),
 
-                // The factory never invokes this config with 'none'
                 ...(functionalEnforcement === 'lite'
                     ? liteRules
                     : functionalEnforcement === 'strict'
@@ -184,26 +176,21 @@ export const functional = async (
                 ...overrides,
             },
         },
-        ...((isTypeAware
-            ? []
-            : [
-                {
-                    name: 'moso/functional/disable-type-aware',
-                    files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
-                    rules: {
-                        ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
-                        functionalPlugin.configs.disableTypeChecked.rules),
+        {
+            name: 'moso/functional/disable-type-aware',
+            ignores: filesTypeAware,
+            rules: {
+                ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
+                functionalPlugin.configs.disableTypeChecked.rules),
 
-                        'functional/no-let': [
-                            'error',
-                            {
-                                allowInForLoopInit: true,
-                                ignoreIdentifierPattern: ignoreNamePattern,
-                            },
-                        ],
+                'functional/no-let': [
+                    'error',
+                    {
+                        allowInForLoopInit: true,
+                        ignoreIdentifierPattern: ignoreNamePattern,
                     },
-                },
-            ]) satisfies TypedFlatConfigItem[]
-        ),
+                ],
+            },
+        },
     ];
 };

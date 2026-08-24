@@ -1,40 +1,18 @@
 import assert from 'node:assert/strict';
 
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
-import type {
-    OptionsFiles,
-    OptionsNextJS,
-    TypedFlatConfigItem,
-} from '../types';
+import type { OptionsFiles, OptionsNextJS, TypedFlatConfigItem } from '../types';
 
-export const nextjs = async (
-    options: Readonly<OptionsFiles & OptionsNextJS>,
-): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        mode,
-        overrides,
-    } = options;
+export const nextjs = async (options: Readonly<OptionsNextJS & Required<OptionsFiles>>): Promise<TypedFlatConfigItem[]> => {
+    const { files, mode, overrides } = options;
 
-    const [nextjsPlugin] = (await loadPackages(['@next/eslint-plugin-next'])) as [typeof import('@next/eslint-plugin-next')];
+    const [nextjsPlugin] = await loadPackages(['@next/eslint-plugin-next']);
 
     return [
         {
             name: 'moso/nextjs/setup',
-            languageOptions: {
-                parserOptions: {
-                    ecmaFeatures: {
-                        jsx: true,
-                    },
-                },
-                sourceType: 'module',
-            },
-            settings: {
-                react: {
-                    version: 'detect',
-                },
-            },
             plugins: {
                 '@next/next': memoize(nextjsPlugin, '@next/eslint-plugin-next'),
             },
@@ -42,6 +20,15 @@ export const nextjs = async (
         {
             name: 'moso/nextjs/rules',
             files,
+            languageOptions: {
+                parserOptions: {
+                    ecmaFeatures: { jsx: true },
+                },
+                sourceType: 'module',
+            },
+            settings: {
+                react: { version: 'detect' },
+            },
             rules: {
                 ...(assert.ok(!Array.isArray(nextjsPlugin.configs.recommended)),
                 nextjsPlugin.configs.recommended.rules),
@@ -49,17 +36,12 @@ export const nextjs = async (
                 ...(assert.ok(!Array.isArray(nextjsPlugin.configs['core-web-vitals'])),
                 nextjsPlugin.configs['core-web-vitals'].rules),
 
+                ...(mode === 'library' && {
+                    '@next/next/no-html-link-for-pages': 'off',
+                }),
+
                 ...overrides,
             },
         },
-        ...((mode === 'library'
-            ? [{
-                name: 'moso/next/library-rules',
-                rules: {
-                    '@next/next/no-html-link-for-pages': 'off',
-                },
-            }]
-            : []) satisfies TypedFlatConfigItem[]
-        ),
     ];
 };

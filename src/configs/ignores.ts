@@ -1,18 +1,13 @@
 import { GLOB_EXCLUDE, GLOB_TS, GLOB_TSX } from '../globs';
-import { globalIgnores, loadPackages } from '../utils';
+import { loadPackages } from '../tools';
+import { globalIgnores } from '../utils';
 
 import type { OptionsIgnores, TypedFlatConfigItem } from '../types';
 
 export const ignores = async (options: Readonly<OptionsIgnores>): Promise<TypedFlatConfigItem[]> => {
-    const {
-        gitignore,
-        ignoreTypeScript,
-        userIgnores,
-    } = options;
+    const { gitignore = true, ignoreTypeScript, userIgnores } = options;
 
-    const [eslintConfigFlatGitIgnore] =
-        (await loadPackages(['eslint-config-flat-gitignore'])) as
-            [typeof import('eslint-config-flat-gitignore')['default']];
+    const [eslintConfigFlatGitIgnore] = await loadPackages(['eslint-config-flat-gitignore']);
 
     const mut_configs: TypedFlatConfigItem[] = [];
 

@@ -26,6 +26,7 @@ export const GLOB_CSS = '**/?(.)*.css';
 export const GLOB_POSTCSS = '**/?(.)*.{p,post}css';
 export const GLOB_LESS = '**/?(.)*.less';
 export const GLOB_SCSS = '**/?(.)*.scss';
+export const GLOB_CSS_IN_JS = '**/*.css.{j,t}s';
 
 export const GLOB_JSON = '**/*.json';
 export const GLOB_JSON5 = '**/*.json5';
@@ -37,8 +38,11 @@ export const GLOB_HTML = '**/*.htm?(l)';
 export const GLOB_MARKDOWN = '**/*.md';
 export const GLOB_MARKDOWN_CODE = (`${GLOB_MARKDOWN}/${GLOB_SRC}`) as string;
 export const GLOB_MARKDOWN_IN_MARKDOWN = '**/*.md/*.md';
+export const GLOB_SVELTE = '**/*.svelte?(.{js,ts})';
+export const GLOB_SVG = '**/*.svg';
 export const GLOB_TOML = '**/*.toml';
 export const GLOB_VUE = '**/*.vue';
+export const GLOB_XML = '**/*.xml';
 export const GLOB_YAML = '**/*.y?(a)ml';
 
 export const GLOB_TYPINGS = 'typings/**/?(.)*.?([cm])ts';
@@ -58,49 +62,64 @@ export const GLOB_ALL_SRC: string[] = [
     GLOB_JSON5,
     GLOB_HTML,
     GLOB_MARKDOWN,
+    GLOB_SVELTE,
     GLOB_VUE,
     GLOB_YAML,
+    GLOB_XML,
+];
+
+export const GLOB_NODE_MODULES = '**/node_modules' as const;
+export const GLOB_DIST = '**/dist' as const;
+export const GLOB_LOCKFILE: string[] = [
+    '**/package-lock.json',
+    '**/bun.lock?(b)',
+    '**/pnpm-lock.yaml',
+    '**/yarn.lock',
+];
+
+export const GLOB_AI: string[] = [
+    '**/.agents',
+    '**/.claude',
+    '**/.context',
+    '**/.*/skills',
 ];
 
 export const GLOB_EXCLUDE: string[] = [
-    '**/node_modules',
-    '**/dist',
-    '**/lib',
-    '**/package-lock.json',
-    '**/yarn.lock',
-    '**/pnpm-lock.yaml',
-    '**/bun.lockb',
-    '**/bun.lock',
+    GLOB_NODE_MODULES,
+    GLOB_DIST,
+    ...GLOB_LOCKFILE,
 
+    '**/fixtures',
+    '**/lib',
     '**/output',
     '**/coverage',
     '**/temp',
-    '**/.temp',
     '**/tmp',
-    '**/.tmp',
-    '**/.history',
-    '**/.vitepress/cache',
-    '**/.nuxt',
-    '**/.next',
-    '**/.vercel',
-    '**/.changeset',
-    '**/.idea',
     '**/.cache',
+    '**/.changeset',
+    '**/.history',
+    '**/.idea',
+    '**/.next',
+    '**/.nitro',
+    '**/.nuxt',
     '**/.output',
+    '**/.temp',
+    '**/.tmp',
+    '**/.vercel',
     '**/.vite-inspect',
+    '**/.vitepress/cache',
     '**/.yarn',
-    '**/vite.config.*.timestamp-*',
 
     '**/CHANGELOG*.md',
-    '**/*.min.*',
+    '**/?(.)*.min.*',
     '**/LICENSE*',
     '**/__snapshots__',
-    '**/auto-import?(s).ts',
-    '**/auto-import?(s).d.ts',
-    '**/components.ts',
-    '**/components.d.ts',
-    '**/typegen.ts',
-    '**/typegen.d.ts',
 
-    '**/*.css.ts',
+    '**/auto-import?(s)?(.d).ts',
+    '**/components?(.d).ts',
+    '**/typegen?(.d).ts',
+    '**/vite.config.*.timestamp-*',
+
+    GLOB_CSS_IN_JS,
+    ...GLOB_AI,
 ];

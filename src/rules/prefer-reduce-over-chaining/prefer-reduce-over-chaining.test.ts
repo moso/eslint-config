@@ -9,6 +9,9 @@ const valids = [
     '[].filter(() => {})',
     '[].reduce(() => {}, 0).sort()',
     '[].filter(() => {}).every(() => true)',
+    'arr["map"](() => {})',
+    'const fn = arr.map;',
+    'class Example { #map() {} run() { return this.#map() } }',
 ];
 
 runTest({

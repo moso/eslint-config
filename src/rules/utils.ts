@@ -177,9 +177,10 @@ const getValue = (token: TSESTree.Token): false | string => {
         case AST_TOKEN_TYPES.Template: {
             return token.value.slice(1, -1);
         }
+        default: {
+            return false;
+        }
     }
-
-    return false;
 };
 
 const functionLikeTypes: ReadonlySet<AST_NODE_TYPES> = new Set([

@@ -8,6 +8,13 @@ runTest({
         '[].flatMap((x) => [x, x])',
         '[].flatMap(fn)',
         '[].flat()',
+        '[].flatMap()',
+        '[].flatMap((a, b) => a)',
+        '[].flatMap(({ x }) => x)',
+        '[].flatMap((x) => { foo(); return x })',
+        '[].flatMap((x) => { foo() })',
+        '[].flatMap((x) => { return y })',
+        'flatMap((x) => x)',
     ],
     invalid: [
         {

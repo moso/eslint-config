@@ -26,16 +26,14 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
             recommended: 'recommended',
             url: 'https://github.com/thepassle/eslint-plugin-barrel-files/blob/main/docs/rules/avoid-barrel-files.md',
         },
-        schema: [
-            {
-                type: 'object',
-                description: 'Minimum amount of exports to consider module as barrel file.',
-                properties: {
-                    amountOfExportsToConsiderModuleAsBarrel: { type: 'number', default: 3 },
-                },
-                additionalProperties: false,
+        schema: [{
+            type: 'object',
+            description: 'Minimum amount of exports to consider module as barrel file.',
+            properties: {
+                amountOfExportsToConsiderModuleAsBarrel: { type: 'number', default: 3 },
             },
-        ],
+            additionalProperties: false,
+        }],
         messages: {
             avoidBarrelFiles: 'Barrel file detected.',
         },

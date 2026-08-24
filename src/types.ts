@@ -12,13 +12,13 @@ import type { RuleOptions as Rules } from './typegen';
 
 export type Awaitable<T> = Promise<T> | T;
 export type ProjectMode = 'application' | 'library' | 'none';
-// export type Rules = Record<string, Linter.RuleEntry<any> | undefined> & RuleOptions;
 
 export type ConfigOptions = {
     /**
      * Enable ESLint comments.
      *
      * @see https://eslint-community.github.io/eslint-plugin-eslint-comments
+     *
      * @default true
      */
     comments?: boolean | OptionsOverrides;
@@ -36,6 +36,7 @@ export type ConfigOptions = {
      * Enforce import best practices
      *
      * @see https://github.com/9romise/eslint-plugin-import-lite
+     *
      * @default true
      */
     imports?: boolean | OptionsOverrides;
@@ -51,6 +52,8 @@ export type ConfigOptions = {
      * Enforce Promises best practices.
      *
      * @see https://github.com/eslint-community/eslint-plugin-promise
+     *
+     * @default true
      */
     promise?: boolean | OptionsOverrides;
 
@@ -58,7 +61,7 @@ export type ConfigOptions = {
      * Enable regex rules.
      *
      * @see https://ota-meshi.github.io/eslint-plugin-regexp
-     * @see https://github.com/BrainMaestro/eslint-plugin-optimize-regex
+     *
      * @default true
      */
     regexp?: boolean | OptionsOverrides;
@@ -82,8 +85,8 @@ export type CoreOptions = {
     /**
      * Extend the global ignores.
      *
-     * Passing an array to extends the ignores.
-     * Passing a function to modify the default ignores.
+     * Pass an array to extend the ignores.
+     * Pass a function to modify the default ignores.
      */
     ignores?: boolean | OptionsIgnores;
 
@@ -113,6 +116,9 @@ export type CoreOptions = {
     /**
      * Root of the project directory.
      *
+     * @deprecated Move this inside the `typescript` options instead. It only serves type-aware linting, which implies TypeScript.
+     * `typescript.projectRoot` takes precedence when both are set.
+     *
      * @example 'import.meta.dirname'
      */
     projectRoot?: OptionsProjectRoot['projectRoot'];
@@ -134,7 +140,7 @@ export type FrameworkOptions = {
     nextjs?: boolean | OptionsNextJS;
 
     /**
-     * Enforce NodeJS best practice.
+     * Enforce Node.js best practice.
      *
      * @default true
      */
@@ -148,6 +154,13 @@ export type FrameworkOptions = {
     react?: boolean | OptionsReact;
 
     /**
+     * Enable TailwindCSS support.
+     *
+     * @default auto-detect based on dependencies
+     */
+    tailwind?: boolean | OptionsTailwind;
+
+    /**
      * Enable Vue support.
      *
      * @default auto-detect based on the dependencies
@@ -156,6 +169,17 @@ export type FrameworkOptions = {
 };
 
 export type LanguageOptions = {
+    /**
+     * Enforce the JavaScript Baseline.
+     *
+     * Pass `'newly'`, `'widely'`, or a year as shorthand for `baseline`.
+     *
+     * @see https://github.com/3ru/eslint-plugin-baseline-js
+     *
+     * @default true
+     */
+    baseline?: boolean | OptionsBaseline | OptionsBaseline['baseline'];
+
     /**
      * Core rules. Can't be disabled.
      */
@@ -225,6 +249,7 @@ export type OptionsAstro = OptionsOverrides & {
      * Helps checking for a11y issues in `.astro`-files, as well as `.jsx` and `.tsx`-files when enabled.
      *
      * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     *
      * @default false
      */
     a11y?: boolean;
@@ -235,11 +260,35 @@ export type OptionsAstro = OptionsOverrides & {
     overridesA11y?: TypedFlatConfigItem['rules'];
 };
 
+export type OptionsBaseline = OptionsOverrides & {
+    /**
+     * Baseline level or year.
+     * Acts as alias for `available` within the config.
+     *
+     * @default 'widely'
+     */
+    baseline?: 'newly' | 'widely' | number;
+
+    /**
+     * Skip specific web-features by ID.
+     * Supports RegExp via `/.../`.
+     * Appended to the config's built-in false-positive ignores.
+     */
+    ignoreFeatures?: string[];
+
+    /**
+     * Suppress reports by ESTree `node.type`.
+     * Supports RegExp via `/.../`.
+     */
+    ignoreNodeTypes?: string[];
+};
+
 export type OptionsE18e = OptionsOverrides & {
     /**
      * Include modernization rules
      *
      * @see https://github.com/e18e/eslint-plugin#modernization
+     *
      * @default true
      */
     modernization?: boolean;
@@ -248,6 +297,7 @@ export type OptionsE18e = OptionsOverrides & {
      * Include module replacements rules
      *
      * @see https://github.com/e18e/eslint-plugin#module-replacements
+     *
      * @default type === 'library' && isInEditor
      */
     moduleReplacements?: boolean;
@@ -256,6 +306,7 @@ export type OptionsE18e = OptionsOverrides & {
      * Include performance improvements rules
      *
      * @see https://github.com/e18e/eslint-plugin#performance-improvements
+     *
      * @default true
      */
     performanceImprovements?: boolean;
@@ -273,6 +324,7 @@ export type OptionsFunctional = {
      * Level of Functional enforcement,
      *
      * @see https://github.com/eslint-functional/eslint-plugin-functional
+     *
      * @default 'lite'
      */
     functionalEnforcement?: 'lite' | 'none' | 'recommended' | 'strict';
@@ -303,6 +355,7 @@ export type OptionsIgnores = OptionsOverrides & {
      * Append `.gitignore` to the ignore files?
      *
      * @see https://github.com/antfu/eslint-config-flat-gitignore
+     *
      * @default true
      */
     gitignore?: boolean | string | FlatGitignoreOptions;
@@ -349,6 +402,7 @@ export type OptionsJSX = OptionsOverrides & {
      * Helps checking for a11y issues in `.jsx` and `.tsx`-files when enabled.
      *
      * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     *
      * @default false
      */
     a11y?: boolean;
@@ -391,6 +445,7 @@ export type OptionsNextJS = OptionsOverrides & {
      * in the root directory. Helpful for monorepos.
      *
      * @see https://nextjs.org/docs/app/api-reference/config/eslint#specifying-a-root-directory-within-a-monorepo
+     *
      * @default undefined
      */
     rootDir?: string;
@@ -427,7 +482,7 @@ export type OptionsNode = OptionsOverrides & {
     /**
      * Check if TypeScript is detected.
      * Will enable certain TypeScript rules and disable
-     * the NodeJS counter-parts.
+     * the Node.js counter-parts.
      *
      * @default false
      */
@@ -456,6 +511,7 @@ export type OptionsReact = OptionsOverrides & {
      * Helps checking for a11y issues in `.jsx` and `.tsx`-files when enabled.
      *
      * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     *
      * @default false
      */
     a11y?: boolean;
@@ -470,9 +526,8 @@ export type OptionsReact = OptionsOverrides & {
 
     /**
      * Enable Next.js support.
-     * Next.js is auto-detected
      *
-     * @default auto-detect
+     * @default auto-detect based on the dependencies
      */
     nextjs?: boolean;
 
@@ -496,6 +551,27 @@ export type OptionsStylistic = {
     stylistic?: boolean | StylisticConfig;
 };
 
+export type OptionsTailwind = OptionsOverrides & (
+    | {
+        /**
+         * Path to the entry file of the CSS-based Tailwind config.
+         *
+         * @example `src/global.css`
+         */
+        entryPoint: string;
+        version?: 4;
+    }
+    | {
+        /**
+         * The path to the entry file of the JS-based Tailwind config.
+         *
+         * @example `tailwind.config.js`
+         */
+        config?: string;
+        version?: 3;
+    }
+);
+
 export type OptionsTypeScript = OptionsOverrides & OptionsTypeScriptErasableOnly & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
 
 export type OptionsTypeScriptErasableOnly = {
@@ -504,6 +580,7 @@ export type OptionsTypeScriptErasableOnly = {
      * This can be disabled individually, or through `lessOpinionated: true`
      *
      * @see https://github.com/JoshuaKGoldberg/eslint-plugin-erasable-syntax-only
+     *
      * @default true
      */
     erasableOnly?: boolean;
@@ -542,9 +619,12 @@ export type OptionsTypeScriptWithTypes = {
     overridesTypeAware?: TypedFlatConfigItem['rules'];
 
     /**
-     * When this options is provided, type-aware rules will be enabled.
+     * Root of the project directory. Your `tsconfig.json` will automatically be detected within the directory provided.
+     * When this option is provided, typed linting and type-aware rules will be enabled.
      *
      * @see https://typescript-eslint.io/linting/typed-linting/
+     *
+     * @example 'import.meta.dirname'
      */
     projectRoot?: OptionsProjectRoot['projectRoot'];
 
@@ -554,7 +634,7 @@ export type OptionsTypeScriptWithTypes = {
     unsafe?: 'error' | 'off' | 'warn';
 
     /**
-     * Any easy way to disable the default project.
+     * An easy way to disable the default project.
      * Has no effect if `parserOptions.projectService` is set.
      *
      * @default true
@@ -592,9 +672,15 @@ export type RequiredOptionsStylistic = {
     stylistic: false | Required<StylisticConfig>;
 };
 
+export type RequiredOptionsTailwind = Required<OptionsOverrides> & {
+    config: string | undefined;
+    entryPoint: string | undefined;
+    version: 3 | 4;
+};
+
 export type ResolvedOptions<T> = T extends boolean
     ? never
-    : T extends string
+    : T extends number | string
         ? never
         : NonNullable<T>;
 
@@ -630,8 +716,18 @@ export type StyleOptions = {
     stylistic?: boolean | (OptionsOverrides & StylisticConfig);
 };
 
-export type StylisticConfig = Omit<Pick<StylisticCustomizeOptions, 'experimental' | 'indent' | 'jsx' | 'quotes' | 'semi'>, 'indent'> & {
+export type StylisticConfig = Omit<Pick<
+    StylisticCustomizeOptions,
+    | 'braceStyle'
+    | 'experimental'
+    | 'indent'
+    | 'jsx'
+    | 'quotes'
+    | 'semi'
+>, 'indent'> & {
     indent?: 'tab' | number;
+    quotes?: 'backtick' | 'double' | 'single';
+    semi?: boolean;
 };
 
 export type TypedFlatConfigItem = Omit<(ConfigWithExtends | Linter.Config), 'ignores' | 'plugins' | 'rules'> & {

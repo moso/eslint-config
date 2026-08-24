@@ -4,6 +4,7 @@ import { FlatConfigComposer } from 'eslint-flat-config-utils';
 import { getPackageInfo, isPackageExists } from 'local-pkg';
 import {
     astro,
+    baseline,
     comments,
     disables,
     e18e,
@@ -23,6 +24,7 @@ import {
     sortPackageJson,
     sortTsconfig,
     stylistic,
+    tailwind,
     test,
     toml,
     typescript,
@@ -35,6 +37,7 @@ import {
     GLOB_ASTRO,
     GLOB_ASTRO_TS,
     GLOB_DTS,
+    GLOB_JS,
     GLOB_JSON,
     GLOB_JSON5,
     GLOB_JSONC,
@@ -59,17 +62,22 @@ import {
     isInEditorEnv,
     resolveSubOptions,
 } from './utils';
+
 import type { Linter } from 'eslint';
+
 import type {
     Awaitable,
     ConfigNames,
+    OptionsBaseline,
     OptionsConfig,
     OptionsIgnores,
     OptionsProjectRoot,
+    OptionsTailwind,
     OptionsTypeScript,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
     ProjectMode,
+    RequiredOptionsTailwind,
     TypedFlatConfigItem,
 } from './types';
 
@@ -142,12 +150,21 @@ export async function moso(
     const astroOptions = options.astro ?? AstroPackages.some((x) => isPackageExists(x));
     const nextjsOptions = options.nextjs ?? NextJSPackages.some((x) => isPackageExists(x));
     const reactOptions = options.react ?? ReactPackages.some((x) => isPackageExists(x));
+    const tailwindOptions = options.tailwind ?? isPackageExists('tailwindcss');
     const vueOptions = options.vue ?? VuePackages.some((x) => isPackageExists(x));
 
     if (vueOptions !== false) componentExts.push('vue');
 
     if ('files' in options)
         throw new Error('[@moso/eslint-config] The first argument should not contain the "files" property as the options are supposed to be global. Place it in the second or later config instead.');
+
+    const baselineOptions = options.baseline === false
+        ? false
+        : typeof options.baseline === 'object'
+            ? options.baseline
+            : (typeof options.baseline === 'string' || typeof options.baseline === 'number')
+                ? { baseline: options.baseline as OptionsBaseline['baseline'] }
+                : {};
 
     const e18eOptions = options.e18e === false
         ? false
@@ -175,17 +192,13 @@ export async function moso(
         ? options.ignores
         : {};
 
-    const modeOptions: ProjectMode = typeof options.mode === 'string' ? options.mode : 'none';
+    const modeOptions: ProjectMode = typeof options.mode === 'string'
+        ? options.mode
+        : 'none';
 
     const perfectionistOptions = typeof options.perfectionist === 'boolean'
         ? options.perfectionist
         : options.lessOpinionated !== true;
-
-    const projectRootOptions: OptionsProjectRoot['projectRoot'] = typeof options.projectRoot === 'string'
-        ? checkFilePath(options.projectRoot)
-        : typeof options.typescript === 'object' && typeof options.typescript.projectRoot === 'string'
-            ? checkFilePath(options.typescript.projectRoot)
-            : undefined;
 
     const stylisticOptions = options.stylistic === false
         ? false
@@ -199,10 +212,23 @@ export async function moso(
         filesTypeAware,
         ignoresTypeAware,
         parserOptions,
+        projectRoot: typescriptProjectRoot,
         useDefaultDefaultProject,
         ...typescriptSubOptions
     } = resolveSubOptions(options, 'typescript') as
         OptionsTypeScript & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
+
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- compat shim for the deprecated top-level option
+    const deprecatedProjectRoot = options.projectRoot;
+
+    if (deprecatedProjectRoot !== undefined)
+        console.warn('[@moso/eslint-config] The top-level `projectRoot` option is deprecated. Move it inside the `typescript` options instead: `typescript: { projectRoot: import.meta.dirname }`.');
+
+    const projectRootOptions: OptionsProjectRoot['projectRoot'] = typeof typescriptProjectRoot === 'string'
+        ? checkFilePath(typescriptProjectRoot)
+        : typeof deprecatedProjectRoot === 'string'
+            ? checkFilePath(deprecatedProjectRoot)
+            : undefined;
 
     const projectServiceUserConfig = {
         defaultProject: './tsconfig.json',
@@ -256,6 +282,7 @@ export async function moso(
         }),
         imports({
             ...typescriptConfigOptions,
+            files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
             overrides: getOverrides(options, 'imports'),
             stylistic: stylisticOptions,
             typescript: hasTypeScript,
@@ -268,6 +295,7 @@ export async function moso(
             overrides: getOverrides(options, 'javascript'),
         }),
         node({
+            files: [GLOB_SRC],
             hasReact: Boolean(reactOptions),
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'node'),
@@ -283,6 +311,7 @@ export async function moso(
             overrides: getOverrides(options, 'regexp'),
         }),
         unicorn({
+            files: [GLOB_SRC],
             lessOpinionated: options.lessOpinionated,
             overrides: getOverrides(options, 'unicorn'),
         }),
@@ -300,6 +329,24 @@ export async function moso(
         );
     }
 
+    if (baselineOptions !== false) {
+        mut_configs.push(
+            baseline({
+                ...baselineOptions,
+                ...typescriptConfigOptions,
+                files: [
+                    GLOB_JS,
+                    GLOB_JSX,
+                    ...(astroOptions === false ? [] : [GLOB_ASTRO]),
+                ],
+                filesTypeAware: [GLOB_TS, GLOB_TSX],
+                overrides: getOverrides(options, 'baseline'),
+                projectRoot: projectRootOptions,
+                typescript: hasTypeScript,
+            }),
+        );
+    }
+
     if (astroOptions !== false) {
         mut_configs.push(
             astro({
@@ -308,6 +355,7 @@ export async function moso(
                 overrides: getOverrides(options, 'astro'),
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
+                ...resolveSubOptions(options, 'astro'),
             }),
         );
     }
@@ -327,10 +375,9 @@ export async function moso(
     if (functionalEnforcement !== 'none') {
         mut_configs.push(
             functional({
-                ...typescriptConfigOptions,
                 ...functionalConfigOptions,
+                ...typescriptConfigOptions,
                 mode: modeOptions,
-                projectRoot: projectRootOptions,
                 overrides: getOverrides(options, 'functional'),
                 stylistic: stylisticOptions,
             }),
@@ -340,6 +387,7 @@ export async function moso(
     if (jsdocOptions !== false) {
         mut_configs.push(
             jsdoc({
+                files: [GLOB_SRC],
                 overrides: getOverrides(options, 'jsdoc'),
                 stylistic: stylisticOptions,
             }),
@@ -383,7 +431,6 @@ export async function moso(
     if (perfectionistOptions) {
         mut_configs.push(
             perfectionist({
-                lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'perfectionist'),
             }),
         );
@@ -393,7 +440,7 @@ export async function moso(
         mut_configs.push(
             react({
                 ...typescriptConfigOptions,
-                files: [GLOB_JSX, GLOB_TS, GLOB_TSX],
+                files: [GLOB_SRC],
                 filesTypeAware: [
                     GLOB_DTS,
                     GLOB_JSX,
@@ -415,6 +462,7 @@ export async function moso(
     if (options.test !== false) {
         mut_configs.push(
             test({
+                ...functionalConfigOptions,
                 files: GLOB_TESTS,
                 isInEditor,
                 overrides: getOverrides(options, 'test'),
@@ -453,17 +501,34 @@ export async function moso(
             vue({
                 ...typescriptConfigOptions,
                 files: [GLOB_VUE],
-                filesTypeAware: [
-                    GLOB_TS,
-                    GLOB_TSX,
-                    GLOB_VUE,
-                ],
                 overrides: getOverrides(options, 'vue'),
-                projectRoot: projectRootOptions,
                 sfcBlocks: true,
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
                 ...resolveSubOptions(options, 'vue'),
+            }),
+        );
+    }
+
+    if (tailwindOptions !== false) {
+        const resolvedTailwind: OptionsTailwind = tailwindOptions === true ? {} : tailwindOptions;
+        const tailwindConfigOptions: Omit<RequiredOptionsTailwind, 'overrides'> = 'entryPoint' in resolvedTailwind
+            ? {
+                config: undefined,
+                entryPoint: resolvedTailwind.entryPoint,
+                version: resolvedTailwind.version ?? 4,
+            }
+            : {
+                config: resolvedTailwind.config ?? 'tailwind.config.js',
+                entryPoint: undefined,
+                version: resolvedTailwind.version ?? 3,
+            };
+
+        mut_configs.push(
+            tailwind({
+                ...tailwindConfigOptions,
+                overrides: getOverrides(options, 'tailwind'),
+                stylistic: stylisticOptions,
             }),
         );
     }

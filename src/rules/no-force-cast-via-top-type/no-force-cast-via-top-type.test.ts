@@ -12,21 +12,17 @@ runTest({
     invalid: [
         {
             code: 'const foo = bar as any as Baz',
-            errors: [
-                {
-                    messageId: 'noForceCast',
-                    data: { type: 'any' },
-                },
-            ],
+            errors: [{
+                messageId: 'noForceCast',
+                data: { type: 'any' },
+            }],
         },
         {
             code: 'const foo = bar as unknown as Baz',
-            errors: [
-                {
-                    messageId: 'noForceCast',
-                    data: { type: 'unknown' },
-                },
-            ],
+            errors: [{
+                messageId: 'noForceCast',
+                data: { type: 'unknown' },
+            }],
         },
     ],
 });

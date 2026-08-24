@@ -1,14 +1,8 @@
-import {
-    GLOB_DTS,
-    GLOB_TS,
-    GLOB_TSX,
-} from '../globs';
-import mosoPlugin from '../rules';
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
+    OptionsFiles,
     OptionsHasTypeScript,
     OptionsOverrides,
     OptionsTypeScriptParserOptions,
@@ -18,6 +12,7 @@ import type {
 
 export const imports = async (
     options: Readonly<
+        OptionsFiles &
         OptionsHasTypeScript &
         OptionsOverrides &
         OptionsTypeScriptParserOptions &
@@ -25,12 +20,13 @@ export const imports = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        files,
         overrides,
         stylistic,
         typescript,
     } = options;
 
-    const [importLite] = (await loadPackages(['eslint-plugin-import-lite'])) as [ESLint.Plugin];
+    const [importLite] = await loadPackages(['eslint-plugin-import-lite']);
 
     const stylisticEnabled = stylistic !== false;
 
@@ -38,7 +34,6 @@ export const imports = async (
         {
             name: 'moso/imports',
             plugins: {
-                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
                 'import-lite': memoize(importLite, 'eslint-plugin-import-lite'),
             },
             rules: {
@@ -60,24 +55,22 @@ export const imports = async (
             },
         },
         ...((typescript
-            ? [
-                {
-                    name: 'moso/imports/typescript',
-                    files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
-                    rules: {
-                        '@typescript-eslint/no-import-type-side-effects': 'error',
-                        '@typescript-eslint/consistent-type-imports': [
-                            stylisticEnabled ? 'error' : 'off',
-                            {
-                                disallowTypeAnnotations: false,
-                                fixStyle: 'inline-type-imports',
-                                prefer: 'type-imports',
+            ? [{
+                name: 'moso/imports/typescript',
+                files,
+                rules: {
+                    '@typescript-eslint/no-import-type-side-effects': 'error',
+                    '@typescript-eslint/consistent-type-imports': [
+                        stylisticEnabled ? 'error' : 'off',
+                        {
+                            disallowTypeAnnotations: false,
+                            fixStyle: 'inline-type-imports',
+                            prefer: 'type-imports',
 
-                            },
-                        ],
-                    },
+                        },
+                    ],
                 },
-            ]
+            }]
             : []) satisfies TypedFlatConfigItem[]
         ),
     ];
