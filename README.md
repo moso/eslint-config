@@ -1,7 +1,8 @@
 # @moso/eslint-config
 
-[![npm](https://img.shields.io/npm/v/@moso/eslint-config.svg)](https://npmx.dev/package/@moso/eslint-config)
-[![npm downloads](https://img.shields.io/npm/dm/@moso/eslint-config?color=000080)](https://npmx.dev/package/@moso/eslint-config)
+[![npm](https://img.shields.io/npm/v/@moso/eslint-config.svg?label=npm)](https://npmx.dev/package/@moso/eslint-config)
+[![coverage](https://img.shields.io/codecov/c/github/moso/eslint-config.svg?label=Coverage)](https://codecov.io/gh/moso/eslint-config)
+[![license](https://img.shields.io/github/license/moso/eslint-config.svg?label=License)](https://github.com/moso/eslint-config/blob/main/LICENSE)
 
 Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 
