@@ -48,6 +48,7 @@ export const tailwind = async (
                             indent: stylistic.indent,
                             lineBreakStyle: 'unix',
                             preferSingleLine: false,
+                            printWidth: 0,
                         },
                     ],
                     'tailwind-better/enforce-consistent-class-order': [
