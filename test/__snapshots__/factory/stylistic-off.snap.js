@@ -100,6 +100,7 @@
       "**/coverage/",
       "**/sponsors.*",
       "**/drafts/",
+      "**/tasks/",
     ],
     "name": "moso/ignores/gitignore",
   },
@@ -856,8 +857,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": [],
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -896,13 +898,13 @@
     "rules": [
       "functional/functional-parameters",
       "functional/immutable-data",
-      "functional/no-classes",
+      "- functional/no-classes",
       "functional/no-class-inheritance",
-      "functional/no-conditional-statements",
-      "functional/no-expression-statements",
+      "- functional/no-conditional-statements",
+      "- functional/no-expression-statements",
       "functional/no-let",
       "functional/no-loop-statements",
-      "functional/no-mixed-types",
+      "- functional/no-mixed-types",
       "- functional/no-promise-reject",
       "- functional/no-return-void",
       "- functional/no-this-expressions",
@@ -1006,7 +1008,7 @@
       "jsdoc/check-indentation",
       "jsdoc/check-line-alignment",
       "jsdoc/no-bad-blocks",
-      "jsdoc/no-types",
+      "- jsdoc/no-types",
       "jsdoc/require-asterisk-prefix",
       "jsdoc/require-description",
       "jsdoc/require-hyphen-before-param-description",
@@ -1245,7 +1247,7 @@
         },
         "ecmaVersion": "latest",
         "extraFileExtensions": [
-          "**/*.vue",
+          ".vue",
         ],
         "jsxPragma": undefined,
         "sourceType": "module",
@@ -1699,7 +1701,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

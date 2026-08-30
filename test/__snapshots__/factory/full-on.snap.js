@@ -100,6 +100,7 @@
       "**/coverage/",
       "**/sponsors.*",
       "**/drafts/",
+      "**/tasks/",
     ],
     "name": "moso/ignores/gitignore",
   },
@@ -927,6 +928,17 @@
   },
   {
     "files": [
+      "**/*.?([cm])js",
+      "**/*.?([cm])jsx",
+      "**/*.astro",
+    ],
+    "name": "moso/baseline/rules",
+    "rules": [
+      "baseline-js/use-baseline",
+    ],
+  },
+  {
+    "files": [
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1163,7 +1175,7 @@
       "jsdoc/check-indentation",
       "jsdoc/check-line-alignment",
       "jsdoc/no-bad-blocks",
-      "jsdoc/no-types",
+      "- jsdoc/no-types",
       "jsdoc/require-asterisk-prefix",
       "jsdoc/require-description",
       "jsdoc/require-hyphen-before-param-description",
@@ -1518,7 +1530,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1531,7 +1542,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1736,7 +1746,7 @@
         },
         "ecmaVersion": "latest",
         "extraFileExtensions": [
-          "**/*.vue",
+          ".vue",
         ],
         "jsxPragma": undefined,
         "sourceType": "module",
@@ -1877,7 +1887,7 @@
         },
         "ecmaVersion": "latest",
         "extraFileExtensions": [
-          "**/*.vue",
+          ".vue",
         ],
         "jsxPragma": undefined,
         "sourceType": "module",
@@ -1913,7 +1923,6 @@
       "@typescript-eslint/restrict-plus-operands",
       "@typescript-eslint/restrict-template-expressions",
       "@typescript-eslint/unbound-method",
-      "- only-throw-error",
       "- prefer-destructuring",
       "@typescript-eslint/consistent-return",
       "@typescript-eslint/consistent-type-exports",
@@ -2347,7 +2356,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

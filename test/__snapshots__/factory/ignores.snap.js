@@ -102,6 +102,7 @@
       "**/coverage/",
       "**/sponsors.*",
       "**/drafts/",
+      "**/tasks/",
     ],
     "name": "moso/ignores/gitignore",
   },
@@ -931,8 +932,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": [],
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1512,7 +1514,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [
