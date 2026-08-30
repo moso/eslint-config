@@ -944,7 +944,7 @@ You can still use these to format files that aren't linted with this config, how
 
 You will need to install and configure [`stylelint`](https://stylelint.io) yourself, unfortunately.
 
-I am actively considering adding linting support for TailwindCSS, however.
+`v3.2.0` added linting support for TailwindCSS, however.
 
 ### I prefer `this` or `that` rule
 
