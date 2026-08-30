@@ -127,11 +127,9 @@ export const node = async (
         ...((options.strict
             ? [{
                 name: 'moso/node/strict',
-                files: files ?? (
-                    options.module
-                        ? [GLOB_CJS]
-                        : [GLOB_CJS, GLOB_JS]
-                ),
+                files: options.module
+                    ? [GLOB_CJS]
+                    : [GLOB_CJS, GLOB_JS],
                 rules: {
                     strict: ['warn', 'global'],
                 },
