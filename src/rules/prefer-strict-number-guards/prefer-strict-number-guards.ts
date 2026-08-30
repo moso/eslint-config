@@ -84,9 +84,7 @@ const isGuardedIndex = (node: TSESTree.MemberExpression): boolean => {
     return parent.type === AST_NODE_TYPES.LogicalExpression && parent.operator === '??' && parent.left === node;
 };
 
-const isMathCall = (node: TSESTree.Node, methods?: ReadonlyArray<string>): boolean => {
-    if (node.type !== AST_NODE_TYPES.CallExpression) return false;
-
+const isMathCall = (node: TSESTree.CallExpression, methods?: ReadonlyArray<string>): boolean => {
     const { callee } = node;
     return (
         callee.type === AST_NODE_TYPES.MemberExpression &&
