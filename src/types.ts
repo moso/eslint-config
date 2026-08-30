@@ -732,11 +732,9 @@ export type StylisticConfig = Omit<Pick<
 
 export type TypedFlatConfigItem = Omit<(ConfigWithExtends | Linter.Config), 'ignores' | 'plugins' | 'rules'> & {
     /**
-     * Extend the global ignores within `FlatConfigItem` and `Linter.Config`.
-     *
-     * Accepts a `string[]` (standard ESLint flat config) or `OptionsIgnores`.
+     * Glob patterns of files to ignore for this config item.
      */
-    ignores?: boolean | OptionsIgnores | ReadonlyArray<string>;
+    ignores?: ReadonlyArray<string>;
 
     /**
      * Custom config name of each item

@@ -47,7 +47,7 @@ export const baseline = async (
         {
             name: `moso/baseline/${isTypeAware ? 'type-aware-rules' : 'rules'}`,
             files: isTypeAware ? filesTypeAware : files,
-            ignores: isTypeAware ? ignoresTypeAware : {},
+            ignores: isTypeAware ? ignoresTypeAware ?? [] : [],
             rules: {
                 'baseline-js/use-baseline': [
                     'warn',

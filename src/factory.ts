@@ -109,12 +109,12 @@ const VuePackages = [
 /**
  * Construct an array of ESLint flat config items.
  *
- * @param {OptionsConfig & TypedFlatConfigItem} options - Options for generating the ESLint configurations.
+ * @param {OptionsConfig & TypedFlatConfigItem} [options={}] - Options for generating the ESLint configurations.
  * @param {Awaitable<TypedFlatConfigItem | TypedFlatConfigItem[]>[]} userConfigs - User configurations to be merged with the generated configurations
  * @returns {Promise<TypedFlatConfigItem[]>} - The merged ESLint configurations
  */
 export async function moso(
-    options: Omit<TypedFlatConfigItem, 'files'> & OptionsConfig,
+    options: Omit<TypedFlatConfigItem, 'files' | 'ignores'> & OptionsConfig = {},
     ...userConfigs: ReadonlyArray<Awaitable<Linter.Config[] | TypedFlatConfigItem | TypedFlatConfigItem[]>>
 ): Promise<Linter.Config[]> {
     const {
@@ -491,6 +491,7 @@ export async function moso(
                 mode: modeOptions,
                 overrides: getOverrides(options, 'typescript'),
                 projectRoot: projectRootOptions,
+                stylistic: stylisticOptions,
                 unsafe: 'warn',
             }),
         );
