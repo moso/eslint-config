@@ -106,6 +106,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -339,7 +340,9 @@
     ],
   },
   {
-    "files": undefined,
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
     "languageOptions": {},
     "name": "moso/node/rules",
     "rules": [
@@ -854,7 +857,7 @@
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
     ],
-    "ignores": {},
+    "ignores": [],
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1325,21 +1328,8 @@
       "@typescript-eslint/unified-signatures",
       "@moso/no-force-cast-via-top-type",
       "@typescript-eslint/consistent-type-definitions",
-      "@typescript-eslint/adjacent-overload-signatures",
-      "@typescript-eslint/array-type",
-      "@typescript-eslint/ban-tslint-comment",
-      "@typescript-eslint/class-literal-property-style",
-      "@typescript-eslint/consistent-generic-constructors",
-      "@typescript-eslint/consistent-indexed-object-style",
-      "@typescript-eslint/consistent-type-assertions",
-      "@typescript-eslint/no-confusing-non-null-assertion",
-      "- no-empty-function",
-      "@typescript-eslint/no-empty-function",
-      "@typescript-eslint/no-inferrable-types",
-      "@typescript-eslint/prefer-for-of",
-      "@typescript-eslint/prefer-function-type",
-      "@stylistic/type-annotation-spacing",
       "@typescript-eslint/class-methods-use-this",
+      "@typescript-eslint/consistent-indexed-object-style",
       "@typescript-eslint/consistent-type-imports",
       "@typescript-eslint/explicit-function-return-type",
       "- @typescript-eslint/explicit-member-accessibility",

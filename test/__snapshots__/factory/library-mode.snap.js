@@ -107,6 +107,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -939,7 +940,7 @@
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
     ],
-    "ignores": {},
+    "ignores": [],
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",

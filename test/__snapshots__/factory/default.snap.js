@@ -106,6 +106,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -929,7 +930,7 @@
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
     ],
-    "ignores": {},
+    "ignores": [],
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1363,6 +1364,31 @@
       "- @typescript-eslint/ban-ts-comment",
       "- @typescript-eslint/no-require-imports",
     ],
+  },
+  {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "config": "tailwind.config.js",
+      },
+    },
   },
   {
     "name": "moso/yaml/setup",
