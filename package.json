@@ -53,7 +53,7 @@
         "prepare": "bun run simple-git-hooks",
         "release": "bumpp --recursive && bun publish",
         "test": "vitest run",
-        "test:update-snapshots": "vitest --update",
+        "test:update-snapshots": "bun run test --update",
         "typecheck": "tsc --noEmit",
         "typegen": "tsx scripts/typegen.ts",
         "watch": "tsdown --watch"
