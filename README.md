@@ -718,7 +718,7 @@ npm install -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plug
 pnpm add -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
 
 # Bun
-bun add --dev @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+bun add -d @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
 ```
 
 ### Vue
@@ -744,7 +744,7 @@ npm install -D eslint-plugin-vue
 pnpm add -D eslint-plugin-vue
 
 # Bun
-bun add --dev eslint-plugin-vue
+bun add -d eslint-plugin-vue
 ```
 
 > [!CAUTION]
@@ -832,7 +832,7 @@ Linting and auto-fixing before every commit is easy, you just add the following 
 ```jsonc
 {
     "simple-git-hooks": {
-        "pre-commit": "npmx lint-staged" // or pnx/bunx
+        "pre-commit": "npx lint-staged" // or pnx/bunx
     },
     "nano-staged": {
         "*": "eslint --fix"
@@ -854,7 +854,7 @@ bun add -d nano-staged simple-git-hooks
 
 
 # to activate the hooks:
-npmx simple-git-hooks # npm
+npx simple-git-hooks # npm
 
 pnx simple-git-hooks  # pnpm
 
@@ -890,7 +890,7 @@ Optionally keep TypeScript 7's own `tsc` around as well:
 {
     "devDependencies": {
         "@typescript/native": "npm:typescript@^7.0.2",
-        "typescript": "npm:@typescript/typescript6@^6.0.3"
+        "typescript": "npm:@typescript/typescript6@^6.0.2"
     }
 }
 ```
