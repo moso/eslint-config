@@ -1,3 +1,4 @@
+import mosoPlugin from '../rules';
 import { loadPackages } from '../tools';
 import { memoize } from '../utils';
 
@@ -34,6 +35,7 @@ export const imports = async (
         {
             name: 'moso/imports',
             plugins: {
+                '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
                 'import-lite': memoize(importLite, 'eslint-plugin-import-lite'),
             },
             rules: {
