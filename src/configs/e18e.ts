@@ -32,7 +32,7 @@ export const e18e = async (
     const [e18ePlugin] = await loadPackages(['@e18e/eslint-plugin']);
 
     const enableModernization = modernization !== false;
-    const enableModuleReplacements = moduleReplacements !== false && mode === 'library' && isInEditor;
+    const enableModuleReplacements = moduleReplacements ?? (mode === 'library' && isInEditor === true);
     const enablePerformanceImprovements = performanceImprovements !== false;
 
     return [
