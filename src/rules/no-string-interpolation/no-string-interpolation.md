@@ -1,6 +1,6 @@
 # `@moso/no-string-interpolation`
 
-Disallow simple string interpolation.
+Disallow multiline expressions in string interpolation.
 
 ## Rule Details
 
@@ -35,7 +35,7 @@ Codebases with heavy tagged-template usage (CSS-in-JS, SQL builders, GraphQL doc
 - Type: Suggestion
 - [ ] :white_check_mark: Stylistic
 - [ ] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [ ] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 

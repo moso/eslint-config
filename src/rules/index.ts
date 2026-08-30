@@ -1,4 +1,3 @@
-import packageJson from '../../package.json' with { type: 'json' };
 import avoidBarrelFiles from './avoid-barrel-files/avoid-barrel-files';
 import noBidi from './no-bidi/no-bidi';
 import noForceCastViaTopType from './no-force-cast-via-top-type/no-force-cast-via-top-type';
@@ -10,6 +9,7 @@ import noRedundantVariable from './no-redundant-variable/no-redundant-variable';
 import noStringInterpolation from './no-string-interpolation/no-string-interpolation';
 import noTopLevelAwait from './no-top-level-await/no-top-level-await';
 import noUnneededArrayFlatMap from './no-unneeded-array-flat-map/no-unneeded-array-flat-map';
+import packageJson from './package.json' with { type: 'json' };
 import preferEarlyReturn from './prefer-early-return/prefer-early-return';
 import preferFetch from './prefer-fetch/prefer-fetch';
 import preferReduceOverChaining from './prefer-reduce-over-chaining/prefer-reduce-over-chaining';

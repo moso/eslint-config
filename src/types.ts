@@ -381,11 +381,11 @@ export type OptionsIgnores = OptionsOverrides & {
 export type OptionsIsInEditor = {
     /**
      * Are we inside an IDE or editor?
-     * Used to activate the helper `disablesRulesFix()` that make defined fixable rules non-fixable.
+     * Used to activate the helper `disableRulesFix()` that makes defined fixable rules non-fixable.
      *
      * This is applied to the following rules:
+     * - `no-only-tests/no-only-tests`
      * - `prefer-const`
-     * - `test-no-only-tests`
      * - `unused-imports/no-unused-imports`
      *
      * The rules will still be applied when you run ESLint in a terminal or through Lint Staged.
@@ -426,7 +426,7 @@ export type OptionsMode = {
     /**
      * Define project mode.
      * Helpful for applications or libraries such as this.
-     * 99.99% of times, this should not be necessary to set.
+     * 99.99% of the time, this should not be necessary to set.
      *
      * @default 'none'
      */
@@ -519,7 +519,6 @@ export type OptionsReact = OptionsOverrides & {
     /**
      * Additional hooks to be added to `react-hooks`.
      *
-     * @see
      * @default undefined
      */
     additionalHooks?: string;
@@ -732,11 +731,9 @@ export type StylisticConfig = Omit<Pick<
 
 export type TypedFlatConfigItem = Omit<(ConfigWithExtends | Linter.Config), 'ignores' | 'plugins' | 'rules'> & {
     /**
-     * Extend the global ignores within `FlatConfigItem` and `Linter.Config`.
-     *
-     * Accepts a `string[]` (standard ESLint flat config) or `OptionsIgnores`.
+     * Glob patterns of files to ignore for this config item.
      */
-    ignores?: boolean | OptionsIgnores | ReadonlyArray<string>;
+    ignores?: ReadonlyArray<string>;
 
     /**
      * Custom config name of each item

@@ -6,6 +6,7 @@ const valids = [
     'import \'b\'',
     'const c = require(\'c\')',
     'require(\'d\')',
+    'require()',
 ];
 
 runTest({

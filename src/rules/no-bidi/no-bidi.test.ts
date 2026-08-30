@@ -96,6 +96,28 @@ runTest({
             output: 'const value = "Line\\u2069End"',
         },
         {
+            code: 'const re = /Hello\u{202E}World/v',
+            errors: [{
+                messageId: 'noBidi',
+                data: {
+                    kind: 'code',
+                    text: String.raw `/Hello\u202EWorld/v`,
+                },
+            }],
+            output: 'const re = /Hello\\u202EWorld/v',
+        },
+        {
+            code: 'const re = /Bad\u{202E}Curly{/',
+            errors: [{
+                messageId: 'noBidi',
+                data: {
+                    kind: 'code',
+                    text: String.raw `/Bad\u202ECurly{/`,
+                },
+            }],
+            output: null,
+        },
+        {
             code: dedent `
               const accessLevel = "user";
               if (accessLevel != "user\u202E \u2066// Check if admin\u2069 \u2066") {

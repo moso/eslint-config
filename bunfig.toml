@@ -1,6 +1,7 @@
 [install]
 minimumReleaseAge = 86400
-linker = "isolated"
+minimumReleaseAgeExcludes = ["@types/node", "tsx", "typescript"]
+linker = "hoisted"
 
 [install.security]
 scanner = "@socketsecurity/bun-security-scanner"

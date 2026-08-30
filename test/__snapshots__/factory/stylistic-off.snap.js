@@ -93,6 +93,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -106,6 +107,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -339,7 +341,9 @@
     ],
   },
   {
-    "files": undefined,
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
     "languageOptions": {},
     "name": "moso/node/rules",
     "rules": [
@@ -853,8 +857,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": {},
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -893,13 +898,13 @@
     "rules": [
       "functional/functional-parameters",
       "functional/immutable-data",
-      "functional/no-classes",
+      "- functional/no-classes",
       "functional/no-class-inheritance",
-      "functional/no-conditional-statements",
-      "functional/no-expression-statements",
+      "- functional/no-conditional-statements",
+      "- functional/no-expression-statements",
       "functional/no-let",
       "functional/no-loop-statements",
-      "functional/no-mixed-types",
+      "- functional/no-mixed-types",
       "- functional/no-promise-reject",
       "- functional/no-return-void",
       "- functional/no-this-expressions",
@@ -1003,7 +1008,7 @@
       "jsdoc/check-indentation",
       "jsdoc/check-line-alignment",
       "jsdoc/no-bad-blocks",
-      "jsdoc/no-types",
+      "- jsdoc/no-types",
       "jsdoc/require-asterisk-prefix",
       "jsdoc/require-description",
       "jsdoc/require-hyphen-before-param-description",
@@ -1242,7 +1247,7 @@
         },
         "ecmaVersion": "latest",
         "extraFileExtensions": [
-          "**/*.vue",
+          ".vue",
         ],
         "jsxPragma": undefined,
         "sourceType": "module",
@@ -1325,21 +1330,8 @@
       "@typescript-eslint/unified-signatures",
       "@moso/no-force-cast-via-top-type",
       "@typescript-eslint/consistent-type-definitions",
-      "@typescript-eslint/adjacent-overload-signatures",
-      "@typescript-eslint/array-type",
-      "@typescript-eslint/ban-tslint-comment",
-      "@typescript-eslint/class-literal-property-style",
-      "@typescript-eslint/consistent-generic-constructors",
-      "@typescript-eslint/consistent-indexed-object-style",
-      "@typescript-eslint/consistent-type-assertions",
-      "@typescript-eslint/no-confusing-non-null-assertion",
-      "- no-empty-function",
-      "@typescript-eslint/no-empty-function",
-      "@typescript-eslint/no-inferrable-types",
-      "@typescript-eslint/prefer-for-of",
-      "@typescript-eslint/prefer-function-type",
-      "@stylistic/type-annotation-spacing",
       "@typescript-eslint/class-methods-use-this",
+      "@typescript-eslint/consistent-indexed-object-style",
       "@typescript-eslint/consistent-type-imports",
       "@typescript-eslint/explicit-function-return-type",
       "- @typescript-eslint/explicit-member-accessibility",
@@ -1709,7 +1701,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

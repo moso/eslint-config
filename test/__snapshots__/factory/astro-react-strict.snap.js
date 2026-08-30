@@ -60,6 +60,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -871,8 +872,9 @@
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
       "**/*.astro",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": {},
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1284,7 +1286,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1542,7 +1543,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

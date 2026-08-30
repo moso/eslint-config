@@ -56,6 +56,7 @@ export const react = async (
         overridesTypeAware,
         parserOptions,
         projectRoot,
+        reactRefresh,
         stylistic,
         typescript,
     } = options;
@@ -72,9 +73,10 @@ export const react = async (
         'eslint-plugin-react-you-might-not-need-an-effect',
     ]);
 
-    const isTypeAware = typescript && typeof projectRoot === 'string';
+    const isTypeAware = typescript && typeof projectRoot === 'string' && parserOptions?.projectService !== false;
 
-    const isAllowConstantExport = ReactRefreshAllowConstantExportPackages.some((x) => isPackageExists(x));
+    const isAllowConstantExport = reactRefresh?.allowConstantExport ??
+        ReactRefreshAllowConstantExportPackages.some((x) => isPackageExists(x));
     const isUsingNextJS = nextjs !== false;
     const isUsingRemix = RemixPackages.some((x) => isPackageExists(x));
     const isUsingReactRouter = ReactRouterPackages.some((x) => isPackageExists(x));

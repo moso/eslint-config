@@ -283,7 +283,7 @@ export const vue = async (
                     name: 'moso/nuxt/rules',
                     files: [
                         `**/app.{${GLOB_SRC_EXT},vue}`,
-                        `**/components/*/**/*.{${GLOB_SRC_EXT},vue}`,
+                        `**/components/**/*.{${GLOB_SRC_EXT},vue}`,
                         `**/error.{${GLOB_SRC_EXT},vue}`,
                         `**/layouts/**/*.{${GLOB_SRC_EXT},vue}`,
                         `**/pages/**/*.{${GLOB_SRC_EXT},vue}`,

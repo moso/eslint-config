@@ -1,3 +1,5 @@
+import { AST_NODE_TYPES } from '@typescript-eslint/utils';
+
 import { createRule } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
@@ -24,12 +26,24 @@ const ruleNoImportFromDist: createRuleType = createRule({
         },
     },
     create: (context) => ({
-        ImportDeclaration: (node: TSESTree.ImportDeclaration) => {
+        'ImportDeclaration': (node: TSESTree.ImportDeclaration) => {
             if (isDist(node.source.value)) {
                 context.report({
                     node,
                     messageId: 'noImportFromDist',
                     data: { path: node.source.value },
+                });
+            }
+        },
+        'CallExpression[callee.name="require"]': (node: TSESTree.CallExpression) => {
+            const firstArg = node.arguments.at(0);
+            if (firstArg?.type === AST_NODE_TYPES.Literal &&
+                typeof firstArg.value === 'string' &&
+                isDist(firstArg.value)) {
+                context.report({
+                    node,
+                    messageId: 'noImportFromDist',
+                    data: { path: firstArg.value },
                 });
             }
         },

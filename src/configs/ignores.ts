@@ -23,20 +23,16 @@ export const ignores = async (options: Readonly<OptionsIgnores>): Promise<TypedF
 
     mut_configs.push(globalIgnores(mut_ignores, 'moso/ignores/globals'));
 
-    if (typeof gitignore === 'boolean' && gitignore) {
+    if (gitignore !== false) {
         mut_configs.push(
             eslintConfigFlatGitIgnore({
-                files: ['.gitignore'],
                 name: 'moso/ignores/gitignore',
                 strict: false,
-            })
-        );
-    } else if (typeof gitignore === 'string' || Array.isArray(gitignore)) {
-        mut_configs.push(
-            eslintConfigFlatGitIgnore({
-                files: gitignore,
-                name: 'moso/ignores/gitignore',
-                strict: false,
+                ...(typeof gitignore === 'string'
+                    ? { files: [gitignore] }
+                    : typeof gitignore === 'object'
+                        ? gitignore
+                        : { files: ['.gitignore'] }),
             }),
         );
     }
