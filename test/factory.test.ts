@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { ESLint } from 'eslint';
 import { it, vi } from 'vitest';
 
 import { astro } from '../src/configs';
@@ -240,6 +241,15 @@ it.concurrent.for(configPresets)('factory $name', async ({ configs, name }, { ex
     const config = await moso(configs);
     await expect(serializeConfigPresets(config))
         .toMatchFileSnapshot(`./__snapshots__/factory/${name}.snap.js`);
+});
+
+it.concurrent.for(configPresets)('eslint accepts factory $name', async ({ configs }, { expect }) => {
+    const eslint = new ESLint({ overrideConfig: await moso(configs), overrideConfigFile: true });
+    await expect(eslint.calculateConfigForFile('scratch.ts')).resolves.not.toThrow();
+});
+
+it('builds a config when called with no arguments', async ({ expect }) => {
+    await expect(moso()).resolves.toSatisfy((configs: Linter.Config[]) => configs.length > 0);
 });
 
 it('prefers `typescript.projectRoot` over the deprecated top-level `projectRoot` and warns', async ({ expect, onTestFinished }) => {
