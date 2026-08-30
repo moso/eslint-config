@@ -66,7 +66,7 @@ export const jsonc = async (
                 'jsonc/array-bracket-spacing': [stylisticEnabled, 'never'],
                 'jsonc/comma-dangle': [stylisticEnabled, 'never'],
                 'jsonc/comma-style': [stylisticEnabled, 'last'],
-                'jsonc/indent': [stylisticEnabled, typeof indent === 'number' || typeof indent === 'string' ? indent : 4],
+                'jsonc/indent': [stylisticEnabled, indent],
                 'jsonc/key-spacing': [stylisticEnabled, { afterColon: true, beforeColon: false }],
                 'jsonc/object-curly-newline': [stylisticEnabled, { consistent: true, multiline: true }],
                 'jsonc/object-curly-spacing': [stylisticEnabled, 'always'],
