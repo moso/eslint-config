@@ -19,8 +19,10 @@ import { loadPackages } from '../tools';
 
 import type { TypedFlatConfigItem } from '../types';
 
-export const disables = async (): Promise<TypedFlatConfigItem[]> => {
-    const [functionalPlugin] = await loadPackages(['eslint-plugin-functional']);
+export const disables = async (functionalEnabled = false): Promise<TypedFlatConfigItem[]> => {
+    const [functionalPlugin] = functionalEnabled
+        ? await loadPackages(['eslint-plugin-functional'])
+        : [undefined];
 
     return [
         {
@@ -98,7 +100,7 @@ export const disables = async (): Promise<TypedFlatConfigItem[]> => {
         },
         {
             name: 'moso/disables/github',
-            files: ['**/ISSUES_TEMPLATE/**'],
+            files: ['**/ISSUE_TEMPLATE/**'],
             rules: {
                 'unicorn/filename-case': 'off',
             },
@@ -191,8 +193,8 @@ export const disables = async (): Promise<TypedFlatConfigItem[]> => {
             name: 'moso/disables/typings',
             files: [GLOB_TYPINGS],
             rules: {
-                ...(assert.ok(!Array.isArray(functionalPlugin.configs.off)),
-                functionalPlugin.configs.off.rules),
+                ...(functionalPlugin !== undefined && (assert.ok(!Array.isArray(functionalPlugin.configs.off)),
+                functionalPlugin.configs.off.rules)),
 
                 'jsdoc/check-examples': 'off',
                 'jsdoc/check-indentation': 'off',
