@@ -1,4 +1,4 @@
-import path from 'node:path';
+import process from 'node:process';
 
 import type { OptionsConfig } from './types';
 
@@ -40,7 +40,7 @@ export const full: OptionsConfig = {
     test: true,
     toml: true,
     typescript: {
-        projectRoot: path.resolve(import.meta.dirname, '..'),
+        projectRoot: process.cwd(),
     },
     unicorn: true,
     vue: {
