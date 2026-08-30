@@ -9,6 +9,8 @@ const valids = [
     'new ActiveXObject(123)',
     'new ActiveXObject("Word.Application")',
     'require("lodash")',
+    'require()',
+    'new ActiveXObject()',
     '$(element)',
     '$(element).other()',
     '$.other()',

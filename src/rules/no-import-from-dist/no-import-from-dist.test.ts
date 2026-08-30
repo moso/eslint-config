@@ -5,6 +5,8 @@ const valids = [
     'import xxx from \'a\'',
     'import \'b\'',
     'import \'package/dist/foo.css\'',
+    'require(\'package/dist/helpers\')',
+    'require()',
 ];
 
 runTest({
@@ -25,6 +27,14 @@ runTest({
         },
         {
             code: 'import c from \'./dist\'',
+            errors: [{ messageId: 'noImportFromDist' }],
+        },
+        {
+            code: 'const d = require(\'../dist/d\')',
+            errors: [{ messageId: 'noImportFromDist' }],
+        },
+        {
+            code: 'require(\'dist\')',
             errors: [{ messageId: 'noImportFromDist' }],
         },
     ],

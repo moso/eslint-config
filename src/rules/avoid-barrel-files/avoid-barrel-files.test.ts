@@ -3,9 +3,11 @@ import module from './avoid-barrel-files';
 
 const valids = [
     'const a = 1; const b = 2; const c = 3; const d = 4;',
-    `export { a } from 'a'; export { b } from 'b'; export { c } from 'c';`,
+    `export { a } from 'a'; export { b } from 'b';`,
     `const a = 1; const b = 2; const c = 3; const d = 4; export { a } from 'a'; export { b } from 'b'; export { c } from 'c'; export { d } from 'd';`,
     `export type * from './a'; export type * from './b'; export type * from './c'; export type * from './d';`,
+    `export type { a } from 'a'; export type { b } from 'b'; export type { c } from 'c'; export type { d } from 'd';`,
+    `export { type a, type b, c } from 'mod';`,
     'export function foo() {}; export const bar = 1; export class Baz {}',
     'function foo() {} class Bar {} interface Baz {} type Qux = 1;',
     'export default function foo() {}',
@@ -19,6 +21,10 @@ runTest({
     invalid: [
         {
             code: `export { a } from 'a'; export { b } from 'b'; export { c } from 'c'; export { d } from 'd';`,
+            errors: [{ messageId: 'avoidBarrelFiles' }],
+        },
+        {
+            code: `export { a } from 'a'; export { b } from 'b'; export { c } from 'c';`,
             errors: [{ messageId: 'avoidBarrelFiles' }],
         },
         {
