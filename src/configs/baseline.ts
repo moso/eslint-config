@@ -29,13 +29,27 @@ export const baseline = async (
         ignoresTypeAware,
         overrides,
         overridesTypeAware,
+        parserOptions,
         projectRoot,
         typescript,
     } = options;
 
-    const isTypeAware = typescript && typeof projectRoot === 'string';
+    const isTypeAware = typescript && typeof projectRoot === 'string' && parserOptions?.projectService !== false;
 
     const [baselinePlugin] = await loadPackages(['eslint-plugin-baseline-js']);
+
+    const baselineRule = (typeAware: boolean): TypedFlatConfigItem['rules'] => ({
+        'baseline-js/use-baseline': [
+            'warn',
+            {
+                available: baseline ?? 'widely',
+                ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
+                ignoreNodeTypes,
+                includeJsBuiltins: { preset: typeAware ? 'type-aware' : 'auto' },
+                includeWebApis: { preset: typeAware ? 'type-aware' : 'auto' },
+            },
+        ],
+    });
 
     return [
         {
@@ -45,26 +59,23 @@ export const baseline = async (
             },
         },
         {
-            name: `moso/baseline/${isTypeAware ? 'type-aware-rules' : 'rules'}`,
-            files: isTypeAware ? filesTypeAware : files,
-            ignores: isTypeAware ? ignoresTypeAware ?? [] : [],
+            name: 'moso/baseline/rules',
+            files: isTypeAware ? files : [...files, ...(filesTypeAware ?? [])],
             rules: {
-                'baseline-js/use-baseline': [
-                    'warn',
-                    {
-                        available: baseline ?? 'widely',
-                        ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
-                        ignoreNodeTypes,
-                        includeJsBuiltins: { preset: isTypeAware ? 'type-aware' : 'auto' },
-                        includeWebApis: { preset: isTypeAware ? 'type-aware' : 'auto' },
-                    },
-                ],
-
-                ...(isTypeAware
-                    ? { ...overridesTypeAware }
-                    : { ...overrides }
-                ),
+                ...baselineRule(false),
+                ...overrides,
             },
         },
+        ...(isTypeAware
+            ? [{
+                name: 'moso/baseline/type-aware-rules',
+                files: filesTypeAware,
+                ignores: ignoresTypeAware ?? [],
+                rules: {
+                    ...baselineRule(true),
+                    ...overridesTypeAware,
+                },
+            } satisfies TypedFlatConfigItem]
+            : []),
     ];
 };
