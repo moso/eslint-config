@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import globals from 'globals';
 
-import { GLOB_CJS, GLOB_JS } from '../globs';
+import { GLOB_CJS, GLOB_JS, GLOB_SRC } from '../globs';
 import { loadPackages } from '../tools';
 import { memoize } from '../utils';
 
@@ -68,7 +68,7 @@ export const node = async (
         },
         {
             name: 'moso/node/rules',
-            files,
+            files: files ?? [GLOB_SRC],
             languageOptions: {
                 globals: {
                     ...globals.node,
