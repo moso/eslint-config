@@ -3,7 +3,7 @@ import path from 'node:path';
 import { ESLint } from 'eslint';
 import { it, vi } from 'vitest';
 
-import { astro } from '../src/configs';
+import { astro, baseline } from '../src/configs';
 import { StylisticConfigDefaults } from '../src/configs/stylistic';
 import { moso } from '../src/factory';
 import { full, off } from '../src/presets';
@@ -48,6 +48,7 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
     },
     {
         configs: {
+            jsdoc: true,
             typescript: false,
             vue: true,
         },
@@ -109,7 +110,7 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
         configs: {
             baseline: 'newly',
             ignores: {
-                gitignore: ['.gitignore'] as OptionsIgnores['gitignore'],
+                gitignore: { files: ['.gitignore'], strict: false } as OptionsIgnores['gitignore'],
                 userIgnores: (builtInGlobs) => [...builtInGlobs, 'fn-ignored/**'],
             },
             isInEditor: false,
@@ -168,6 +169,26 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
             },
         },
         name: 'less-opinionated-type-aware',
+    },
+    {
+        configs: {
+            e18e: {
+                moduleReplacements: true,
+            },
+            isInEditor: false,
+            nextjs: {
+                rootDir: 'apps/web',
+            },
+            perfectionist: {
+                overrides: {
+                    'perfectionist/sort-objects': 'off',
+                },
+            },
+            typescript: {
+                unsafe: 'off',
+            },
+        },
+        name: 'overrides-unsafe-rootdir',
     },
 ];
 
@@ -326,6 +347,26 @@ it('disables the project service when `parserOptions.projectService` is false', 
 
     expect(services.length).toBeGreaterThan(0);
     expect(services.every((service) => service === false)).toBe(true);
+});
+
+it('baseline tolerates omitted type-aware globs in both modes', async ({ expect }) => {
+    const untyped = await baseline({
+        files: ['**/*.js'],
+        typescript: true,
+    });
+
+    expect(untyped).toHaveLength(2);
+    expect(untyped[1].files).toEqual(['**/*.js']);
+
+    const typed = await baseline({
+        files: ['**/*.js'],
+        filesTypeAware: ['**/*.ts'],
+        projectRoot: import.meta.dirname,
+        typescript: true,
+    });
+
+    expect(typed).toHaveLength(3);
+    expect(typed[2].ignores).toEqual([]);
 });
 
 it('astro enables the JSX accessibility plugin when `a11y` is set', async ({ expect }) => {
