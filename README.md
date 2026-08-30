@@ -26,7 +26,7 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 
 ## Configs
 
-This section contains a list of the plugins used in the named configs that ships with this shareable config.
+This section contains a list of the plugins used in the named configs that ship with this shareable config.
 
 \- ✅ Enabled by default  
 \- ☑️ Enabled by auto-detect  
@@ -351,7 +351,7 @@ pnpm add -D eslint @moso/eslint-config
 bun add -d eslint @moso/eslint-config
 ```
 
-Create a `eslint.config.*` in the root of your project. You can use `.js` or `.ts`; `.mjs`/`.cjs` also works.
+Create an `eslint.config.*` in the root of your project. You can use `.js` or `.ts`; `.mjs`/`.cjs` also works.
 
 > [!NOTE]
 > If you use `.ts`, you will need to install [`jiti`](https://unjs.io/packages/jiti) as a developer dependency:
@@ -442,7 +442,7 @@ Add the following settings to your `.vscode/settings.json`:
     "source.organizeImports": "never"
   },
 
-    // You can silent specific rules in you IDE, but still auto fix them
+    // You can silence specific rules in your IDE, but still auto fix them
   "eslint.rules.customizations": [
     { "rule": "@stylistic/*", "severity": "off", "fixable": true },
     { "rule": "*-indent", "severity": "off", "fixable": true },
@@ -644,7 +644,7 @@ export default moso({
 });
 ```
 
-This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exists, and tags are formatted and styled consistently.
+This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exist, and tags are formatted and styled consistently.
 
 Individual rules can be tweaked with the `overrides` property:
 
@@ -723,7 +723,7 @@ bun add -d @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-r
 
 ### Vue
 
-Auto-detected if you have Vue, Nuxt, VitePress, or the `@astrojs/vue` Astro framework intefration installed. Enable explicitly:
+Auto-detected if you have Vue, Nuxt, VitePress, or the `@astrojs/vue` Astro framework integration installed. Enable explicitly:
 
 ```ts
 // eslint.config.*
@@ -748,7 +748,7 @@ bun add -d eslint-plugin-vue
 ```
 
 > [!CAUTION]
-> Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need to support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
+> Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
 
 ### Typed Linting
 
@@ -858,14 +858,14 @@ npx simple-git-hooks # npm
 
 pnx simple-git-hooks  # pnpm
 
-bunx simple-git-hooks # npm
+bunx simple-git-hooks # bun
 ```
 
 ## FAQ
 
 ### ESLint v9, older Node.js versions?
 
-ESLint v9 will reach [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that has reached EOL unless absolutely necessary. The same goes with older Node.js versions.
+ESLint v9 reached [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that have reached EOL unless absolutely necessary. The same goes with older Node.js versions.
 
 Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this version has also reached EOL. The rest of their requirements mention `v22.13.0` and `>= 24`. However, the minimum requirements of some of the configs that this sharable config apply rules from have a minimum requirement of `v22.22.3`, this project will stay within this range.
 
