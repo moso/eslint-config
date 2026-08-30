@@ -18,7 +18,7 @@ const ruleNoUnneededArrayFlatMap: createRuleType = createRule({
         fixable: 'code',
         schema: [],
         messages: {
-            noUnneededArrayFlatMap: 'Disallow simple `Array#flatMap()` in array.',
+            noUnneededArrayFlatMap: 'Use `Array#flat()` instead of `Array#flatMap()` with an identity callback.',
         },
     },
     create: (context) => ({
@@ -35,7 +35,7 @@ const ruleNoUnneededArrayFlatMap: createRuleType = createRule({
                 messageId: 'noUnneededArrayFlatMap',
                 fix: (fixer) => [
                     fixer.replaceText(property, 'flat'),
-                    ...node.arguments.map((argument) => fixer.remove(argument)),
+                    fixer.replaceTextRange([node.arguments[0].range[0], node.range[1] - 1], ''),
                 ],
             });
         },
