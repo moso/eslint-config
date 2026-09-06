@@ -1,6 +1,11 @@
 [install]
 minimumReleaseAge = 86400
-minimumReleaseAgeExcludes = ["@types/node", "tsx", "typescript"]
+minimumReleaseAgeExcludes = [
+    "@types/node",
+    "eslint",
+    "tsx",
+    "typescript"
+]
 linker = "hoisted"
 
 [install.security]
