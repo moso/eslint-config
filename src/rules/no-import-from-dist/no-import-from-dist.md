@@ -4,7 +4,7 @@ Prevent importing modules located in the `dist` folder.
 
 ## Rule Details
 
-Imports that reach into a `dist/` directory bypass a package's public entry point and couple your code to build artifacts: compiled output that may be stale locally, differ between builds, or disappear when the package restructures. This rule reports any import or `require` whose specifier is `dist`, starts with `./dist`/`../dist`, or contains a `/dist/` segment.
+Imports that reach into your own `dist/` directory couple your code to build artifacts: compiled output that may be stale locally or differ between builds. This rule reports any import or `require` whose specifier is `dist` or is a relative path containing a `/dist/` segment (such as `./dist` or `../dist/a`). Bare package specifiers like `some-pkg/dist/helpers` are deliberately not reported - for some dependencies a `dist` path is the only published entry.
 
 ## Examples
 
@@ -13,7 +13,7 @@ Imports that reach into a `dist/` directory bypass a package's public entry poin
 ```js
 import a from '../dist/a';
 import b from 'dist';
-import c from 'some-pkg/dist/helpers';
+const c = require('../dist/c');
 ```
 
 ### ✅ Correct
@@ -21,6 +21,7 @@ import c from 'some-pkg/dist/helpers';
 ```js
 import a from '../src/a';
 import b from 'some-pkg';
+import c from 'some-pkg/dist/helpers';
 ```
 
 ## When Not To Use It
@@ -32,7 +33,7 @@ If a dependency genuinely only ships consumable files under `dist/` with no expo
 - Type: Problem
 - [x] :white_check_mark: Recommended
 - [ ] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [ ] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 

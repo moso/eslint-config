@@ -21,6 +21,7 @@ export const jsdoc = async (
         lessOpinionated,
         overrides,
         stylistic,
+        typescript,
     } = options;
 
     const [jsdocPlugin] = await loadPackages(['eslint-plugin-jsdoc']);
@@ -106,8 +107,7 @@ export const jsdoc = async (
                             ],
                         },
                     ],
-                    // 'jsdoc/no-types': typescriptEnabled ? 'off' : 'warn',
-                    'jsdoc/no-types': 'warn',
+                    'jsdoc/no-types': typescript ? 'off' : 'warn',
                     'jsdoc/require-asterisk-prefix': 'warn',
                     'jsdoc/require-description': 'warn',
                     'jsdoc/require-hyphen-before-param-description': 'warn',

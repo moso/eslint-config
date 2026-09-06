@@ -32,5 +32,15 @@ runTest({
             errors: [{ messageId: 'noUnneededArrayFlatMap' }],
             output: '[].flat()',
         },
+        {
+            code: '[].flatMap(function (x) { return x }, thisArg)',
+            errors: [{ messageId: 'noUnneededArrayFlatMap' }],
+            output: '[].flat()',
+        },
+        {
+            code: '[].flatMap((x) => x,)',
+            errors: [{ messageId: 'noUnneededArrayFlatMap' }],
+            output: '[].flat()',
+        },
     ],
 });

@@ -7,7 +7,7 @@ import type { ReportFixFunction, RuleContext } from '@typescript-eslint/utils/ts
 
 import type { createRuleType } from '../utils';
 
-const isTriggering = (node: TSESTree.Node, maximumStatements: number) => {
+const isTriggering = (node: TSESTree.Node, maximumStatements: number): node is TSESTree.IfStatement => {
     if (node.type !== AST_NODE_TYPES.IfStatement || node.alternate !== null) return false;
 
     const { consequent } = node;
@@ -19,10 +19,8 @@ const isTriggering = (node: TSESTree.Node, maximumStatements: number) => {
 
 const makeFixer = (
     context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>,
-    parent: TSESTree.Statement,
+    parent: TSESTree.IfStatement,
 ): ReportFixFunction => (fixer) => {
-    if (parent.type !== AST_NODE_TYPES.IfStatement) return [];
-
     const { test, consequent } = parent;
 
     const bodyText = consequent.type === AST_NODE_TYPES.BlockStatement
@@ -70,13 +68,13 @@ const rulePreferEarlyReturns: createRuleType = createRule({
         BlockStatement: ({ body, parent }: TSESTree.BlockStatement) => {
             if (!isFunctionLike(parent)) return;
 
-            const simplifiable = body.length === 1 && isTriggering(body[0], maximumStatements);
-            if (!simplifiable) return;
+            const statement = body.at(0);
+            if (statement === undefined || body.length !== 1 || !isTriggering(statement, maximumStatements)) return;
 
             context.report({
-                node: body[0],
+                node: statement,
                 messageId: 'preferEarlyReturn',
-                fix: makeFixer(context, body[0]),
+                fix: makeFixer(context, statement),
             });
         },
     }),

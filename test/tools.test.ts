@@ -67,10 +67,23 @@ describe('loadPackages', () => {
         setTTY(true);
         mocks.isPackageExists.mockReturnValue(true);
 
+        const [astroPlugin] = await loadPackages(['eslint-plugin-astro']);
+
+        expect(astroPlugin).toHaveProperty('rules');
+        expect(mocks.isPackageExists).toHaveBeenCalledWith('eslint-plugin-astro', expect.anything());
+        expect(mocks.confirm).not.toHaveBeenCalled();
+        expect(mocks.installPackage).not.toHaveBeenCalled();
+    });
+
+    it('skips the existence check entirely for hard dependencies', async () => {
+        vi.stubEnv('CI', '');
+        setTTY(true);
+        mocks.isPackageExists.mockReturnValue(false);
+
         const [globalsModule] = await loadPackages(['globals']);
 
         expect(globalsModule).toHaveProperty('node');
-        expect(mocks.isPackageExists).toHaveBeenCalledWith('globals');
+        expect(mocks.isPackageExists).not.toHaveBeenCalled();
         expect(mocks.confirm).not.toHaveBeenCalled();
         expect(mocks.installPackage).not.toHaveBeenCalled();
     });
@@ -81,18 +94,18 @@ describe('loadPackages', () => {
         mocks.isPackageExists.mockReturnValue(false);
         mocks.confirm.mockResolvedValue(true);
 
-        const [globalsModule] = await loadPackages(['globals']);
+        const [astroPlugin] = await loadPackages(['eslint-plugin-astro']);
 
         expect(mocks.confirm)
         .toHaveBeenCalledExactlyOnceWith({
-            message: 'globals is required. Do you want to install it?',
+            message: 'eslint-plugin-astro is required. Do you want to install it?',
         });
         expect(mocks.installPackage)
         .toHaveBeenCalledExactlyOnceWith(
-            ['globals'],
+            ['eslint-plugin-astro'],
             { dev: true },
         );
-        expect(globalsModule).toHaveProperty('node');
+        expect(astroPlugin).toHaveProperty('rules');
     });
 
     it('prompts with the plural message for several missing packages', async () => {
@@ -101,15 +114,15 @@ describe('loadPackages', () => {
         mocks.isPackageExists.mockReturnValue(false);
         mocks.confirm.mockResolvedValue(true);
 
-        await loadPackages(['globals', 'local-pkg']);
+        await loadPackages(['eslint-plugin-astro', 'eslint-plugin-vue']);
 
         expect(mocks.confirm)
         .toHaveBeenCalledExactlyOnceWith({
-            message: 'These packages are required: globals, local-pkg.\nDo you want to install them?',
+            message: 'These packages are required: eslint-plugin-astro, eslint-plugin-vue.\nDo you want to install them?',
         });
         expect(mocks.installPackage)
         .toHaveBeenCalledExactlyOnceWith(
-            ['globals', 'local-pkg'],
+            ['eslint-plugin-astro', 'eslint-plugin-vue'],
             { dev: true },
         );
     });
@@ -120,22 +133,22 @@ describe('loadPackages', () => {
         mocks.isPackageExists.mockReturnValue(false);
         mocks.confirm.mockResolvedValue(false);
 
-        await loadPackages(['globals']);
+        await loadPackages(['eslint-plugin-astro']);
 
         expect(mocks.confirm).toHaveBeenCalledOnce();
         expect(mocks.installPackage).not.toHaveBeenCalled();
     });
 
-    it('skips the prompt when the package is missing from cwd but present in scope', async () => {
+    it('skips the prompt when the package is present in scope', async () => {
         vi.stubEnv('CI', '');
         setTTY(true);
         mocks.isPackageExists
         .mockImplementation((_name: string, options?: object) =>
             options !== undefined,);
 
-        const [globalsModule] = await loadPackages(['globals']);
+        const [astroPlugin] = await loadPackages(['eslint-plugin-astro']);
 
-        expect(globalsModule).toHaveProperty('node');
+        expect(astroPlugin).toHaveProperty('rules');
         expect(mocks.confirm).not.toHaveBeenCalled();
         expect(mocks.installPackage).not.toHaveBeenCalled();
     });

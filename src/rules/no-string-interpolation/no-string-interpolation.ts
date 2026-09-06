@@ -11,7 +11,7 @@ const ruleNoStringInterpolation: createRuleType = createRule({
     meta: {
         type: 'suggestion',
         docs: {
-            description: 'Disallow simple string interpolation.',
+            description: 'Disallow multiline expressions in string interpolation.',
             recommended: 'stylistic',
             url: 'https://dimensiondev.github.io/eslint-plugin/src/rules/string/no-interpolation',
         },

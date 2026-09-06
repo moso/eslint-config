@@ -93,6 +93,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -106,6 +107,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -879,8 +881,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": {},
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1149,6 +1152,31 @@
     ],
   },
   {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "config": "tailwind.config.js",
+      },
+    },
+  },
+  {
     "name": "moso/yaml/setup",
     "plugins": [
       "yml",
@@ -1268,7 +1296,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [
@@ -1361,26 +1389,6 @@
     ],
     "name": "moso/disables/typings",
     "rules": [
-      "- functional/functional-parameters",
-      "- functional/immutable-data",
-      "- functional/no-classes",
-      "- functional/no-class-inheritance",
-      "- functional/no-conditional-statements",
-      "- functional/no-expression-statements",
-      "- functional/no-let",
-      "- functional/no-loop-statements",
-      "- functional/no-mixed-types",
-      "- functional/no-promise-reject",
-      "- functional/no-return-void",
-      "- functional/no-this-expressions",
-      "- functional/no-throw-statements",
-      "- functional/no-try-statements",
-      "- functional/prefer-immutable-types",
-      "- functional/prefer-property-signatures",
-      "- functional/prefer-readonly-type",
-      "- functional/prefer-tacit",
-      "- functional/readonly-type",
-      "- functional/type-declaration-immutability",
       "- jsdoc/check-examples",
       "- jsdoc/check-indentation",
       "- jsdoc/check-line-alignment",

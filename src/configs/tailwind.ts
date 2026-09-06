@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { loadPackages } from '../tools';
 import { memoize } from '../utils';
 
@@ -27,9 +26,7 @@ export const tailwind = async (
             settings: {
                 'better-tailwindcss': version === 4
                     ? { entryPoint }
-                    : version === 3
-                        ? { config }
-                        : undefined,
+                    : { config },
             },
             plugins: {
                 'tailwind-better': memoize(tailwindPlugin, 'eslint-plugin-better-tailwindcss'),
@@ -48,6 +45,7 @@ export const tailwind = async (
                             indent: stylistic.indent,
                             lineBreakStyle: 'unix',
                             preferSingleLine: false,
+                            printWidth: 0,
                         },
                     ],
                     'tailwind-better/enforce-consistent-class-order': [

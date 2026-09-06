@@ -53,8 +53,6 @@
       "**/.claude",
       "**/.context",
       "**/.*/skills",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
     ],
     "name": "moso/ignores/globals",
   },
@@ -956,6 +954,7 @@
       "e18e/prefer-object-has-own",
       "e18e/prefer-spread-syntax",
       "e18e/prefer-url-canparse",
+      "e18e/ban-dependencies",
       "e18e/prefer-array-from-map",
       "e18e/prefer-timer-args",
       "e18e/prefer-date-now",
@@ -1059,6 +1058,58 @@
     ],
   },
   {
+    "name": "moso/nextjs/setup",
+    "plugins": [
+      "@next/next",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "languageOptions": {
+      "parserOptions": {
+        "ecmaFeatures": {
+          "jsx": true,
+        },
+      },
+      "sourceType": "module",
+    },
+    "name": "moso/nextjs/rules",
+    "rules": [
+      "@next/next/google-font-display",
+      "@next/next/google-font-preconnect",
+      "@next/next/next-script-for-ga",
+      "@next/next/no-async-client-component",
+      "@next/next/no-before-interactive-script-outside-document",
+      "@next/next/no-css-tags",
+      "@next/next/no-head-element",
+      "@next/next/no-html-link-for-pages",
+      "@next/next/no-img-element",
+      "@next/next/no-location-assign-relative-destination",
+      "@next/next/no-page-custom-font",
+      "@next/next/no-styled-jsx-in-document",
+      "@next/next/no-sync-scripts",
+      "@next/next/no-title-in-document-head",
+      "@next/next/no-typos",
+      "@next/next/no-unwanted-polyfillio",
+      "@next/next/inline-script-id",
+      "@next/next/no-assign-module-variable",
+      "@next/next/no-document-import-in-page",
+      "@next/next/no-duplicate-head",
+      "@next/next/no-head-import-in-document",
+      "@next/next/no-script-component-in-head",
+    ],
+    "settings": {
+      "next": {
+        "rootDir": "apps/web",
+      },
+      "react": {
+        "version": "detect",
+      },
+    },
+  },
+  {
     "name": "moso/perfectionist",
     "plugins": [
       "perfectionist",
@@ -1081,7 +1132,7 @@
       "perfectionist/sort-named-exports",
       "perfectionist/sort-named-imports",
       "perfectionist/sort-object-types",
-      "perfectionist/sort-objects",
+      "- perfectionist/sort-objects",
       "perfectionist/sort-sets",
       "perfectionist/sort-switch-case",
       "perfectionist/sort-union-types",
@@ -1247,7 +1298,7 @@
       "@typescript-eslint/no-array-constructor",
       "@typescript-eslint/no-duplicate-enum-values",
       "@typescript-eslint/no-empty-object-type",
-      "@typescript-eslint/no-explicit-any",
+      "- @typescript-eslint/no-explicit-any",
       "@typescript-eslint/no-extra-non-null-assertion",
       "@typescript-eslint/no-misused-new",
       "@typescript-eslint/no-namespace",

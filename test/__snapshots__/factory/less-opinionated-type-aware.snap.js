@@ -93,6 +93,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -106,6 +107,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -877,6 +879,17 @@
   },
   {
     "files": [
+      "**/*.?([cm])js",
+      "**/*.?([cm])jsx",
+      "**/*.astro",
+    ],
+    "name": "moso/baseline/rules",
+    "rules": [
+      "baseline-js/use-baseline",
+    ],
+  },
+  {
+    "files": [
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -923,19 +936,13 @@
       "astro/no-exports-from-components",
       "astro/no-prerender-export-outside-pages",
       "astro/no-unused-define-vars-in-style",
-      "astro/no-set-html-directive",
-      "astro/no-set-text-directive",
-      "astro/no-unsafe-inline-scripts",
-      "astro/prefer-class-list-directive",
-      "astro/prefer-object-class-list",
-      "astro/prefer-split-class-list",
-      "- astro/sort-attributes",
       "- @stylistic/indent",
       "- @stylistic/jsx-closing-tag-location",
       "- @stylistic/jsx-one-expression-per-line",
       "- @stylistic/no-multiple-empty-lines",
       "astro/semi",
       "astro/jsx-a11y/alt-text",
+      "- astro/jsx-a11y/anchor-ambiguous-text",
       "astro/jsx-a11y/anchor-has-content",
       "astro/jsx-a11y/anchor-is-valid",
       "astro/jsx-a11y/aria-activedescendant-has-tabindex",
@@ -951,8 +958,8 @@
       "astro/jsx-a11y/iframe-has-title",
       "astro/jsx-a11y/img-redundant-alt",
       "astro/jsx-a11y/interactive-supports-focus",
-      "- astro/jsx-a11y/label-has-for",
       "astro/jsx-a11y/label-has-associated-control",
+      "- astro/jsx-a11y/label-has-for",
       "astro/jsx-a11y/media-has-caption",
       "astro/jsx-a11y/mouse-events-have-key-events",
       "astro/jsx-a11y/no-access-key",
@@ -1164,7 +1171,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1177,7 +1183,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1503,7 +1508,6 @@
       "@typescript-eslint/restrict-plus-operands",
       "@typescript-eslint/restrict-template-expressions",
       "@typescript-eslint/unbound-method",
-      "- only-throw-error",
       "- prefer-destructuring",
       "@typescript-eslint/consistent-return",
       "@typescript-eslint/consistent-type-exports",
@@ -1566,6 +1570,31 @@
       "- @typescript-eslint/ban-ts-comment",
       "- @typescript-eslint/no-require-imports",
     ],
+  },
+  {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "config": "tailwind.config.js",
+      },
+    },
   },
   {
     "name": "moso/yaml/setup",
@@ -1687,7 +1716,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [
@@ -1780,26 +1809,6 @@
     ],
     "name": "moso/disables/typings",
     "rules": [
-      "- functional/functional-parameters",
-      "- functional/immutable-data",
-      "- functional/no-classes",
-      "- functional/no-class-inheritance",
-      "- functional/no-conditional-statements",
-      "- functional/no-expression-statements",
-      "- functional/no-let",
-      "- functional/no-loop-statements",
-      "- functional/no-mixed-types",
-      "- functional/no-promise-reject",
-      "- functional/no-return-void",
-      "- functional/no-this-expressions",
-      "- functional/no-throw-statements",
-      "- functional/no-try-statements",
-      "- functional/prefer-immutable-types",
-      "- functional/prefer-property-signatures",
-      "- functional/prefer-readonly-type",
-      "- functional/prefer-tacit",
-      "- functional/readonly-type",
-      "- functional/type-declaration-immutability",
       "- jsdoc/check-examples",
       "- jsdoc/check-indentation",
       "- jsdoc/check-line-alignment",

@@ -49,8 +49,8 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                     if (declarationTypes.has(statement.type))
                         return { declarationCount: declarationCount + 1, exportCount };
 
-                    if (statement.type === AST_NODE_TYPES.ExportNamedDeclaration)
-                        return { declarationCount, exportCount: exportCount + statement.specifiers.length };
+                    if (statement.type === AST_NODE_TYPES.ExportNamedDeclaration && statement.exportKind !== 'type')
+                        return { declarationCount, exportCount: exportCount + statement.specifiers.filter((specifier) => specifier.exportKind !== 'type').length };
 
                     if (statement.type === AST_NODE_TYPES.ExportAllDeclaration && statement.exportKind !== 'type')
                         return { declarationCount, exportCount: exportCount + 1 };
@@ -73,7 +73,7 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                 { declarationCount: 0, exportCount: 0 },
             );
 
-            if (exportCount > declarationCount && exportCount > amountOfExportsToConsiderModuleAsBarrel) {
+            if (exportCount > declarationCount && exportCount >= amountOfExportsToConsiderModuleAsBarrel) {
                 context.report({
                     node,
                     messageId: 'avoidBarrelFiles',

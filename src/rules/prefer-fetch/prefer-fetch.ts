@@ -47,7 +47,7 @@ const rulePreferFetch: createRuleType = createRule({
     name: 'prefer-fetch',
     meta: {
         docs: {
-            description: 'Enforce fetch',
+            description: 'Enforce `fetch()` over legacy HTTP request APIs and libraries.',
             recommended: 'stylistic',
             url: 'https://dimensiondev.github.io/eslint-plugin/src/rules/prefer-fetch',
         },

@@ -67,7 +67,7 @@ export const typescript = async (
         ? await loadPackages(['eslint-plugin-erasable-syntax-only'])
         : [undefined];
 
-    const isTypeAware = typeof projectRoot === 'string';
+    const isTypeAware = typeof projectRoot === 'string' && parserOptions.projectService !== false;
 
     const stylisticEnabled = stylistic !== false;
 
@@ -80,7 +80,7 @@ export const typescript = async (
                 parserOptions: {
                     ecmaFeatures: { jsx: true },
                     ecmaVersion: 'latest',
-                    extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
+                    extraFileExtensions: componentExts.map((ext) => `.${ext}`),
                     jsxPragma: undefined,
                     sourceType: 'module',
                     warnOnUnsupportedTypeScriptVersion: true,
@@ -397,7 +397,7 @@ export const typescript = async (
                     parserOptions: {
                         ecmaFeatures: { jsx: true },
                         ecmaVersion: 'latest',
-                        extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
+                        extraFileExtensions: componentExts.map((ext) => `.${ext}`),
                         jsxPragma: undefined,
                         projectService: true,
                         sourceType: 'module',
@@ -413,7 +413,7 @@ export const typescript = async (
 
                     // JS off
                     'no-implied-eval': 'off',
-                    'only-throw-error': 'off',
+                    'no-throw-literal': 'off',
                     'prefer-destructuring': 'off',
                     'prefer-promise-reject-errors': 'off',
                     'require-await': 'off',

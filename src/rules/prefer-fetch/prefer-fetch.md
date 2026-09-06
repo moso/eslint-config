@@ -1,6 +1,6 @@
 # `@moso/prefer-fetch`
 
-Enforce fetch.
+Enforce `fetch()` over legacy HTTP request APIs and libraries.
 
 ## Rule Details
 

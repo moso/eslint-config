@@ -24,6 +24,11 @@ runTest({
             output: '"\\u{E0100}example\\u{E0100}"',
         },
         {
+            code: 'class A { #fo\u{200D}o = 1; }',
+            errors: [{ messageId: 'noInvisibleCharacter' }],
+            output: null,
+        },
+        {
             code: '"a\u{200B}b"',
             errors: [{ messageId: 'noInvisibleCharacter' }],
             output: '"a\\u200Bb"',

@@ -10,6 +10,7 @@ runTest({
         'function example() { return \'bar\' }',
         'function example() { return foo }',
         'function example() { let foo; return foo }',
+        'function makeTick() { const tick = () => { schedule(tick); }; return tick }',
     ],
     invalid: [
         {
@@ -26,6 +27,11 @@ runTest({
             code: 'async function example() { try { const foo = await bar; return foo } catch {} }',
             errors: [{ messageId: 'noRedundantVar' }],
             output: 'async function example() { try {  return await bar } catch {} }',
+        },
+        {
+            code: 'async function example() { try { const foo: string = await bar; return foo } catch {} }',
+            errors: [{ messageId: 'noRedundantVar' }],
+            output: 'async function example() { try {  return (await bar) as string } catch {} }',
         },
         {
             code: 'const example = () => { const foo: string = \'bar\'; return foo }',

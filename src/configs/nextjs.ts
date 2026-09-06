@@ -6,7 +6,12 @@ import { memoize } from '../utils';
 import type { OptionsFiles, OptionsNextJS, TypedFlatConfigItem } from '../types';
 
 export const nextjs = async (options: Readonly<OptionsNextJS & Required<OptionsFiles>>): Promise<TypedFlatConfigItem[]> => {
-    const { files, mode, overrides } = options;
+    const {
+        files,
+        mode,
+        overrides,
+        rootDir,
+    } = options;
 
     const [nextjsPlugin] = await loadPackages(['@next/eslint-plugin-next']);
 
@@ -28,6 +33,7 @@ export const nextjs = async (options: Readonly<OptionsNextJS & Required<OptionsF
             },
             settings: {
                 react: { version: 'detect' },
+                ...(rootDir !== undefined && { next: { rootDir } }),
             },
             rules: {
                 ...(assert.ok(!Array.isArray(nextjsPlugin.configs.recommended)),

@@ -94,6 +94,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -107,6 +108,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -341,7 +343,9 @@
     ],
   },
   {
-    "files": undefined,
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
     "languageOptions": {},
     "name": "moso/node/rules",
     "rules": [
@@ -936,8 +940,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": {},
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1453,6 +1458,31 @@
     ],
   },
   {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "config": "tailwind.config.js",
+      },
+    },
+  },
+  {
     "name": "moso/yaml/setup",
     "plugins": [
       "yml",
@@ -1572,7 +1602,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

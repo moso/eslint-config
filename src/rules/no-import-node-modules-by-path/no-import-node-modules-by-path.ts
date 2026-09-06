@@ -30,8 +30,8 @@ const ruleNoImportNodeModulesByPath: createRuleType = createRule({
             }
         },
         'CallExpression[callee.name="require"]': (node: TSESTree.CallExpression) => {
-            const firstArg = node.arguments[0];
-            if (firstArg.type === AST_NODE_TYPES.Literal &&
+            const firstArg = node.arguments.at(0);
+            if (firstArg?.type === AST_NODE_TYPES.Literal &&
                 typeof firstArg.value === 'string' &&
                 firstArg.value.includes('/node_modules/')) {
                 context.report({

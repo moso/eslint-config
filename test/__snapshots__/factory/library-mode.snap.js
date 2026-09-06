@@ -94,6 +94,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -107,6 +108,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -388,7 +390,8 @@
   },
   {
     "files": [
-      "**/*.?([cm])[jt]s?(x)",
+      "**/*.cjs",
+      "**/*.?([cm])js",
     ],
     "name": "moso/node/strict",
     "rules": [
@@ -938,8 +941,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": {},
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1564,7 +1568,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

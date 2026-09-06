@@ -13,33 +13,44 @@ import type { ReportFixFunction, SourceCode } from '@typescript-eslint/utils/ts-
 
 import type { createRuleType } from '../utils';
 
+type RedundantDeclaration = TSESTree.VariableDeclaration & {
+    declarations: [TSESTree.VariableDeclarator & { init: TSESTree.Expression }];
+};
+
 const isRedundantVariable = (
     node: TSESTree.Node | undefined,
     exit: TSESTree.ReturnStatement,
-): node is TSESTree.VariableDeclaration => {
+): node is RedundantDeclaration => {
     if (!node) return false;
 
     return (
         node.type === AST_NODE_TYPES.VariableDeclaration &&
         node.declarations.length === 1 &&
-        node.declarations.some(({ init, id }) => init !== null && isSameIdentifier(exit.argument, id))
+        node.declarations[0].init !== null &&
+        isSameIdentifier(exit.argument, node.declarations[0].id)
     );
+};
+
+const isSelfReferencing = (source: Readonly<SourceCode>, variable: RedundantDeclaration): boolean => {
+    const { init } = variable.declarations[0];
+
+    return source.getDeclaredVariables(variable).some(({ references }) =>
+        references.some(({ identifier }) => identifier.range[0] >= init.range[0] && identifier.range[1] <= init.range[1]));
 };
 
 const isRedundantVariableFixer = (
     source: Readonly<SourceCode>,
-    variable: TSESTree.VariableDeclaration,
-    exit: TSESTree.ReturnStatement,
+    variable: RedundantDeclaration,
+    exit: TSESTree.ReturnStatement & { argument: TSESTree.Identifier },
 ): ReportFixFunction => (fixer) => {
     const { init, id } = variable.declarations[0];
-    if (!init || !exit.argument) return null;
 
     const replaced = getReturnExpression(init);
     const modified = wrap(source.getText(replaced), (input) => {
         if (!id.typeAnnotation) return input;
 
         const annotation = source.getText(id.typeAnnotation.typeAnnotation);
-        return `(${input}) as ${init.type === AST_NODE_TYPES.AwaitExpression ? `Promise<${annotation}>` : annotation}`;
+        return `(${input}) as ${replaced === init ? annotation : `Promise<${annotation}>`}`;
     });
 
     return [fixer.remove(variable), fixer.replaceText(exit.argument, modified)];
@@ -61,7 +72,7 @@ const ruleNoRedundantVariables: createRuleType = createRule({
         fixable: 'code',
         schema: [],
         messages: {
-            noRedundantVar: 'Disallow redundant variables.',
+            noRedundantVar: 'Return the value directly instead of assigning it to a redundant variable.',
         },
     },
     create: (context) => ({
@@ -74,7 +85,7 @@ const ruleNoRedundantVariables: createRuleType = createRule({
                     continue;
                 }
 
-                if (isRedundantVariable(mut_previous, statement)) {
+                if (isRedundantVariable(mut_previous, statement) && !isSelfReferencing(context.sourceCode, mut_previous)) {
                     context.report({
                         node: statement,
                         messageId: 'noRedundantVar',

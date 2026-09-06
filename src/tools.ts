@@ -2,6 +2,7 @@ import process from 'node:process';
 
 import { isPackageExists } from 'local-pkg';
 
+import packageJson from '../package.json' with { type: 'json' };
 import { interopDefault } from './utils';
 
 import type { ESLint, Linter } from 'eslint';
@@ -18,13 +19,13 @@ type LoadedPackages<Ids extends ReadonlyArray<string>> = { -readonly [K in keyof
 /**
  * `package name`: `module type`, unwrapped through `Interop` by `Loaded`.
  *
- * Only packages whose typed surface is actually used (parsers, or plugins
- * whose `.configs[...].rules` are read) need an entry; anything unlisted
- * falls back to `ESLint.Plugin`.
+ * Only packages whose typed surface is actually used
+ * (parsers, or plugins whose `.configs[...].rules` are read) need an entry;
+ * anything unlisted falls back to `ESLint.Plugin`.
  *
- * This module is deliberately not re-exported from the package entry, so
- * these `typeof import(...)` references to optional peer dependencies never
- * reach consumers' declaration graphs.
+ * This module is deliberately not re-exported from the package entry,
+ * so the `typeof import(...)` references to optional peer dependencies
+ * never reach consumers' declaration graphs.
  */
 type PackageTypes = {
     '@e18e/eslint-plugin': typeof import('@e18e/eslint-plugin');
@@ -33,12 +34,10 @@ type PackageTypes = {
     '@next/eslint-plugin-next': typeof import('@next/eslint-plugin-next');
     '@stylistic/eslint-plugin': typeof import('@stylistic/eslint-plugin');
     '@typescript-eslint/parser': Linter.Parser;
-    '@vitest/eslint-plugin': typeof import('@vitest/eslint-plugin');
     'astro-eslint-parser': Linter.Parser;
     'eslint-config-flat-gitignore': typeof import('eslint-config-flat-gitignore');
     'eslint-merge-processors': typeof import('eslint-merge-processors');
     'eslint-plugin-astro': typeof import('eslint-plugin-astro');
-    'eslint-plugin-better-tailwindcss': typeof import('eslint-plugin-better-tailwindcss');
     'eslint-plugin-functional': typeof import('eslint-plugin-functional');
     'eslint-plugin-jsx-a11y': typeof import('eslint-plugin-jsx-a11y');
     'eslint-plugin-n': typeof import('eslint-plugin-n');
@@ -68,6 +67,11 @@ type VuePlugin = ESLint.Plugin & Omit<VueModule, 'processors'> & {
 const scopeURL = import.meta.dirname;
 
 /**
+ * The optional peer dependencies in a self-maintained list.
+ */
+const optionalPeers: ReadonlySet<string> = new Set(Object.keys(packageJson.peerDependenciesMeta));
+
+/**
  * Whether `name` resolves from this package's own directory (not the user's cwd).
  */
 const isPackageInScope = (name: string): boolean => isPackageExists(name, { paths: [scopeURL] });
@@ -82,14 +86,12 @@ const isInteractive = (): boolean => {
 
 /**
  * Offer to install missing packages through an interactive prompt.
- * Only called from `loadPackages` after it has verified the session is interactive.
+ * Only called from `loadPackages` after it has verified the session is interactive,
+ * and the packages are genuinely missing.
  *
- * @param packages - Package names to check and offer for installation.
+ * @param missingPackages - Package names to offer for installation.
  */
-const ensurePackages = async (packages: ReadonlyArray<string>): Promise<void> => {
-    const missingPackages = packages.filter((x) => !isPackageInScope(x));
-    if (missingPackages.length === 0) return;
-
+const ensurePackages = async (missingPackages: ReadonlyArray<string>): Promise<void> => {
     const prompt = await import('@clack/prompts');
     const result = await prompt.confirm({
         message: missingPackages.length === 1
@@ -99,7 +101,7 @@ const ensurePackages = async (packages: ReadonlyArray<string>): Promise<void> =>
 
     if (result === true) {
         const { installPackage } = await import('@antfu/install-pkg');
-        await installPackage(missingPackages, { dev: true });
+        await installPackage([...missingPackages], { dev: true });
     }
 };
 
@@ -118,7 +120,7 @@ export const loadPackages = async <const Ids extends ReadonlyArray<string>>(
     packageIds: Ids,
 ): Promise<LoadedPackages<Ids>> => {
     if (isInteractive()) {
-        const missing = packageIds.filter((id) => !isPackageExists(id));
+        const missing = packageIds.filter((id) => optionalPeers.has(id) && !isPackageInScope(id));
         if (missing.length > 0) await ensurePackages(missing);
     }
 

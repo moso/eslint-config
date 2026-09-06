@@ -93,6 +93,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -106,6 +107,7 @@
   {
     "name": "moso/imports",
     "plugins": [
+      "@moso",
       "import-lite",
     ],
     "rules": [
@@ -916,8 +918,9 @@
     "files": [
       "**/*.?([cm])js",
       "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
     ],
-    "ignores": {},
     "name": "moso/baseline/rules",
     "rules": [
       "baseline-js/use-baseline",
@@ -1017,6 +1020,63 @@
       "- functional/readonly-type",
       "- functional/type-declaration-immutability",
       "functional/no-let",
+    ],
+  },
+  {
+    "name": "moso/jsdoc/setup",
+    "plugins": [
+      "jsdoc",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/jsdoc/rules",
+    "rules": [
+      "jsdoc/check-access",
+      "jsdoc/check-alignment",
+      "jsdoc/check-param-names",
+      "jsdoc/check-property-names",
+      "jsdoc/check-tag-names",
+      "jsdoc/check-types",
+      "jsdoc/check-values",
+      "jsdoc/empty-tags",
+      "jsdoc/implements-on-classes",
+      "jsdoc/multiline-blocks",
+      "jsdoc/no-defaults",
+      "jsdoc/no-multi-asterisks",
+      "jsdoc/no-undefined-types",
+      "jsdoc/reject-any-type",
+      "jsdoc/reject-function-type",
+      "jsdoc/require-jsdoc",
+      "jsdoc/require-next-type",
+      "jsdoc/require-param",
+      "jsdoc/require-param-description",
+      "jsdoc/require-param-name",
+      "jsdoc/require-property",
+      "jsdoc/require-property-description",
+      "jsdoc/require-property-name",
+      "jsdoc/require-returns",
+      "jsdoc/require-returns-check",
+      "jsdoc/require-returns-description",
+      "jsdoc/require-throws-type",
+      "jsdoc/require-yields",
+      "jsdoc/require-yields-check",
+      "jsdoc/require-yields-type",
+      "jsdoc/tag-lines",
+      "jsdoc/valid-types",
+      "jsdoc/check-indentation",
+      "jsdoc/check-line-alignment",
+      "jsdoc/no-bad-blocks",
+      "jsdoc/no-types",
+      "jsdoc/require-asterisk-prefix",
+      "jsdoc/require-description",
+      "jsdoc/require-hyphen-before-param-description",
+      "jsdoc/require-throws",
+      "jsdoc/require-throws-description",
+      "jsdoc/require-yields-description",
+      "- jsdoc/sort-tags",
     ],
   },
   {
@@ -1360,6 +1420,31 @@
     ],
   },
   {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "config": "tailwind.config.js",
+      },
+    },
+  },
+  {
     "name": "moso/yaml/setup",
     "plugins": [
       "yml",
@@ -1479,7 +1564,7 @@
   },
   {
     "files": [
-      "**/ISSUES_TEMPLATE/**",
+      "**/ISSUE_TEMPLATE/**",
     ],
     "name": "moso/disables/github",
     "rules": [

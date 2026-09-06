@@ -32,7 +32,7 @@ Only if your codebase legitimately embeds raw bidi control characters - for exam
 - Type: Problem
 - [x] :white_check_mark: Recommended
 - [x] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [ ] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 

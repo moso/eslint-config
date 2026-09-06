@@ -12,6 +12,7 @@ const valids = [
     'arr["map"](() => {})',
     'const fn = arr.map;',
     'class Example { #map() {} run() { return this.#map() } }',
+    'foo(arr.map).filter((x) => x)',
 ];
 
 runTest({
@@ -24,6 +25,10 @@ runTest({
         },
         {
             code: '[].filter(() => {}).map(() => {}, 0)',
+            errors: [{ messageId: 'preferReduceOverChaining' }],
+        },
+        {
+            code: '[].flatMap(() => []).filter(() => true)',
             errors: [{ messageId: 'preferReduceOverChaining' }],
         },
         {

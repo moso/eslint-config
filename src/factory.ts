@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import { FlatConfigComposer } from 'eslint-flat-config-utils';
 import { getPackageInfo, isPackageExists } from 'local-pkg';
 import {
@@ -43,11 +41,8 @@ import {
     GLOB_JSONC,
     GLOB_JSX,
     GLOB_MARKDOWN,
-    GLOB_ROOT_DTS,
     GLOB_ROOT_JS,
     GLOB_ROOT_JSX,
-    GLOB_ROOT_TS,
-    GLOB_ROOT_TSX,
     GLOB_SRC,
     GLOB_TESTS,
     GLOB_TOML,
@@ -109,54 +104,63 @@ const VuePackages = [
 /**
  * Construct an array of ESLint flat config items.
  *
- * @param {OptionsConfig & TypedFlatConfigItem} options - Options for generating the ESLint configurations.
+ * @param {OptionsConfig & TypedFlatConfigItem} [options={}] - Options for generating the ESLint configurations.
  * @param {Awaitable<TypedFlatConfigItem | TypedFlatConfigItem[]>[]} userConfigs - User configurations to be merged with the generated configurations
  * @returns {Promise<TypedFlatConfigItem[]>} - The merged ESLint configurations
  */
 export async function moso(
-    options: Omit<TypedFlatConfigItem, 'files'> & OptionsConfig,
+    options: Omit<TypedFlatConfigItem, 'files' | 'ignores'> & OptionsConfig = {},
     ...userConfigs: ReadonlyArray<Awaitable<Linter.Config[] | TypedFlatConfigItem | TypedFlatConfigItem[]>>
 ): Promise<Linter.Config[]> {
     const {
-        componentExts = [],
+        componentExts: componentExtsOption = [],
         isInEditor = isInEditorEnv(),
         jsdoc: jsdocOptions = false,
         jsonc: jsoncOptions = false,
         jsx: jsxOptions = true,
     } = options;
 
-    const typescriptRequested = options.typescript ?? isPackageExists('typescript');
-    const typescriptPackage = typescriptRequested === false ? undefined : await getPackageInfo('typescript');
-    const typescriptVersion = typescriptPackage?.version;
+    if ('files' in options)
+        throw new Error('[@moso/eslint-config] The first argument should not contain the "files" property as the options are supposed to be global. Place it in the second or later config instead.');
+
+    const mut_packageExistsCache = new Map<string, boolean>();
+    const packageExists = (name: string): boolean => {
+        const cached = mut_packageExistsCache.get(name);
+        if (cached !== undefined) return cached;
+
+        const found = isPackageExists(name);
+        mut_packageExistsCache.set(name, found);
+        return found;
+    };
+
+    // eslint-disable-next-line functional/prefer-tacit -- the tacit form trips unicorn/no-array-callback-reference and keeps `.some`'s index/array arguments away from the unary cache
+    const anyPackageExists = (names: ReadonlyArray<string>): boolean => names.some((x) => packageExists(x));
 
     // TypeScript 7.0 does not ship with a programmatic API.
     // 7.1 will supposedly ship a new, different one, so @typescript-eslint currently cannot run against it.
     // Microsoft's supported setup is aliasing the `typescript` specifier to the 6.x compatibility package.
     // With the alias in place the resolved version reads 6.x and this gate passes
+    const typescriptRequested = options.typescript ?? packageExists('typescript');
+    const typescriptPackage = typescriptRequested === false ? undefined : await getPackageInfo('typescript');
+    const typescriptVersion = typescriptPackage?.version;
+
     const typescriptUnsupported = typescriptVersion !== undefined && Number(typescriptVersion.split('.')[0]) >= 7;
 
     if (typescriptUnsupported) {
-        const message = `[@moso/eslint-config] TypeScript ${typescriptVersion} was detected, but TypeScript 7 does not ship a programmatic API, so @typescript-eslint (and therefore all TypeScript linting) cannot run against it.\n\n
-            Install the TypeScript 6 compatibility package side-by-side via an npm alias:\n\n
-                npm install -D typescript@npm:@typescript/typescript6\n\n
-            Optionally keep TypeScript 7's own tsc available as "@typescript/native": "npm:typescript@^7.0.2".\n
-            See https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0`;
+        const message = `[@moso/eslint-config] TypeScript ${typescriptVersion} was detected, but TypeScript 7 does not ship a programmatic API, so @typescript-eslint (and therefore all TypeScript linting) cannot run against it.\n\nInstall the TypeScript 6 compatibility package side-by-side via an npm alias:\n\n    npm install -D typescript@npm:@typescript/typescript6\n\nOptionally keep TypeScript 7's own tsc available as "@typescript/native": "npm:typescript@^7.0.2".\nSee https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0`;
         if (options.typescript !== undefined) throw new Error(message);
         console.warn(message);
     }
 
     const typescriptOptions = typescriptUnsupported ? false : typescriptRequested;
 
-    const astroOptions = options.astro ?? AstroPackages.some((x) => isPackageExists(x));
-    const nextjsOptions = options.nextjs ?? NextJSPackages.some((x) => isPackageExists(x));
-    const reactOptions = options.react ?? ReactPackages.some((x) => isPackageExists(x));
-    const tailwindOptions = options.tailwind ?? isPackageExists('tailwindcss');
-    const vueOptions = options.vue ?? VuePackages.some((x) => isPackageExists(x));
+    const astroOptions = options.astro ?? anyPackageExists(AstroPackages);
+    const nextjsOptions = options.nextjs ?? anyPackageExists(NextJSPackages);
+    const reactOptions = options.react ?? anyPackageExists(ReactPackages);
+    const tailwindOptions = options.tailwind ?? packageExists('tailwindcss');
+    const vueOptions = options.vue ?? anyPackageExists(VuePackages);
 
-    if (vueOptions !== false) componentExts.push('vue');
-
-    if ('files' in options)
-        throw new Error('[@moso/eslint-config] The first argument should not contain the "files" property as the options are supposed to be global. Place it in the second or later config instead.');
+    const componentExts = vueOptions === false ? [...componentExtsOption] : [...new Set([...componentExtsOption, 'vue'])];
 
     const baselineOptions = options.baseline === false
         ? false
@@ -179,7 +183,7 @@ export async function moso(
     const functionalEnforcement = typeof options.functional === 'string'
         ? options.functional
         : typeof options.functional === 'object'
-            ? (options.functional.functionalEnforcement ?? 'recommended')
+            ? (options.functional.functionalEnforcement ?? 'lite')
             : options.functional
                 ? 'recommended'
                 : (options.functional === false || options.lessOpinionated === true)
@@ -213,6 +217,7 @@ export async function moso(
         ignoresTypeAware,
         parserOptions,
         projectRoot: typescriptProjectRoot,
+        unsafe: typescriptUnsafe,
         useDefaultDefaultProject,
         ...typescriptSubOptions
     } = resolveSubOptions(options, 'typescript') as
@@ -238,9 +243,6 @@ export async function moso(
 
     const defaultFilesTypesAware = [GLOB_DTS, GLOB_TS, GLOB_TSX];
 
-    const withRoot = (glob: string): string =>
-        (projectRootOptions === undefined ? glob : path.join(projectRootOptions, glob));
-
     const typescriptConfigOptions: Required<OptionsTypeScriptParserOptions> = {
         ...typescriptSubOptions,
         filesTypeAware: filesTypeAware ?? defaultFilesTypesAware,
@@ -255,11 +257,8 @@ export async function moso(
                         ? projectServiceUserConfig
                         : {
                             allowDefaultProject: [
-                                withRoot(GLOB_ROOT_DTS),
-                                withRoot(GLOB_ROOT_JS),
-                                withRoot(GLOB_ROOT_JSX),
-                                withRoot(GLOB_ROOT_TS),
-                                withRoot(GLOB_ROOT_TSX),
+                                GLOB_ROOT_JS,
+                                GLOB_ROOT_JSX,
                             ],
                             ...projectServiceUserConfig,
                         },
@@ -272,21 +271,38 @@ export async function moso(
         ...resolveSubOptions(options, 'functional'),
     };
 
-    const mut_configs: Array<Awaitable<TypedFlatConfigItem[]>> = [
-        comments({
-            overrides: getOverrides(options, 'comments'),
-        }),
-        ignores({
-            ...ignoreOptions,
-            ...resolveSubOptions(options, 'ignores'),
-        }),
-        imports({
-            ...typescriptConfigOptions,
-            files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
-            overrides: getOverrides(options, 'imports'),
-            stylistic: stylisticOptions,
-            typescript: hasTypeScript,
-        }),
+    const mut_configs: Array<Awaitable<TypedFlatConfigItem[]>> = [];
+
+    if (options.comments !== false) {
+        mut_configs.push(
+            comments({
+                overrides: getOverrides(options, 'comments'),
+            }),
+        );
+    }
+
+    if (options.ignores !== false) {
+        mut_configs.push(
+            ignores({
+                ...ignoreOptions,
+                ...resolveSubOptions(options, 'ignores'),
+            }),
+        );
+    }
+
+    if (options.imports !== false) {
+        mut_configs.push(
+            imports({
+                ...typescriptConfigOptions,
+                files: [GLOB_DTS, GLOB_TS, GLOB_TSX],
+                overrides: getOverrides(options, 'imports'),
+                stylistic: stylisticOptions,
+                typescript: hasTypeScript,
+            }),
+        );
+    }
+
+    mut_configs.push(
         javascript({
             ...functionalConfigOptions,
             isInEditor,
@@ -294,30 +310,49 @@ export async function moso(
             perfectionist: perfectionistOptions,
             overrides: getOverrides(options, 'javascript'),
         }),
-        node({
-            files: [GLOB_SRC],
-            hasReact: Boolean(reactOptions),
-            lessOpinionated: options.lessOpinionated,
-            overrides: getOverrides(options, 'node'),
-            typescript: hasTypeScript,
-            ...resolveSubOptions(options, 'node'),
-        }),
-        promise({
-            lessOpinionated: options.lessOpinionated,
-            overrides: getOverrides(options, 'promise'),
-            typescript: hasTypeScript,
-        }),
-        regexp({
-            overrides: getOverrides(options, 'regexp'),
-        }),
-        unicorn({
-            files: [GLOB_SRC],
-            lessOpinionated: options.lessOpinionated,
-            overrides: getOverrides(options, 'unicorn'),
-        }),
-    ];
+    );
 
-    // Base configs
+    if (options.node !== false) {
+        mut_configs.push(
+            node({
+                files: [GLOB_SRC],
+                hasReact: Boolean(reactOptions),
+                lessOpinionated: options.lessOpinionated,
+                overrides: getOverrides(options, 'node'),
+                typescript: hasTypeScript,
+                ...resolveSubOptions(options, 'node'),
+            }),
+        );
+    }
+
+    if (options.promise !== false) {
+        mut_configs.push(
+            promise({
+                lessOpinionated: options.lessOpinionated,
+                overrides: getOverrides(options, 'promise'),
+                typescript: hasTypeScript,
+            }),
+        );
+    }
+
+    if (options.regexp !== false) {
+        mut_configs.push(
+            regexp({
+                overrides: getOverrides(options, 'regexp'),
+            }),
+        );
+    }
+
+    if (options.unicorn !== false) {
+        mut_configs.push(
+            unicorn({
+                files: [GLOB_SRC],
+                lessOpinionated: options.lessOpinionated,
+                overrides: getOverrides(options, 'unicorn'),
+            }),
+        );
+    }
+
     if (stylisticOptions !== false) {
         mut_configs.push(
             stylistic({
@@ -352,6 +387,7 @@ export async function moso(
             astro({
                 ...typescriptConfigOptions,
                 files: [GLOB_ASTRO],
+                lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'astro'),
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
@@ -388,8 +424,11 @@ export async function moso(
         mut_configs.push(
             jsdoc({
                 files: [GLOB_SRC],
+                lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'jsdoc'),
                 stylistic: stylisticOptions,
+                typescript: hasTypeScript,
+                ...resolveSubOptions(options, 'jsdoc'),
             }),
         );
     }
@@ -424,6 +463,7 @@ export async function moso(
                 files: [GLOB_SRC],
                 mode: modeOptions,
                 overrides: getOverrides(options, 'nextjs'),
+                ...resolveSubOptions(options, 'nextjs'),
             }),
         );
     }
@@ -441,12 +481,7 @@ export async function moso(
             react({
                 ...typescriptConfigOptions,
                 files: [GLOB_SRC],
-                filesTypeAware: [
-                    GLOB_DTS,
-                    GLOB_JSX,
-                    GLOB_TS,
-                    GLOB_TSX,
-                ],
+                filesTypeAware: defaultFilesTypesAware,
                 ignoresTypeAware: [GLOB_ASTRO_TS, `${GLOB_MARKDOWN}/**`],
                 lessOpinionated: options.lessOpinionated,
                 nextjs: Boolean(nextjsOptions),
@@ -491,7 +526,8 @@ export async function moso(
                 mode: modeOptions,
                 overrides: getOverrides(options, 'typescript'),
                 projectRoot: projectRootOptions,
-                unsafe: 'warn',
+                stylistic: stylisticOptions,
+                unsafe: typescriptUnsafe ?? 'warn',
             }),
         );
     }
@@ -543,7 +579,7 @@ export async function moso(
         );
     }
 
-    mut_configs.push(disables());
+    mut_configs.push(disables(functionalEnforcement !== 'none'));
 
     let mut_composer = new FlatConfigComposer<TypedFlatConfigItem, ConfigNames>().append(...mut_configs, ...userConfigs);
 

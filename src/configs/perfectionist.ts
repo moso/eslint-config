@@ -231,9 +231,9 @@ export const perfectionist = async (options: Readonly<OptionsPerfectionist>): Pr
                         type: 'alphabetical',
                     },
                 ],
-            },
 
-            ...overrides,
+                ...overrides,
+            },
         },
     ];
 };

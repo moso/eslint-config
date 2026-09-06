@@ -37,7 +37,7 @@ For small arrays in cold paths, the chained version can be easier to read and th
 - Type: Problem
 - [x] :white_check_mark: Recommended
 - [ ] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [ ] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 
