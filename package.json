@@ -62,7 +62,7 @@
         "src/rules"
     ],
     "peerDependencies": {
-        "@eslint-react/eslint-plugin": "^5.18.10",
+        "@eslint-react/eslint-plugin": "^5.19.0",
         "@next/eslint-plugin-next": "^16.3.4",
         "astro-eslint-parser": "^3.1.0",
         "eslint": "^10.0.0",
@@ -156,7 +156,7 @@
         "yaml-eslint-parser": "^2.1.0"
     },
     "devDependencies": {
-        "@eslint-react/eslint-plugin": "^5.18.10",
+        "@eslint-react/eslint-plugin": "^5.19.0",
         "@eslint/compat": "^2.1.1",
         "@eslint/config-inspector": "^3.4.0",
         "@moso/eslint-plugin": "workspace:*",
