@@ -1358,6 +1358,7 @@
       "- @typescript-eslint/no-duplicate-type-constituents",
       "- @typescript-eslint/no-floating-promises",
       "- @typescript-eslint/no-for-in-array",
+      "- @typescript-eslint/no-generated-empty-object-type",
       "- @typescript-eslint/no-implied-eval",
       "- @typescript-eslint/no-meaningless-void-operator",
       "- @typescript-eslint/no-misused-promises",

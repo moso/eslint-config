@@ -1934,6 +1934,7 @@
       "@typescript-eslint/return-await",
       "@typescript-eslint/no-confusing-void-expression",
       "@typescript-eslint/no-deprecated",
+      "@typescript-eslint/no-generated-empty-object-type",
       "@typescript-eslint/no-meaningless-void-operator",
       "@typescript-eslint/no-misused-spread",
       "@typescript-eslint/no-mixed-enums",
