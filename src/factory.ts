@@ -192,6 +192,12 @@ export async function moso(
 
     const hasTypeScript = Boolean(typescriptOptions);
 
+    const hasDOM = options.mode !== 'library' ||
+        Boolean(astroOptions) ||
+        Boolean(nextjsOptions) ||
+        Boolean(reactOptions) ||
+        Boolean(vueOptions);
+
     const ignoreOptions: OptionsIgnores = typeof options.ignores === 'object'
         ? options.ignores
         : {};
@@ -347,6 +353,7 @@ export async function moso(
         mut_configs.push(
             unicorn({
                 files: [GLOB_SRC],
+                hasDOM,
                 lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'unicorn'),
             }),
@@ -375,6 +382,7 @@ export async function moso(
                     ...(astroOptions === false ? [] : [GLOB_ASTRO]),
                 ],
                 filesTypeAware: [GLOB_TS, GLOB_TSX],
+                hasDOM,
                 overrides: getOverrides(options, 'baseline'),
                 projectRoot: projectRootOptions,
                 typescript: hasTypeScript,
