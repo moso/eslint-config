@@ -190,6 +190,20 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
         },
         name: 'overrides-unsafe-rootdir',
     },
+    {
+        configs: {
+            astro: false,
+            baseline: true,
+            isInEditor: false,
+            jsdoc: true,
+            mode: 'library',
+            nextjs: false,
+            react: false,
+            unicorn: true,
+            vue: false,
+        },
+        name: 'has-dom',
+    },
 ];
 
 const ignoreConfigs: ReadonlySet<string> = new Set(['moso/ignores', 'moso/javascript/setup']);
@@ -367,6 +381,28 @@ it('baseline tolerates omitted type-aware globs in both modes', async ({ expect 
 
     expect(typed).toHaveLength(3);
     expect(typed[2].ignores).toEqual([]);
+});
+
+it('baseline skips Web API checks only when `hasDOM` is false', async ({ expect }) => {
+    const webApisOf = (config: TypedFlatConfigItem): unknown => {
+        const entry = config.rules?.['baseline-js/use-baseline'];
+        return Array.isArray(entry) ? (entry[1] as { includeWebApis: unknown }).includeWebApis : undefined;
+    };
+
+    const [node, browser] = await Promise.all([
+        baseline({
+            files: ['**/*.js'],
+            hasDOM: false,
+            typescript: true,
+        }),
+        baseline({
+            files: ['**/*.js'],
+            typescript: true,
+        }),
+    ]);
+
+    expect(webApisOf(node[1])).toBe(false);
+    expect(webApisOf(browser[1])).toEqual({ preset: 'auto' });
 });
 
 it('astro enables the JSX accessibility plugin when `a11y` is set', async ({ expect }) => {
