@@ -122,7 +122,7 @@
         "@antfu/install-pkg": "^2.0.1",
         "@clack/prompts": "^1.8.0",
         "@e18e/eslint-plugin": "^0.8.0",
-        "@eslint-community/eslint-plugin-eslint-comments": "^4.8.0",
+        "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
         "@eslint/js": "^10.0.1",
         "@stylistic/eslint-plugin": "^5.10.0",
         "@typescript-eslint/eslint-plugin": "^8.70.0",
