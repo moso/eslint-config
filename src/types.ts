@@ -346,6 +346,21 @@ export type OptionsFunctional = {
     // ignoreTypePattern?: string[];
 };
 
+export type OptionsHasDOM = {
+    /**
+     * Whether the linted code can reach the DOM and Web APIs.
+     * Resolved by the factory.
+     *
+     * `false` when `mode` is `'library'` and no framework is auto-detected.
+     *
+     * When `false`, `baseline()` skips its Web API checks
+     * and the DOM-only `unicorn()` rules are disabled.
+     *
+     * @default true
+     */
+    hasDOM?: boolean;
+};
+
 export type OptionsHasTypeScript = {
     typescript?: boolean;
 };

@@ -13,14 +13,10 @@ import type { ReportFixFunction, SourceCode } from '@typescript-eslint/utils/ts-
 
 import type { createRuleType } from '../utils';
 
-type RedundantDeclaration = TSESTree.VariableDeclaration & {
-    declarations: [TSESTree.VariableDeclarator & { init: TSESTree.Expression }];
-};
-
 const isRedundantVariable = (
     node: TSESTree.Node | undefined,
     exit: TSESTree.ReturnStatement,
-): node is RedundantDeclaration => {
+): node is TSESTree.VariableDeclaration => {
     if (!node) return false;
 
     return (
@@ -31,20 +27,13 @@ const isRedundantVariable = (
     );
 };
 
-const isSelfReferencing = (source: Readonly<SourceCode>, variable: RedundantDeclaration): boolean => {
-    const { init } = variable.declarations[0];
-
-    return source.getDeclaredVariables(variable).some(({ references }) =>
-        references.some(({ identifier }) => identifier.range[0] >= init.range[0] && identifier.range[1] <= init.range[1]));
-};
-
 const isRedundantVariableFixer = (
     source: Readonly<SourceCode>,
-    variable: RedundantDeclaration,
+    variable: TSESTree.VariableDeclaration,
+    id: TSESTree.BindingName,
+    init: TSESTree.Expression,
     exit: TSESTree.ReturnStatement & { argument: TSESTree.Identifier },
 ): ReportFixFunction => (fixer) => {
-    const { init, id } = variable.declarations[0];
-
     const replaced = getReturnExpression(init);
     const modified = wrap(source.getText(replaced), (input) => {
         if (!id.typeAnnotation) return input;
@@ -59,6 +48,13 @@ const isRedundantVariableFixer = (
 const isReturnStatement = (node: TSESTree.Node): node is TSESTree.ReturnStatement & { argument: TSESTree.Identifier } => (
     node.type === AST_NODE_TYPES.ReturnStatement && isIdentifier(node.argument)
 );
+
+const isSelfReferencing = (
+    source: Readonly<SourceCode>,
+    variable: TSESTree.VariableDeclaration,
+    init: TSESTree.Expression,
+): boolean => source.getDeclaredVariables(variable).some(({ references }) =>
+    references.some(({ identifier }) => identifier.range[0] >= init.range[0] && identifier.range[1] <= init.range[1]));
 
 const ruleNoRedundantVariables: createRuleType = createRule({
     name: 'no-redundant-variable',
@@ -85,12 +81,16 @@ const ruleNoRedundantVariables: createRuleType = createRule({
                     continue;
                 }
 
-                if (isRedundantVariable(mut_previous, statement) && !isSelfReferencing(context.sourceCode, mut_previous)) {
-                    context.report({
-                        node: statement,
-                        messageId: 'noRedundantVar',
-                        fix: isRedundantVariableFixer(context.sourceCode, mut_previous, statement),
-                    });
+                if (isRedundantVariable(mut_previous, statement)) {
+                    const { id, init } = mut_previous.declarations[0];
+
+                    if (init && !isSelfReferencing(context.sourceCode, mut_previous, init)) {
+                        context.report({
+                            node: statement,
+                            messageId: 'noRedundantVar',
+                            fix: isRedundantVariableFixer(context.sourceCode, mut_previous, id, init, statement),
+                        });
+                    }
                 }
 
                 return;

@@ -4,6 +4,7 @@ import { memoize } from '../utils';
 import type {
     OptionsBaseline,
     OptionsFiles,
+    OptionsHasDOM,
     OptionsHasTypeScript,
     OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
@@ -15,6 +16,7 @@ const defaultIgnoreFeatures = ['functions-caller-arguments'];
 export const baseline = async (
     options: Readonly<
         OptionsBaseline &
+        OptionsHasDOM &
         OptionsTypeScriptParserOptions &
         OptionsTypeScriptWithTypes &
         Required<OptionsFiles & OptionsHasTypeScript>
@@ -24,6 +26,7 @@ export const baseline = async (
         baseline,
         files,
         filesTypeAware,
+        hasDOM,
         ignoreFeatures,
         ignoreNodeTypes,
         ignoresTypeAware,
@@ -46,7 +49,7 @@ export const baseline = async (
                 ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
                 ignoreNodeTypes,
                 includeJsBuiltins: { preset: typeAware ? 'type-aware' : 'auto' },
-                includeWebApis: { preset: typeAware ? 'type-aware' : 'auto' },
+                includeWebApis: hasDOM === false ? false : { preset: typeAware ? 'type-aware' : 'auto' },
             },
         ],
     });

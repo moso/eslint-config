@@ -5,19 +5,53 @@ import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
+    OptionsHasDOM,
     OptionsLessOpinionated,
     OptionsOverrides,
     TypedFlatConfigItem,
 } from '../types';
 
+const DOMRules = [
+    'unicorn/better-dom-traversing',
+    'unicorn/dom-node-dataset',
+    'unicorn/no-blob-to-file',
+    'unicorn/no-canvas-to-image',
+    'unicorn/no-document-cookie',
+    'unicorn/no-incorrect-query-selector',
+    'unicorn/no-invalid-remove-event-listener',
+    'unicorn/no-selector-as-dom-name',
+    'unicorn/no-transition-all',
+    'unicorn/no-unsafe-dom-html',
+    'unicorn/prefer-add-event-listener',
+    'unicorn/prefer-add-event-listener-options',
+    'unicorn/prefer-classlist-toggle',
+    'unicorn/prefer-dom-node-append',
+    'unicorn/prefer-dom-node-html-methods',
+    'unicorn/prefer-dom-node-replace-children',
+    'unicorn/prefer-dom-node-text-content',
+    'unicorn/prefer-keyboard-event-key',
+    'unicorn/prefer-modern-dom-apis',
+    'unicorn/prefer-observer-apis',
+    'unicorn/prefer-path2d',
+    'unicorn/prefer-query-selector',
+    'unicorn/prefer-scoped-selector',
+    'unicorn/require-passive-events',
+] as const;
+
 export const unicorn = async (
     options: Readonly<
+        OptionsHasDOM &
         OptionsLessOpinionated &
         OptionsOverrides &
         Required<OptionsFiles>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const { files, lessOpinionated, overrides } = options;
+    const {
+        files,
+        hasDOM,
+        lessOpinionated,
+        overrides,
+    } = options;
 
     const [unicornPlugin] = await loadPackages(['eslint-plugin-unicorn']);
 
@@ -130,6 +164,10 @@ export const unicorn = async (
                     'unicorn/require-module-attributes': 'off',
                     'unicorn/require-module-specifiers': 'off',
                     'unicorn/single-line-block-comment-style': 'off',
+                }),
+
+                ...(hasDOM === false && {
+                    ...Object.fromEntries(DOMRules.map((rule) => [rule, 'off'])),
                 }),
 
                 ...overrides,

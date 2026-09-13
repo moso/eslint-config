@@ -51,7 +51,6 @@ export const jsdoc = async (
                 'jsdoc/multiline-blocks': stylisticEnabled,
                 'jsdoc/no-defaults': 'warn',
                 'jsdoc/no-multi-asterisks': 'error',
-                'jsdoc/no-undefined-types': ['error', { disableReporting: true }],
                 'jsdoc/reject-any-type': 'error',
                 'jsdoc/reject-function-type': 'error',
                 'jsdoc/require-jsdoc': [
@@ -82,7 +81,7 @@ export const jsdoc = async (
                 'jsdoc/require-yields-check': 'error',
                 'jsdoc/require-yields-type': 'error',
                 'jsdoc/tag-lines': [
-                    'warn',
+                    stylisticEnabled,
                     'never',
                     {
                         applyToEndTag: false,
@@ -94,7 +93,6 @@ export const jsdoc = async (
 
                 ...(!lessOpinionated && {
                     'jsdoc/check-indentation': 'warn',
-                    'jsdoc/check-line-alignment': 'error',
                     'jsdoc/no-bad-blocks': [
                         'warn',
                         {
