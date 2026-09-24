@@ -58,8 +58,7 @@ const indexNamePattern = /^(?:[ijk]|idx|index)$/iu;
 const indexSuffixPattern = /(?:Idx|Index)$/u;
 
 const isConsoleAssert = (statement: TSESTree.Statement): boolean => {
-    if (statement.type !== AST_NODE_TYPES.ExpressionStatement) return false;
-    if (statement.expression.type !== AST_NODE_TYPES.CallExpression) return false;
+    if ((statement.type !== AST_NODE_TYPES.ExpressionStatement) || (statement.expression.type !== AST_NODE_TYPES.CallExpression)) return false;
 
     const { callee } = statement.expression;
     return (
@@ -72,16 +71,15 @@ const isConsoleAssert = (statement: TSESTree.Statement): boolean => {
 
 const isConsumedDirectly = (node: TSESTree.CallExpression): boolean => {
     const { parent } = node;
-    if (parent.type === AST_NODE_TYPES.BinaryExpression) return arithmeticOperators.has(parent.operator);
-
-    return parent.type === AST_NODE_TYPES.MemberExpression && parent.computed && parent.property === node;
+    return parent.type === AST_NODE_TYPES.BinaryExpression
+        ? arithmeticOperators.has(parent.operator)
+        : parent.type === AST_NODE_TYPES.MemberExpression && parent.computed && parent.property === node;
 };
 
 const isGuardedIndex = (node: TSESTree.MemberExpression): boolean => {
     const { parent } = node;
-    if (parent.type === AST_NODE_TYPES.TSNonNullExpression) return true;
-
-    return parent.type === AST_NODE_TYPES.LogicalExpression && parent.operator === '??' && parent.left === node;
+    return parent.type === AST_NODE_TYPES.TSNonNullExpression ||
+        (parent.type === AST_NODE_TYPES.LogicalExpression && parent.operator === '??' && parent.left === node);
 };
 
 const isMathCall = (node: TSESTree.CallExpression, methods?: ReadonlyArray<string>): boolean => {
@@ -96,10 +94,9 @@ const isMathCall = (node: TSESTree.CallExpression, methods?: ReadonlyArray<strin
 
 const isWriteTarget = (node: TSESTree.MemberExpression): boolean => {
     const { parent } = node;
-    if (parent.type === AST_NODE_TYPES.AssignmentExpression) return parent.left === node;
-    if (parent.type === AST_NODE_TYPES.UpdateExpression) return true;
-
-    return parent.type === AST_NODE_TYPES.UnaryExpression && parent.operator === 'delete';
+    return (parent.type === AST_NODE_TYPES.AssignmentExpression && parent.left === node) ||
+        parent.type === AST_NODE_TYPES.UpdateExpression ||
+        (parent.type === AST_NODE_TYPES.UnaryExpression && parent.operator === 'delete');
 };
 
 const assertedNames = (node: FunctionNode, sourceCode: Readonly<SourceCode>): ReadonlySet<string> => {
@@ -119,17 +116,16 @@ const assertedNames = (node: FunctionNode, sourceCode: Readonly<SourceCode>): Re
 
 const looksLikeIndex = (node: TSESTree.Node): boolean => {
     if (node.type === AST_NODE_TYPES.BinaryExpression) return arithmeticOperators.has(node.operator);
-    if (node.type === AST_NODE_TYPES.CallExpression) return isMathCall(node);
-
-    return isIdentifierName(node, (name) => indexNamePattern.test(name) || indexSuffixPattern.test(name));
+    return node.type === AST_NODE_TYPES.CallExpression
+        ? isMathCall(node)
+        : isIdentifierName(node, (name) => indexNamePattern.test(name) || indexSuffixPattern.test(name));
 };
 
 const numberParameterNames = (node: FunctionNode): ReadonlySet<string> => {
     const mut_names = new Set<string>();
 
     for (const parameter of node.params) {
-        if (parameter.type !== AST_NODE_TYPES.Identifier) continue;
-        if (parameter.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSNumberKeyword) continue;
+        if ((parameter.type !== AST_NODE_TYPES.Identifier) || (parameter.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSNumberKeyword)) continue;
 
         mut_names.add(parameter.name);
     }
@@ -184,13 +180,10 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
         const exitFunction = () => mut_scopes.pop();
 
         const reportUnencodedInput = (node: TSESTree.Node) => {
-            if (!enabled.has('encode-input-rule')) return;
-            if (node.type !== AST_NODE_TYPES.Identifier) return;
+            if (!enabled.has('encode-input-rule') || (node.type !== AST_NODE_TYPES.Identifier)) return;
 
             const scope = mut_scopes.at(-1);
-            if (!scope) return;
-            if (!scope.numberParams.has(node.name)) return;
-            if (scope.asserted.has(node.name)) return;
+            if (!scope || !scope.numberParams.has(node.name) || scope.asserted.has(node.name)) return;
 
             context.report({
                 node,
@@ -251,10 +244,7 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
             'FunctionExpression:exit': exitFunction,
 
             'LogicalExpression': (node: TSESTree.LogicalExpression) => {
-                if (!enabled.has('write-explicit-condition')) return;
-                if (node.operator !== '||') return;
-                if (node.right.type !== AST_NODE_TYPES.Literal) return;
-                if (typeof node.right.value !== 'number') return;
+                if (!enabled.has('write-explicit-condition') || (node.operator !== '||') || (node.right.type !== AST_NODE_TYPES.Literal) || (typeof node.right.value !== 'number')) return;
 
                 context.report({
                     node,
@@ -263,14 +253,11 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
             },
 
             'MemberExpression': (node: TSESTree.MemberExpression) => {
-                if (!node.computed) return;
-                if (node.property.type === AST_NODE_TYPES.Literal) return;
+                if (!node.computed || (node.property.type === AST_NODE_TYPES.Literal)) return;
 
                 reportUnencodedInput(node.property);
 
-                if (!enabled.has('guard-array-index')) return;
-                if (!looksLikeIndex(node.property)) return;
-                if (isGuardedIndex(node) || isWriteTarget(node)) return;
+                if (!enabled.has('guard-array-index') || !looksLikeIndex(node.property) || isGuardedIndex(node) || isWriteTarget(node)) return;
 
                 context.report({
                     node,

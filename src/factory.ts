@@ -152,7 +152,7 @@ export async function moso(
         console.warn(message);
     }
 
-    const typescriptOptions = typescriptUnsupported ? false : typescriptRequested;
+    const typescriptOptions = !typescriptUnsupported && typescriptRequested;
 
     const astroOptions = options.astro ?? anyPackageExists(AstroPackages);
     const nextjsOptions = options.nextjs ?? anyPackageExists(NextJSPackages);
@@ -162,23 +162,19 @@ export async function moso(
 
     const componentExts = vueOptions === false ? [...componentExtsOption] : [...new Set([...componentExtsOption, 'vue'])];
 
-    const baselineOptions = options.baseline === false
-        ? false
-        : typeof options.baseline === 'object'
+    const baselineOptions = options.baseline !== false && (
+        typeof options.baseline === 'object'
             ? options.baseline
             : (typeof options.baseline === 'string' || typeof options.baseline === 'number')
                 ? { baseline: options.baseline as OptionsBaseline['baseline'] }
-                : {};
+                : {}
+    );
 
-    const e18eOptions = options.e18e === false
-        ? false
-        : typeof options.e18e === 'object'
+    const e18eOptions = options.e18e !== false && (
+        typeof options.e18e === 'object'
             ? options.e18e
-            : options.e18e === true
-                ? {}
-                : options.lessOpinionated === true
-                    ? false
-                    : {};
+            : (options.e18e === true || options.lessOpinionated !== true) && {}
+    );
 
     const functionalEnforcement = typeof options.functional === 'string'
         ? options.functional
@@ -210,13 +206,11 @@ export async function moso(
         ? options.perfectionist
         : options.lessOpinionated !== true;
 
-    const stylisticOptions = options.stylistic === false
-        ? false
-        : {
-            ...StylisticConfigDefaults,
-            jsx: typeof jsxOptions === 'boolean' ? jsxOptions : true,
-            ...(typeof options.stylistic === 'object' && options.stylistic),
-        };
+    const stylisticOptions = options.stylistic !== false && {
+        ...StylisticConfigDefaults,
+        jsx: jsxOptions !== false,
+        ...(typeof options.stylistic === 'object' && options.stylistic),
+    };
 
     const {
         filesTypeAware,
@@ -256,18 +250,17 @@ export async function moso(
         parserOptions: {
             tsconfigRootDir: projectRootOptions,
             ...parserOptions,
-            projectService:
-                projectRootOptions === undefined || parserOptions?.projectService === false
-                    ? false
-                    : useDefaultDefaultProject === false
-                        ? projectServiceUserConfig
-                        : {
-                            allowDefaultProject: [
-                                GLOB_ROOT_JS,
-                                GLOB_ROOT_JSX,
-                            ],
-                            ...projectServiceUserConfig,
-                        },
+            projectService: projectRootOptions !== undefined && parserOptions?.projectService !== false && (
+                useDefaultDefaultProject === false
+                    ? projectServiceUserConfig
+                    : {
+                        allowDefaultProject: [
+                            GLOB_ROOT_JS,
+                            GLOB_ROOT_JSX,
+                        ],
+                        ...projectServiceUserConfig,
+                    }
+            ),
         },
     };
 

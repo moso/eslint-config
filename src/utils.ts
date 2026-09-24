@@ -114,19 +114,13 @@ const isInGitHooksOrLintStaged = (): boolean => (
  *
  * @returns `true` only for editor processes outside CI, git hooks, and lint-staged.
  */
-export const isInEditorEnv = (): boolean => {
-    if (Boolean(process.env.CI)) return false;
-
-    if (isInGitHooksOrLintStaged()) return false;
-
-    return (
-        Boolean(process.env.VSCODE_PID) ||
-        Boolean(process.env.VSCODE_CWD) ||
-        Boolean(process.env.JETBRAINS_IDE) ||
-        Boolean(process.env.VIM) ||
-        Boolean(process.env.NVIM)
-    );
-};
+export const isInEditorEnv = (): boolean => !Boolean(process.env.CI) && !isInGitHooksOrLintStaged() && (
+    Boolean(process.env.VSCODE_PID) ||
+    Boolean(process.env.VSCODE_CWD) ||
+    Boolean(process.env.JETBRAINS_IDE) ||
+    Boolean(process.env.VIM) ||
+    Boolean(process.env.NVIM)
+);
 
 /**
  * Normalize a factory option that accepts `boolean | string | number | object`

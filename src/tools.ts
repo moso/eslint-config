@@ -79,10 +79,7 @@ const isPackageInScope = (name: string): boolean => isPackageExists(name, { path
 /**
  * Whether an install prompt could ever be shown: a TTY outside CI.
  */
-const isInteractive = (): boolean => {
-    if (Boolean(process.env.CI)) return false;
-    return process.stdout.isTTY;
-};
+const isInteractive = (): boolean => !Boolean(process.env.CI) && process.stdout.isTTY;
 
 /**
  * Offer to install missing packages through an interactive prompt.

@@ -15,15 +15,14 @@ const arrayHighOrderFunctions = new Set([
     'reduceRight',
 ]);
 
-const isArrayHigherOrderFunction = (node: TSESTree.Node | undefined): node is TSESTree.MemberExpressionNonComputedName => {
-    if (node?.type !== AST_NODE_TYPES.MemberExpression) return false;
-    if (node.computed) return false;
-    if (node.property.type !== AST_NODE_TYPES.Identifier) return false;
-
-    return arrayHighOrderFunctions.has(node.property.name) &&
-        node.parent.type === AST_NODE_TYPES.CallExpression &&
-        node.parent.callee === node;
-};
+const isArrayHigherOrderFunction = (node: TSESTree.Node | undefined): node is TSESTree.MemberExpressionNonComputedName => (
+    node?.type === AST_NODE_TYPES.MemberExpression &&
+    !node.computed &&
+    node.property.type === AST_NODE_TYPES.Identifier &&
+    arrayHighOrderFunctions.has(node.property.name) &&
+    node.parent.type === AST_NODE_TYPES.CallExpression &&
+    node.parent.callee === node
+);
 
 const rulePreferReduceOverChaining: createRuleType = createRule({
     name: 'prefer-reduce-over-chaining',
