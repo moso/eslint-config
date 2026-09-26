@@ -135,8 +135,7 @@ export const getFixer = (token: TSESTree.Token, pattern: RegExp): ReportFixFunct
  */
 export const getReturnExpression = (node: TSESTree.Node): TSESTree.Node => {
     if (node.type !== AST_NODE_TYPES.AwaitExpression) return node;
-    if (closest(node, AST_NODE_TYPES.TryStatement)) return node;
-    return node.argument;
+    return closest(node, AST_NODE_TYPES.TryStatement) ? node : node.argument;
 };
 
 /**
@@ -176,10 +175,7 @@ const functionLikeTypes: ReadonlySet<AST_NODE_TYPES> = new Set([
  */
 export const isFunctionLike = (
     node?: TSESTree.Node | null,
-): node is TSESTree.ArrowFunctionExpression | TSESTree.FunctionDeclaration | TSESTree.FunctionExpression => {
-    if (!node) return false;
-    return functionLikeTypes.has(node.type);
-};
+): node is TSESTree.ArrowFunctionExpression | TSESTree.FunctionDeclaration | TSESTree.FunctionExpression => (node ? functionLikeTypes.has(node.type) : false);
 
 /**
  * Whether `node` is an identifier matching `name` given as an exact string,
@@ -191,8 +187,7 @@ export const isIdentifierName = (
 ): boolean => {
     if (!isIdentifier(node)) return false;
     if (typeof name === 'string') return node.name === name;
-    if (typeof name === 'function') return Boolean(name(node.name));
-    return name?.includes(node.name) ?? false;
+    return typeof name === 'function' ? Boolean(name(node.name)) : name?.includes(node.name) ?? false;
 };
 
 /**
@@ -206,24 +201,24 @@ export const isSameIdentifier = (a: TSESTree.Node | null | undefined, b: TSESTre
  * returns its own parameter unchanged, in either expression form (`(x) => x`)
  * or block form (`(x) => { return x }`).
  */
-export const isIdentifierFunction = (node?: TSESTree.Node): boolean => {
-    if (!isFunctionLike(node)) return false;
-    if (node.params.length !== 1) return false;
-    if (node.params[0].type !== AST_NODE_TYPES.Identifier) return false;
-    if (isSameIdentifier(node.params[0], node.body)) return true;
-
-    return (
-        node.body.type === AST_NODE_TYPES.BlockStatement &&
-        node.body.body.length === 1 &&
-        node.body.body[0].type === AST_NODE_TYPES.ReturnStatement &&
-        isSameIdentifier(node.params[0], node.body.body[0].argument)
-    );
-};
+export const isIdentifierFunction = (node?: TSESTree.Node): boolean => (
+    isFunctionLike(node) &&
+    node.params.length === 1 &&
+    node.params[0].type === AST_NODE_TYPES.Identifier &&
+    (
+        isSameIdentifier(node.params[0], node.body) ||
+        (
+            node.body.type === AST_NODE_TYPES.BlockStatement &&
+            node.body.body.length === 1 &&
+            node.body.body[0].type === AST_NODE_TYPES.ReturnStatement &&
+            isSameIdentifier(node.params[0], node.body.body[0].argument)
+        )
+    )
+);
 
 export const isLiteralValue = (node: TSESTree.Node | undefined, value: string | RegExp): boolean => {
     if (node?.type !== AST_NODE_TYPES.Literal) return false;
-    if (typeof value === 'string') return node.value === value;
-    return typeof node.value === 'string' && value.test(node.value);
+    return typeof value === 'string' ? node.value === value : typeof node.value === 'string' && value.test(node.value);
 };
 
 export const makeProgramListener = (

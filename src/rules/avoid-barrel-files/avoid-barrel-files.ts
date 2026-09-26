@@ -62,10 +62,7 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                         )
                             return { declarationCount: declarationCount + 1, exportCount };
 
-                        if (statement.declaration.type === AST_NODE_TYPES.ObjectExpression)
-                            return { declarationCount, exportCount: exportCount + statement.declaration.properties.length };
-
-                        return { declarationCount, exportCount: exportCount + 1 };
+                        return ({ declarationCount, exportCount: exportCount + (statement.declaration.type === AST_NODE_TYPES.ObjectExpression ? statement.declaration.properties.length : 1) });
                     }
 
                     return { declarationCount, exportCount };

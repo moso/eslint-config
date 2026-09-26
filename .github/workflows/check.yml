@@ -1,0 +1,47 @@
+# pages-moso-dev GitHub action status check
+# Fails the check if the preview deploy on pages.moso.dev fails
+
+name: Deploy Preview Status
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  preview-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          PREVIEW_DEPLOY_URL: ${{ secrets.PREVIEW_DEPLOY_URL }}
+          PREVIEW_DEPLOY_API_KEY: ${{ secrets.PREVIEW_DEPLOY_API_KEY }}
+          PREVIEW_DEPLOY_APP_ID: ${{ secrets.PREVIEW_DEPLOY_APP_ID }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          deadline=$((SECONDS + 300))
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            body=$(curl -sS --fail-with-body \
+            "$PREVIEW_DEPLOY_URL/api/previewDeployment.all?applicationId=$PREVIEW_DEPLOY_APP_ID" \
+            -H "x-api-key: $PREVIEW_DEPLOY_API_KEY") || { echo "$body"; sleep 15; continue; }
+
+            status=$(jq -r --arg pr "$PR" --arg sha "$SHA" '
+              [ .[]
+                | select(.pullRequestNumber == $pr)
+                | .deployments[]
+                | select((.description // "") | contains($sha))
+              ] | (.[0].status // "pending")' <<<"$body")
+
+            case "$status" in
+              done) exit 0 ;;
+              error|cancelled) echo "preview built $status"; exit 1 ;;
+              *) sleep 15 ;;
+            esac
+          done
+          echo "timed out waiting for Preview Deployment"
+          exit 1

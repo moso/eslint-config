@@ -49,7 +49,7 @@ export const baseline = async (
                 ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
                 ignoreNodeTypes,
                 includeJsBuiltins: { preset: typeAware ? 'type-aware' : 'auto' },
-                includeWebApis: hasDOM === false ? false : { preset: typeAware ? 'type-aware' : 'auto' },
+                includeWebApis: hasDOM !== false && { preset: typeAware ? 'type-aware' : 'auto' },
             },
         ],
     });

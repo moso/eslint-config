@@ -28,8 +28,7 @@ const ruleNoForceCastViaTopType: createRuleType = createRule({
     },
     create: (context) => ({
         TSAsExpression: (node: TSESTree.TSAsExpression) => {
-            if (!isTopType(node.typeAnnotation)) return;
-            if (!isCastToAnotherType(node.parent)) return;
+            if (!isTopType(node.typeAnnotation) || !isCastToAnotherType(node.parent)) return;
 
             const type = node.typeAnnotation.type === AST_NODE_TYPES.TSAnyKeyword ? 'any' : 'unknown';
 

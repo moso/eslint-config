@@ -15,17 +15,16 @@ import type { createRuleType } from '../utils';
 
 const isRedundantVariable = (
     node: TSESTree.Node | undefined,
-    exit: TSESTree.ReturnStatement,
-): node is TSESTree.VariableDeclaration => {
-    if (!node) return false;
-
-    return (
+    exit: TSESTree.ReturnStatement
+): node is TSESTree.VariableDeclaration =>
+    node
+    ? (
         node.type === AST_NODE_TYPES.VariableDeclaration &&
         node.declarations.length === 1 &&
         node.declarations[0].init !== null &&
         isSameIdentifier(exit.argument, node.declarations[0].id)
-    );
-};
+    )
+    : false;
 
 const isRedundantVariableFixer = (
     source: Readonly<SourceCode>,
