@@ -26,9 +26,9 @@ jobs:
           set -euo pipefail
           deadline=$((SECONDS + 300))
           while [ "$SECONDS" -lt "$deadline" ]; do
-            body=$(curl -fsS \
+            body=$(curl -sS --fail-with-body \
             "$PREVIEW_DEPLOY_URL/api/previewDeployment.all?applicationId=$PREVIEW_DEPLOY_APP_ID" \
-            -H "x-api-key: $PREVIEW_DEPLOY_API_KEY") || { sleep 15; continue; }
+            -H "x-api-key: $PREVIEW_DEPLOY_API_KEY") || { echo "$body"; sleep 15; continue; }
 
             status=$(jq -r --arg pr "$PR" --arg sha "$SHA" '
               [ .[]
