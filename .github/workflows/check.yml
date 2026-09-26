@@ -1,8 +1,7 @@
 # pages-moso-dev GitHub action status check
 # Fails the check if the preview deploy on pages.moso.dev fails
 
-name: pages-moso-dev-deploy-preview-check
-run-name: Deploy Preview Check
+name: Deploy Preview Status
 
 on:
   pull_request:
