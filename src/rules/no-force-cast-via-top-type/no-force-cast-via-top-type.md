@@ -34,9 +34,9 @@ At genuine type-system boundaries where two structurally-incompatible type world
 - Type: Problem
 - [x] :white_check_mark: Recommended
 - [ ] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [ ] :gear: Configurable
-- [x] :thought_balloon: Requires type information
+- [ ] :thought_balloon: Requires type information
 
 ---
 

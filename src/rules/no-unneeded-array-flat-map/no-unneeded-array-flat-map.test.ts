@@ -8,6 +8,13 @@ runTest({
         '[].flatMap((x) => [x, x])',
         '[].flatMap(fn)',
         '[].flat()',
+        '[].flatMap()',
+        '[].flatMap((a, b) => a)',
+        '[].flatMap(({ x }) => x)',
+        '[].flatMap((x) => { foo(); return x })',
+        '[].flatMap((x) => { foo() })',
+        '[].flatMap((x) => { return y })',
+        'flatMap((x) => x)',
     ],
     invalid: [
         {
@@ -22,6 +29,16 @@ runTest({
         },
         {
             code: '[].flatMap(function (x) { return x })',
+            errors: [{ messageId: 'noUnneededArrayFlatMap' }],
+            output: '[].flat()',
+        },
+        {
+            code: '[].flatMap(function (x) { return x }, thisArg)',
+            errors: [{ messageId: 'noUnneededArrayFlatMap' }],
+            output: '[].flat()',
+        },
+        {
+            code: '[].flatMap((x) => x,)',
             errors: [{ messageId: 'noUnneededArrayFlatMap' }],
             output: '[].flat()',
         },

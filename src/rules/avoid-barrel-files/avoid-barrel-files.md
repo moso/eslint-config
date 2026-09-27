@@ -43,7 +43,7 @@ Disable it for a package's deliberate public entry point (`src/index.ts`), where
 - Type: Suggestion
 - [x] :white_check_mark: Recommended
 - [ ] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [x] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 

@@ -47,15 +47,11 @@ export const createRule: ReturnType<typeof ESLintUtils.RuleCreator<RuleMeta>> = 
  */
 const closest = (
     node: TSESTree.Node | null | undefined,
-    test: TSESTree.Node['type'] | ((node: TSESTree.Node) => boolean),
+    type: TSESTree.Node['type'],
 ): TSESTree.Node | undefined => {
-    const predicate = typeof test === 'string'
-        ? (node: TSESTree.Node) => node.type === test
-        : test;
-
     const findClosest = (current: TSESTree.Node | null | undefined): TSESTree.Node | undefined => {
         if (!current) return undefined;
-        return predicate(current) ? current : findClosest(current.parent);
+        return current.type === type ? current : findClosest(current.parent);
     };
 
     return findClosest(node);
@@ -103,9 +99,13 @@ export const getFixer = (token: TSESTree.Token, pattern: RegExp): ReportFixFunct
         case AST_TOKEN_TYPES.RegularExpression: {
             return (fixer) => {
                 const mut_flags = new Set(token.regex.flags);
-                mut_flags.add('u');
-                const re = new RegExp(escape(token.regex.pattern, pattern), [...mut_flags].join(''));
-                return fixer.replaceText(token, re.toString());
+                if (!mut_flags.has('v')) mut_flags.add('u');
+                try {
+                    const re = new RegExp(escape(token.regex.pattern, pattern), [...mut_flags].join(''));
+                    return fixer.replaceText(token, re.toString());
+                } catch {
+                    return null;
+                }
             };
         }
         case AST_TOKEN_TYPES.String:
@@ -135,8 +135,7 @@ export const getFixer = (token: TSESTree.Token, pattern: RegExp): ReportFixFunct
  */
 export const getReturnExpression = (node: TSESTree.Node): TSESTree.Node => {
     if (node.type !== AST_NODE_TYPES.AwaitExpression) return node;
-    if (closest(node, AST_NODE_TYPES.TryStatement)) return node;
-    return node.argument;
+    return closest(node, AST_NODE_TYPES.TryStatement) ? node : node.argument;
 };
 
 /**
@@ -146,29 +145,11 @@ export const getReturnExpression = (node: TSESTree.Node): TSESTree.Node => {
  */
 const getValue = (token: TSESTree.Token): false | string => {
     switch (token.type) {
-        case AST_TOKEN_TYPES.Block:
-        case AST_TOKEN_TYPES.Boolean: {
-            return false;
-        }
-        case AST_TOKEN_TYPES.Identifier: {
-            if (token.value.startsWith('#')) return token.value.slice(1);
-            return token.value;
-        }
+        case AST_TOKEN_TYPES.Identifier:
         case AST_TOKEN_TYPES.JSXIdentifier:
-        case AST_TOKEN_TYPES.JSXText: {
-            return token.value;
-        }
-        case AST_TOKEN_TYPES.Keyword:
-        case AST_TOKEN_TYPES.Line:
-        case AST_TOKEN_TYPES.Null:
-        case AST_TOKEN_TYPES.Numeric: {
-            return false;
-        }
+        case AST_TOKEN_TYPES.JSXText:
         case AST_TOKEN_TYPES.PrivateIdentifier: {
             return token.value;
-        }
-        case AST_TOKEN_TYPES.Punctuator: {
-            return false;
         }
         case AST_TOKEN_TYPES.RegularExpression: {
             return token.regex.pattern;
@@ -177,9 +158,10 @@ const getValue = (token: TSESTree.Token): false | string => {
         case AST_TOKEN_TYPES.Template: {
             return token.value.slice(1, -1);
         }
+        default: {
+            return false;
+        }
     }
-
-    return false;
 };
 
 const functionLikeTypes: ReadonlySet<AST_NODE_TYPES> = new Set([
@@ -193,10 +175,7 @@ const functionLikeTypes: ReadonlySet<AST_NODE_TYPES> = new Set([
  */
 export const isFunctionLike = (
     node?: TSESTree.Node | null,
-): node is TSESTree.ArrowFunctionExpression | TSESTree.FunctionDeclaration | TSESTree.FunctionExpression => {
-    if (!node) return false;
-    return functionLikeTypes.has(node.type);
-};
+): node is TSESTree.ArrowFunctionExpression | TSESTree.FunctionDeclaration | TSESTree.FunctionExpression => (node ? functionLikeTypes.has(node.type) : false);
 
 /**
  * Whether `node` is an identifier matching `name` given as an exact string,
@@ -208,8 +187,7 @@ export const isIdentifierName = (
 ): boolean => {
     if (!isIdentifier(node)) return false;
     if (typeof name === 'string') return node.name === name;
-    if (typeof name === 'function') return Boolean(name(node.name));
-    return name?.includes(node.name) ?? false;
+    return typeof name === 'function' ? Boolean(name(node.name)) : name?.includes(node.name) ?? false;
 };
 
 /**
@@ -223,25 +201,24 @@ export const isSameIdentifier = (a: TSESTree.Node | null | undefined, b: TSESTre
  * returns its own parameter unchanged, in either expression form (`(x) => x`)
  * or block form (`(x) => { return x }`).
  */
-export const isIdentifierFunction = (node?: TSESTree.Node): boolean => {
-    if (!isFunctionLike(node)) return false;
-    if (node.params.length !== 1) return false;
-    if (node.params[0].type !== AST_NODE_TYPES.Identifier) return false;
-    if (isSameIdentifier(node.params[0], node.body)) return true;
+export const isIdentifierFunction = (node?: TSESTree.Node): boolean => (
+    isFunctionLike(node) &&
+    node.params.length === 1 &&
+    node.params[0].type === AST_NODE_TYPES.Identifier &&
+    (
+        isSameIdentifier(node.params[0], node.body) ||
+        (
+            node.body.type === AST_NODE_TYPES.BlockStatement &&
+            node.body.body.length === 1 &&
+            node.body.body[0].type === AST_NODE_TYPES.ReturnStatement &&
+            isSameIdentifier(node.params[0], node.body.body[0].argument)
+        )
+    )
+);
 
-    return (
-        node.body.type === AST_NODE_TYPES.BlockStatement &&
-        node.body.body.length === 1 &&
-        node.body.body[0].type === AST_NODE_TYPES.ReturnStatement &&
-        isSameIdentifier(node.params[0], node.body.body[0].argument)
-    );
-};
-
-export const isLiteralValue = (node: TSESTree.Node, value: string | ReadonlyArray<unknown> | RegExp): boolean => {
-    if (node.type !== AST_NODE_TYPES.Literal) return false;
-    if (typeof value === 'string') return node.value === value;
-    if ('test' in value) return typeof node.value === 'string' && value.test(node.value);
-    return value.includes(node.value);
+export const isLiteralValue = (node: TSESTree.Node | undefined, value: string | RegExp): boolean => {
+    if (node?.type !== AST_NODE_TYPES.Literal) return false;
+    return typeof value === 'string' ? node.value === value : typeof node.value === 'string' && value.test(node.value);
 };
 
 export const makeProgramListener = (

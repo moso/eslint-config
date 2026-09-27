@@ -10,6 +10,8 @@ const valids = [
           await bar()
       }
     `,
+    'async function foo() { for await (const x of stream) { use(x) } }',
+    'async function foo() { await using res = getRes() }',
 ];
 
 runTest({
@@ -33,6 +35,14 @@ runTest({
                   foo: await bar()
               }
             `,
+            errors: [{ messageId: 'noTopLevelAwait' }],
+        },
+        {
+            code: 'for await (const x of stream) { use(x) }',
+            errors: [{ messageId: 'noTopLevelAwait' }],
+        },
+        {
+            code: 'await using res = getRes()',
             errors: [{ messageId: 'noTopLevelAwait' }],
         },
     ],

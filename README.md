@@ -1,6 +1,8 @@
 # @moso/eslint-config
 
-[![npm](https://img.shields.io/npm/v/@moso/eslint-config.svg)](https://npmjs.com/package/@moso/eslint-config)
+[![npm](https://img.shields.io/npm/v/@moso/eslint-config.svg?label=npm)](https://npmx.dev/package/@moso/eslint-config)
+[![coverage](https://img.shields.io/codecov/c/github/moso/eslint-config.svg?label=Coverage)](https://codecov.io/gh/moso/eslint-config)
+[![license](https://img.shields.io/github/license/moso/eslint-config.svg?label=License)](https://github.com/moso/eslint-config/blob/main/LICENSE)
 
 Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 
@@ -15,7 +17,8 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - Ships its own small [`@moso`](#custom-rules)-ruleset with security and hygiene rules
 - Every config can be enabled/disabled
 - Respects `.gitignore` by default
-- Requires Node.js >= v22.23.x/v24.18.x, ESLint v10+
+- Requires Node.js >= v22.22.3/v24.x, ESLint v10+
+- Enhanced security by [Socket's Bun Security Scanner](https://npmx.dev/package/@socketsecurity/bun-security-scanner)
 
 > [!NOTE]
 > **Note regarding TypeScript v7**
@@ -23,7 +26,7 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 
 ## Configs
 
-This section contains a list of the plugins used in the named configs that ships with this shareable config.
+This section contains a list of the plugins used in the named configs that ship with this shareable config.
 
 \- ✅ Enabled by default  
 \- ☑️ Enabled by auto-detect  
@@ -31,7 +34,7 @@ This section contains a list of the plugins used in the named configs that ships
 \- 🟨 Can be enabled manually  
 \- 🎨 Stylistic rules enabled  
 \- 💭 Type-aware rules available by setting the path to your `tsconfig.json`  
-\- ℹ️ Accessibility rules available with `a11y: true`
+\- ℹ️ Accessibility rules available with `a11y: true`  
 
 <table>
 <thead>
@@ -53,6 +56,17 @@ This section contains a list of the plugins used in the named configs that ships
 <td valign="top">☑️ℹ️</td>
 <td valign="top">🎨</td>
 <td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>Baseline</strong></summary>
+
+[`eslint-plugin-baseline-js`](https://github.com/3ru/eslint-plugin-baseline-js)
+
+</details></td>
+<td valign="top">✅</td>
+<td valign="top"></td>
+<td valign="top">💭</td>
 </tr>
 <tr>
 <td valign="top">
@@ -222,6 +236,17 @@ This section contains a list of the plugins used in the named configs that ships
 </tr>
 <tr>
 <td valign="top">
+<details><summary><strong>TailwindCSS</strong></summary>
+
+[`eslint-plugin-better-tailwindcss`](https://github.com/schoero/eslint-plugin-better-tailwindcss)
+
+</details></td>
+<td valign="top">☑️</td>
+<td valign="top">🎨</td>
+<td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
 <details><summary><strong>Test</strong></summary>
 
 [`@vitest/eslint-plugin`](https://github.com/vitest-dev/eslint-plugin-vitest), [`eslint-plugin-no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests)
@@ -309,22 +334,40 @@ This config ships its own small plugin, registered as `@moso`. Each rule has ful
 | [`prefer-early-return`](./src/rules/prefer-early-return/prefer-early-return.md) | Prefer guard clauses over wrapped function bodies | | 🔧 |
 | [`prefer-fetch`](./src/rules/prefer-fetch/prefer-fetch.md) | Enforce `fetch` over legacy HTTP clients | | |
 | [`prefer-reduce-over-chaining`](./src/rules/prefer-reduce-over-chaining/prefer-reduce-over-chaining.md) | Prefer one `.reduce()` pass over `.map().filter()` chains | ✅ | |
+| [`prefer-strict-number-guards`](./src/rules/prefer-strict-number-guards/prefer-strict-number-guards.md) | Enforce the syntactic patterns that keep numeric code analyzable | | |
 
 ## Usage
 
 ### Install
 
-> [!NOTE]
-> I like to use [Bun](https://bun.sh) because it's hella fast. Thus all the install instructions are with Bun. If you use something else, check the syntax with your favorite package manager.
+```shell
+# npm
+npm install -D eslint @moso/eslint-config
 
-```bash
+# pnpm
+pnpm add -D eslint @moso/eslint-config
+
+# bun
 bun add -d eslint @moso/eslint-config
 ```
 
-Create `eslint.config.js` in the root of your project:
+Create an `eslint.config.*` in the root of your project. You can use `.js` or `.ts`; `.mjs`/`.cjs` also works.
 
-```js
-// eslint.config.js
+> [!NOTE]
+> If you use `.ts`, you will need to install [`jiti`](https://unjs.io/packages/jiti) as a developer dependency:
+> ```shell
+> # npm
+> npm install -D jiti
+> 
+> # pnpm
+> pnpm add -D jiti
+> 
+> # bun
+> bun add -d jiti
+> ```
+
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso();
@@ -335,10 +378,10 @@ export default moso();
 Combine with legacy config:
 </summary>
 
-If you still use some configs from the legacy `eslintrc` format, you can use the [`@eslint/eslintrc`](https://npmjs.com/package/@eslint/eslintrc) package to convert them to the flat config.
+If you still use some configs from the legacy `.eslintrc` format, you can use the [`@eslint/eslintrc`](https://npmjs.com/package/@eslint/eslintrc) package to convert them to the flat config.
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 import { FlatCompat } from '@eslint/eslintrc';
 
@@ -399,7 +442,7 @@ Add the following settings to your `.vscode/settings.json`:
     "source.organizeImports": "never"
   },
 
-    // You can silent specific rules in you IDE, but still auto fix them
+    // You can silence specific rules in your IDE, but still auto fix them
   "eslint.rules.customizations": [
     { "rule": "@stylistic/*", "severity": "off", "fixable": true },
     { "rule": "*-indent", "severity": "off", "fixable": true },
@@ -434,8 +477,8 @@ Since v1.0.0, this config has been migrated to [ESLint Flat config](https://esli
 
 Normally you only need to import the `moso` preset:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso();
@@ -445,8 +488,8 @@ export default moso();
 
 Configure integrations by passing options to the main function:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -464,6 +507,14 @@ export default moso({
     react: true,
     typescript: true,
     vue: true,
+
+    // JavaScript Baseline (enabled by default, reported as warnings)
+    baseline: false, // disable entirely
+    baseline: 'newly', // 'widely' (default), 'newly', or a year like 2023
+    baseline: {
+        baseline: 'widely',
+        ignoreFeatures: [], // skip web-features by ID, supports RegExp via '/.../'
+    },
 
     // JSDoc support
     jsdoc: true, // enable explicitly with reasonable defaults
@@ -484,8 +535,8 @@ export default moso({
 
 Pass additional flat config objects as arguments. Rules are scoped to specific file types:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso(
@@ -515,8 +566,8 @@ export default moso(
 
 The config returns a `FlatConfigComposer` object from [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils#composer), enabling chainable methods:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso()
@@ -539,7 +590,7 @@ export default moso()
 
 You can import and compose individual configs directly. Only use this if you need granular control:
 
-```js
+```ts
 import {
     combine,
     comments,
@@ -584,8 +635,8 @@ Disabled by default, will have to be enabled manually.
 
 There are many ways JSDoc support can be configured. However, the most simple way is just enabling it which will use very reasonable defaults:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -593,11 +644,11 @@ export default moso({
 });
 ```
 
-This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exists, and tags are formatted and styled consistently.
+This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exist, and tags are formatted and styled consistently.
 
 Individual rules can be tweaked with the `overrides` property:
 
-```js
+```ts
 {
     jsdoc: {
         overrides: {
@@ -618,8 +669,8 @@ Framework support is auto-detected based on installed packages, but can be enabl
 
 Auto-detected if you have [Astro](https://astro.build) installed. Enable explicitly:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -629,8 +680,15 @@ export default moso({
 
 Install dependencies when prompted, or manually:
 
-```bash
-bun add --dev eslint-plugin-astro astro-eslint-parser
+```shell
+# npm
+npm install -D eslint-plugin-astro astro-eslint-parser
+
+# pnpm
+pnpm add -D eslint-plugin-astro astro-eslint-parser
+
+# Bun
+bun add -d eslint-plugin-astro astro-eslint-parser
 ```
 
 > [!NOTE]
@@ -641,8 +699,8 @@ bun add --dev eslint-plugin-astro astro-eslint-parser
 
 Auto-detected if you have React, Next.js, Nextra, Remix, Gatsby, or the `@astrojs/react` Astro framework integration installed. Enable explicitly:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -652,16 +710,23 @@ export default moso({
 
 Install dependencies when prompted, or manually:
 
-```bash
-bun add --dev @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+```shell
+# npm
+npm install -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+
+# pnpm
+pnpm add -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
+
+# Bun
+bun add -d @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
 ```
 
 ### Vue
 
-Auto-detected if you have Vue, Nuxt, VitePress, or the `@astrojs/vue` Astro framework intefration installed. Enable explicitly:
+Auto-detected if you have Vue, Nuxt, VitePress, or the `@astrojs/vue` Astro framework integration installed. Enable explicitly:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -671,34 +736,41 @@ export default moso({
 
 Install dependencies when prompted, or manually (the Vue parser and SFC processors are already bundled as dependencies):
 
-```bash
-bun add --dev eslint-plugin-vue
+```shell
+# npm
+npm install -D eslint-plugin-vue
+
+# pnpm
+pnpm add -D eslint-plugin-vue
+
+# Bun
+bun add -d eslint-plugin-vue
 ```
 
 > [!CAUTION]
-> Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need to support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
+> Since Vue 2 has [reached EOL](https://v2.vuejs.org/eol), this config does not support Vue 2. If you need support for Vue 2, you'll need to disable the imported configs from Vue 3, and replace them with the Vue 2 ones. You can see an inspiring example on [`eslint-plugin-vue`](https://eslint.vuejs.org/user-guide/#usage). I recommend upgrading to Vue 3 if possible.
 
 ### Typed Linting
 
 You can optionally enable [typed linting](https://typescript-eslint.io/getting-started/typed-linting). These are also known as "rules that require types", or simply "type-aware rules". This enables for much deeper insight into your code.
 
-You enable them by passing the path of your `tsconfig.json` to the `projectRoot` option.
+You enable them by passing your project's root directory to the `projectRoot` option inside `typescript`.
 
 > [!WARNING]
 > Enabling these rules will come with a slight performance cost, [explained here](https://typescript-eslint.io/getting-started/typed-linting/#performance).
 >
 > To make things even more complicated, if you have enabled typed linting but disabled [`@stylistic`](https://eslint.style), it will also disable the type-aware rules [considered stylistic](https://typescript-eslint.io/rules/?=stylistic-typeInformation).
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso(
     {
-        projectRoot: import.meta.dirname,
-
-        // If you wish to override any of these rules, use `overridesTypeAware`:
         typescript: {
+            projectRoot: import.meta.dirname,
+
+            // If you wish to override any of these rules, use `overridesTypeAware`:
             overridesTypeAware: {
                 '@typescript-eslint/no-deprecated': 'off',
             },
@@ -714,14 +786,14 @@ export default moso(
 
 You can disable the type-aware layer entirely, or exclude certain globs or specific files from it:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
-    projectRoot: import.meta.dirname,
-
     typescript: {
+        projectRoot: import.meta.dirname,
+
         // Kill switch: keep regular TypeScript rules, drop the type-aware layer
         disableTypeAwareRules: true,
 
@@ -744,8 +816,8 @@ Some rules are deemed as 'non-fixable' when inside your editor with ESLint integ
 
 Before v1.0.0, they used to be hard disabled. But with a [helper](https://github.com/antfu/eslint-flat-config-utils#composerdisablerulesfix), they are now just marked as 'non-fixable'. They are re-applied when you're linting through a terminal, or by using [Lint Staged](#lint-staged).
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -757,10 +829,10 @@ export default moso({
 
 Linting and auto-fixing before every commit is easy, you just add the following to your `package.json`:
 
-```json
+```jsonc
 {
     "simple-git-hooks": {
-        "pre-commit": "bunx lint-staged"
+        "pre-commit": "npx lint-staged" // or pnx/bunx
     },
     "nano-staged": {
         "*": "eslint --fix"
@@ -770,18 +842,30 @@ Linting and auto-fixing before every commit is easy, you just add the following 
 
 and then
 
-```bash
-bun add --dev nano-staged simple-git-hooks
+```shell
+# npm
+npm install -D nano-staged simple-git-hooks
 
-# to activate the hooks
-bunx simple-git-hooks
+# pnpm
+pnpm add -D nano-staged simple-git-hooks
+
+# Bun
+bun add -d nano-staged simple-git-hooks
+
+
+# to activate the hooks:
+npx simple-git-hooks # npm
+
+pnx simple-git-hooks  # pnpm
+
+bunx simple-git-hooks # bun
 ```
 
 ## FAQ
 
 ### ESLint v9, older Node.js versions?
 
-ESLint v9 will reach [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that has reached EOL unless absolutely necessary. The same goes with older Node.js versions.
+ESLint v9 reached [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that have reached EOL unless absolutely necessary. The same goes with older Node.js versions.
 
 Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this version has also reached EOL. The rest of their requirements mention `v22.13.0` and `>= 24`. However, the minimum requirements of some of the configs that this sharable config apply rules from have a minimum requirement of `v22.22.3`, this project will stay within this range.
 
@@ -789,13 +873,20 @@ Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this 
 
 TypeScript 7.0 [does not ship a compiler API](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) (a new one supposedly arrives in 7.1), so [`typescript-eslint`](https://typescript-eslint.io) - and therefore all TypeScript linting in this config - cannot run against it. TypeScript's supported setup is running TypeScript 6 side-by-side through the [`@typescript/typescript6`](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0) compatibility package, aliased so tooling that imports `typescript` keeps working:
 
-```bash
-bun add --dev typescript@npm:@typescript/typescript6
+```shell
+# npm
+npm install -D typescript@npm:@typescript/typescript6
+
+# pnpm
+pnpm add -D typescript@npm:@typescript/typescript6
+
+# Bun
+bun add -d typescript@npm:@typescript/typescript6
 ```
 
 Optionally keep TypeScript 7's own `tsc` around as well:
 
-```jsonc
+```json
 {
     "devDependencies": {
         "@typescript/native": "npm:typescript@^7.0.2",
@@ -808,12 +899,15 @@ With the alias in place, this config works unchanged. Without it, the config det
 
 **Keep in mind**, this is temporary until an API is provided by TypeScript for v7.
 
+> [!NOTE]
+> As per v8.65.0, `@typescript-eslint` will also display a warning if TypeScript v7 is detected.
+
 ### I want it less opinionated
 
 No problem. I've extracted the things that I've deemed *very opinionated* in each integration, and made a setting that helps you disable all of it in one go.
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.*
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -824,7 +918,7 @@ export default moso({
 > [!NOTE]
 > The above will also disable `functional` and `perfectionist` completely. If you want to keep these enabled, you'll have to re-enable them explicitly, as demonstrated below
 
-```js
+```ts
 {
     // Disable opinionated rules
     lessOpinionated: true,
@@ -850,7 +944,7 @@ You can still use these to format files that aren't linted with this config, how
 
 You will need to install and configure [`stylelint`](https://stylelint.io) yourself, unfortunately.
 
-I am actively considering adding linting support for TailwindCSS, however.
+`v3.2.0` added linting support for TailwindCSS, however.
 
 ### I prefer `this` or `that` rule
 
@@ -860,9 +954,9 @@ No worries, you can always override the rules locally in your project to fit you
 
 This ESLint config is heavily inspired by (and uses some of the same logic of):
 
-\- [@antfu/eslint-config](https://github.com/antfu/eslint-config)
-\- [@rebeccastevens/eslint-config](https://github.com/RebeccaStevens/eslint-config-rebeccastevens)
-\- [@eslint-sukka/eslint-config](https://github.com/SukkaW/eslint-config-sukka)
+\- [@antfu/eslint-config](https://github.com/antfu/eslint-config)  
+\- [@rebeccastevens/eslint-config](https://github.com/RebeccaStevens/eslint-config-rebeccastevens)  
+\- [@eslint-sukka/eslint-config](https://github.com/SukkaW/eslint-config-sukka)  
 
 [Anthony Fu](https://github.com/antfu)'s config inspired me to take the journey, but this project has since evolved into a personal project. Especially Rebecca's config and strict(er) approach to coding has pushed me towards a stricter coding environment, with [Functional](https://github.com/eslint-functional/eslint-plugin-functional) and [Azat](https://github.com/azat-io)'s [Perfectionist](https://perfectionist.dev) and [De Morgan](https://github.com/azat-io/eslint-plugin-de-morgan) enabled.
 

@@ -26,16 +26,14 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
             recommended: 'recommended',
             url: 'https://github.com/thepassle/eslint-plugin-barrel-files/blob/main/docs/rules/avoid-barrel-files.md',
         },
-        schema: [
-            {
-                type: 'object',
-                description: 'Minimum amount of exports to consider module as barrel file.',
-                properties: {
-                    amountOfExportsToConsiderModuleAsBarrel: { type: 'number', default: 3 },
-                },
-                additionalProperties: false,
+        schema: [{
+            type: 'object',
+            description: 'Minimum amount of exports to consider module as barrel file.',
+            properties: {
+                amountOfExportsToConsiderModuleAsBarrel: { type: 'number', default: 3 },
             },
-        ],
+            additionalProperties: false,
+        }],
         messages: {
             avoidBarrelFiles: 'Barrel file detected.',
         },
@@ -51,8 +49,8 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                     if (declarationTypes.has(statement.type))
                         return { declarationCount: declarationCount + 1, exportCount };
 
-                    if (statement.type === AST_NODE_TYPES.ExportNamedDeclaration)
-                        return { declarationCount, exportCount: exportCount + statement.specifiers.length };
+                    if (statement.type === AST_NODE_TYPES.ExportNamedDeclaration && statement.exportKind !== 'type')
+                        return { declarationCount, exportCount: exportCount + statement.specifiers.filter((specifier) => specifier.exportKind !== 'type').length };
 
                     if (statement.type === AST_NODE_TYPES.ExportAllDeclaration && statement.exportKind !== 'type')
                         return { declarationCount, exportCount: exportCount + 1 };
@@ -64,10 +62,7 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                         )
                             return { declarationCount: declarationCount + 1, exportCount };
 
-                        if (statement.declaration.type === AST_NODE_TYPES.ObjectExpression)
-                            return { declarationCount, exportCount: exportCount + statement.declaration.properties.length };
-
-                        return { declarationCount, exportCount: exportCount + 1 };
+                        return ({ declarationCount, exportCount: exportCount + (statement.declaration.type === AST_NODE_TYPES.ObjectExpression ? statement.declaration.properties.length : 1) });
                     }
 
                     return { declarationCount, exportCount };
@@ -75,7 +70,7 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
                 { declarationCount: 0, exportCount: 0 },
             );
 
-            if (exportCount > declarationCount && exportCount > amountOfExportsToConsiderModuleAsBarrel) {
+            if (exportCount > declarationCount && exportCount >= amountOfExportsToConsiderModuleAsBarrel) {
                 context.report({
                     node,
                     messageId: 'avoidBarrelFiles',

@@ -51,7 +51,7 @@ Teams that prefer single-exit functions (one `return` per function) should disab
 - Type: Problem
 - [x] :white_check_mark: Stylistic
 - [x] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [x] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 

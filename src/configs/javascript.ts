@@ -3,9 +3,8 @@ import assert from 'node:assert/strict';
 import globals from 'globals';
 
 import mosoPlugin from '../rules';
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFunctional,
@@ -37,19 +36,9 @@ export const javascript = async (
         perfectionist,
     } = options;
 
-    const [
-        deMorganPlugin,
-        eslintJs,
-        unusedImportsPlugin,
-    ] = (await loadPackages([
-        'eslint-plugin-de-morgan',
-        '@eslint/js',
-        'eslint-plugin-unused-imports',
-    ])) as [
-        (typeof import('eslint-plugin-de-morgan')),
-        typeof import('@eslint/js'),
-        ESLint.Plugin,
-    ];
+    const [deMorganPlugin, eslintJs, unusedImportsPlugin] = await loadPackages(
+        ['eslint-plugin-de-morgan', '@eslint/js', 'eslint-plugin-unused-imports']
+    );
 
     return [
         {
@@ -75,7 +64,6 @@ export const javascript = async (
                 reportUnusedDisableDirectives: true,
             },
             plugins: {
-                '@eslint/js': memoize(eslintJs, '@eslint/js'),
                 'unused-imports': memoize(unusedImportsPlugin, 'eslint-plugin-unused-imports'),
             },
             rules: {
@@ -227,18 +215,13 @@ export const javascript = async (
                         selector: 'LabeledStatement',
                     },
                     {
-                        message: 'Const enums are forbidden to increase interoperability. Use regular enums instead.',
-                        selector: 'TSEnumDeclaration[const=true]',
-                    },
-                    {
                         message: 'TypeScript\'s own parser uses `ExportAssignment` for both `export default` and `export =`.',
                         selector: 'TSExportAssignment',
                     },
                     {
-                        message: '`with` is disallowed in strict mode because it makes code impossoble to predict and optimize.',
+                        message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
                         selector: 'WithStatement',
                     },
-
                 ],
                 'no-return-assign': 'off',
                 'no-sequences': 'error',
@@ -370,33 +353,32 @@ export const javascript = async (
         },
         ...((lessOpinionated
             ? []
-            : [
-                {
-                    name: 'moso/javascript/opinionated',
-                    plugins: {
-                        '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
-                        'de-morgan': memoize(deMorganPlugin, 'eslint-plugin-de-morgan'),
-                    },
-                    rules: {
-                        // Own rules
-                        '@moso/avoid-barrel-files': ['error', { amountOfExportsToConsiderModuleAsBarrel: 5 }],
-                        '@moso/no-bidi': 'error',
-                        '@moso/no-invisible-characters': 'error',
-                        '@moso/no-redundant-variable': 'error',
-                        '@moso/no-string-interpolation': 'error',
-                        '@moso/no-top-level-await': 'error',
-                        '@moso/no-unneeded-array-flat-map': 'error',
-                        '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
-                        '@moso/prefer-fetch': 'error',
-                        '@moso/prefer-reduce-over-chaining': 'error',
-
-                        // eslint-plugin-de-morgan rules
-                        // @see https://github.com/azat-io/eslint-plugin-de-morgan
-                        'de-morgan/no-negated-conjunction': 'error',
-                        'de-morgan/no-negated-disjunction': 'error',
-                    },
+            : [{
+                name: 'moso/javascript/opinionated',
+                plugins: {
+                    '@moso': memoize(mosoPlugin, '@moso/eslint-plugin'),
+                    'de-morgan': memoize(deMorganPlugin, 'eslint-plugin-de-morgan'),
                 },
-            ]) satisfies TypedFlatConfigItem[]
+                rules: {
+                    // Own rules
+                    '@moso/avoid-barrel-files': ['error', { amountOfExportsToConsiderModuleAsBarrel: 5 }],
+                    '@moso/no-bidi': 'error',
+                    '@moso/no-invisible-characters': 'error',
+                    '@moso/no-redundant-variable': 'error',
+                    '@moso/no-string-interpolation': 'error',
+                    '@moso/no-top-level-await': 'error',
+                    '@moso/no-unneeded-array-flat-map': 'error',
+                    '@moso/prefer-early-return': ['error', { maximumStatements: 1 }],
+                    '@moso/prefer-fetch': 'error',
+                    '@moso/prefer-reduce-over-chaining': 'error',
+                    '@moso/prefer-strict-number-guards': 'error',
+
+                    // eslint-plugin-de-morgan rules
+                    // @see https://github.com/azat-io/eslint-plugin-de-morgan
+                    'de-morgan/no-negated-conjunction': 'error',
+                    'de-morgan/no-negated-disjunction': 'error',
+                },
+            }]) satisfies TypedFlatConfigItem[]
         ),
     ];
 };

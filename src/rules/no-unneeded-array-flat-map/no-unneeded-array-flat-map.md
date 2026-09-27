@@ -35,7 +35,7 @@ No real reason to disable it - the fix is behavior-preserving for identity callb
 - Type: Suggestion
 - [ ] :white_check_mark: Stylistic
 - [x] :wrench: Fixable
-- [x] :bulb: Suggestions
+- [ ] :bulb: Suggestions
 - [ ] :gear: Configurable
 - [ ] :thought_balloon: Requires type information
 

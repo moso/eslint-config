@@ -8,24 +8,19 @@ export const GLOB_TS = '**/*.?([cm])ts';
 export const GLOB_TSX = '**/*.?([cm])tsx';
 export const GLOB_DTS = '**/?(.)*.d.?([cm])ts';
 
-export const GLOB_ROOT_JS = './?(.)*.?([cm])js';
-export const GLOB_ROOT_JSX = './?(.)*.?([cm])jsx';
+export const GLOB_ROOT_JS = '?(.)*.?([cm])js';
+export const GLOB_ROOT_JSX = '?(.)*.?([cm])jsx';
 
-export const GLOB_ROOT_TS = './?(.)*.?([cm])ts';
-export const GLOB_ROOT_TSX = './?(.)*.?([cm])tsx';
-export const GLOB_ROOT_DTS = './?(.)*.d.?([cm])ts';
+export const GLOB_ROOT_TS = '?(.)*.?([cm])ts';
+export const GLOB_ROOT_TSX = '?(.)*.?([cm])tsx';
+export const GLOB_ROOT_DTS = '?(.)*.d.?([cm])ts';
 
 export const GLOB_MJS = '**/*.mjs';
-export const GLOB_MTS = '**/*.mts';
-
 export const GLOB_CJS = '**/*.cjs';
-export const GLOB_CTS = '**/*.cts';
+export const GLOB_TYPINGS = 'typings/**/?(.)*.?([cm])ts';
 
-export const GLOB_STYLE = '**/?(.)*.{c,le,sc,pc,postc}ss';
-export const GLOB_CSS = '**/?(.)*.css';
-export const GLOB_POSTCSS = '**/?(.)*.{p,post}css';
-export const GLOB_LESS = '**/?(.)*.less';
-export const GLOB_SCSS = '**/?(.)*.scss';
+export const GLOB_STYLE = '**/?(.)*.{c,le,sa,sc,pc,postc}ss';
+export const GLOB_CSS_IN_JS = '**/*.css.{j,t}s';
 
 export const GLOB_JSON = '**/*.json';
 export const GLOB_JSON5 = '**/*.json5';
@@ -33,15 +28,10 @@ export const GLOB_JSONC = '**/*.jsonc';
 
 export const GLOB_ASTRO = '**/*.astro';
 export const GLOB_ASTRO_TS = '**/*.astro/*.ts';
-export const GLOB_HTML = '**/*.htm?(l)';
 export const GLOB_MARKDOWN = '**/*.md';
-export const GLOB_MARKDOWN_CODE = (`${GLOB_MARKDOWN}/${GLOB_SRC}`) as string;
-export const GLOB_MARKDOWN_IN_MARKDOWN = '**/*.md/*.md';
 export const GLOB_TOML = '**/*.toml';
 export const GLOB_VUE = '**/*.vue';
 export const GLOB_YAML = '**/*.y?(a)ml';
-
-export const GLOB_TYPINGS = 'typings/**/?(.)*.?([cm])ts';
 
 export const GLOB_TESTS: string[] = [
     `**/__tests__/**/?(.)*.${GLOB_SRC_EXT}`,
@@ -51,56 +41,58 @@ export const GLOB_TESTS: string[] = [
     `**/?(.)*.benchmark.${GLOB_SRC_EXT}`,
 ];
 
-export const GLOB_ALL_SRC: string[] = [
-    GLOB_SRC,
-    GLOB_STYLE,
-    GLOB_JSON,
-    GLOB_JSON5,
-    GLOB_HTML,
-    GLOB_MARKDOWN,
-    GLOB_VUE,
-    GLOB_YAML,
+export const GLOB_NODE_MODULES = '**/node_modules' as const;
+export const GLOB_DIST = '**/dist' as const;
+export const GLOB_LOCKFILE: string[] = [
+    '**/package-lock.json',
+    '**/bun.lock?(b)',
+    '**/pnpm-lock.yaml',
+    '**/yarn.lock',
+];
+
+export const GLOB_AI: string[] = [
+    '**/.agents',
+    '**/.claude',
+    '**/.context',
+    '**/.*/skills',
 ];
 
 export const GLOB_EXCLUDE: string[] = [
-    '**/node_modules',
-    '**/dist',
-    '**/lib',
-    '**/package-lock.json',
-    '**/yarn.lock',
-    '**/pnpm-lock.yaml',
-    '**/bun.lockb',
-    '**/bun.lock',
+    GLOB_NODE_MODULES,
+    GLOB_DIST,
+    ...GLOB_LOCKFILE,
 
+    '**/fixtures',
+    '**/lib',
     '**/output',
     '**/coverage',
     '**/temp',
-    '**/.temp',
     '**/tmp',
-    '**/.tmp',
-    '**/.history',
-    '**/.vitepress/cache',
-    '**/.nuxt',
-    '**/.next',
-    '**/.vercel',
-    '**/.changeset',
-    '**/.idea',
     '**/.cache',
+    '**/.changeset',
+    '**/.history',
+    '**/.idea',
+    '**/.next',
+    '**/.nitro',
+    '**/.nuxt',
     '**/.output',
+    '**/.temp',
+    '**/.tmp',
+    '**/.vercel',
     '**/.vite-inspect',
+    '**/.vitepress/cache',
     '**/.yarn',
-    '**/vite.config.*.timestamp-*',
 
     '**/CHANGELOG*.md',
-    '**/*.min.*',
+    '**/?(.)*.min.*',
     '**/LICENSE*',
     '**/__snapshots__',
-    '**/auto-import?(s).ts',
-    '**/auto-import?(s).d.ts',
-    '**/components.ts',
-    '**/components.d.ts',
-    '**/typegen.ts',
-    '**/typegen.d.ts',
 
-    '**/*.css.ts',
+    '**/auto-import?(s)?(.d).ts',
+    '**/components?(.d).ts',
+    '**/typegen?(.d).ts',
+    '**/vite.config.*.timestamp-*',
+
+    GLOB_CSS_IN_JS,
+    ...GLOB_AI,
 ];

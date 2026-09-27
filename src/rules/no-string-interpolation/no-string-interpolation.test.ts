@@ -7,10 +7,8 @@ const valids = ['`${test.test()}`'];
 runTest({
     module,
     valid: valids,
-    invalid: [
-        {
-            code: '`${test.\ntest()}`',
-            errors: [{ messageId: 'noStringInterpolation' }],
-        },
-    ],
+    invalid: [{
+        code: '`${test.\ntest()}`',
+        errors: [{ messageId: 'noStringInterpolation' }],
+    }],
 });

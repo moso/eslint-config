@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -15,27 +14,24 @@ export const jsonc = async (
         Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        overrides,
-        stylistic,
-    } = options;
+    const { files, overrides, stylistic } = options;
 
     const { indent = 4 } = typeof stylistic === 'boolean' ? {} : stylistic;
 
-    const [jsoncPlugin, jsoncParser] =
-        (await loadPackages(['eslint-plugin-jsonc', 'jsonc-eslint-parser'])) as
-            [ESLint.Plugin, Linter.Parser];
+    const [jsoncPlugin, jsoncParser] = await loadPackages(['eslint-plugin-jsonc', 'jsonc-eslint-parser']);
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
     return [
         {
-            name: 'moso/jsonc',
-            files,
+            name: 'moso/jsonc/setup',
             plugins: {
                 'jsonc': memoize(jsoncPlugin, 'eslint-plugin-jsonc'),
             },
+        },
+        {
+            name: 'moso/jsonc/rules',
+            files,
             languageOptions: {
                 parser: memoize(jsoncParser, 'jsonc-eslint-parser'),
             },
@@ -70,7 +66,7 @@ export const jsonc = async (
                 'jsonc/array-bracket-spacing': [stylisticEnabled, 'never'],
                 'jsonc/comma-dangle': [stylisticEnabled, 'never'],
                 'jsonc/comma-style': [stylisticEnabled, 'last'],
-                'jsonc/indent': [stylisticEnabled, typeof indent === 'number' || typeof indent === 'string' ? indent : 4],
+                'jsonc/indent': [stylisticEnabled, indent],
                 'jsonc/key-spacing': [stylisticEnabled, { afterColon: true, beforeColon: false }],
                 'jsonc/object-curly-newline': [stylisticEnabled, { consistent: true, multiline: true }],
                 'jsonc/object-curly-spacing': [stylisticEnabled, 'always'],

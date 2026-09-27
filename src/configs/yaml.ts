@@ -1,6 +1,5 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint, Linter } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
@@ -10,19 +9,18 @@ import type {
 } from '../types';
 
 export const yaml = async (
-    options: Readonly<OptionsOverrides & Required<OptionsFiles & RequiredOptionsStylistic>>,
+    options: Readonly<
+        OptionsOverrides &
+        Required<OptionsFiles & RequiredOptionsStylistic>
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
-    const {
-        files,
-        overrides,
-        stylistic,
-    } = options;
+    const { files, overrides, stylistic } = options;
 
     const { quotes = 'single' } = typeof stylistic === 'boolean' ? {} : stylistic;
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
-    const [yamlPlugin, yamlParser] = (await loadPackages(['eslint-plugin-yml', 'yaml-eslint-parser'])) as [ESLint.Plugin, Linter.Parser];
+    const [yamlPlugin, yamlParser] = await loadPackages(['eslint-plugin-yml', 'yaml-eslint-parser']);
 
     return [
         {
@@ -32,12 +30,12 @@ export const yaml = async (
             },
         },
         {
+            name: 'moso/yaml/rules',
             files,
             language: 'yml/yaml',
             languageOptions: {
                 parser: memoize(yamlParser, 'yaml-eslint-parser'),
             },
-            name: 'moso/yaml/rules',
             rules: {
                 '@stylistic/spaced-comment': 'off',
 

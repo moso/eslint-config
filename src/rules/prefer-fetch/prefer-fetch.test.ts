@@ -1,8 +1,25 @@
 import { runTest } from '../tests';
 import module from './prefer-fetch';
 
+const valids = [
+    'import "foo"',
+    'fetch("/api")',
+    'new Foo()',
+    'new ActiveXObject(name)',
+    'new ActiveXObject(123)',
+    'new ActiveXObject("Word.Application")',
+    'require("lodash")',
+    'require()',
+    'new ActiveXObject()',
+    '$(element)',
+    '$(element).other()',
+    '$.other()',
+    'other.ajax()',
+];
+
 runTest({
     module,
+    valid: valids,
     invalid: [
         {
             code: 'import "axios"',

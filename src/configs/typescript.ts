@@ -6,9 +6,10 @@ import {
     GLOB_JSX,
     GLOB_TESTS,
 } from '../globs';
-import { loadPackages, memoize } from '../utils';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
-import type { ESLint, Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import type {
     OptionsComponentExts,
@@ -57,14 +58,16 @@ export const typescript = async (
         unsafe,
     } = options;
 
-    const [tsEslintPlugin, tsEslintParser] = (await loadPackages(['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'])) as [ESLint.Plugin, Linter.Parser];
+    const [tsEslintPlugin, tsEslintParser] = await loadPackages(
+        ['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser']
+    );
 
     // Enforcing Erasable Syntax Only unless explicitly disabled or `lessOpinionated`
     const [erasableSyntaxPlugin] = erasableOnly !== false && !lessOpinionated
-        ? (await loadPackages(['eslint-plugin-erasable-syntax-only'])) as [ESLint.Plugin]
+        ? await loadPackages(['eslint-plugin-erasable-syntax-only'])
         : [undefined];
 
-    const isTypeAware = typeof projectRoot === 'string';
+    const isTypeAware = typeof projectRoot === 'string' && parserOptions.projectService !== false;
 
     const stylisticEnabled = stylistic !== false;
 
@@ -77,7 +80,7 @@ export const typescript = async (
                 parserOptions: {
                     ecmaFeatures: { jsx: true },
                     ecmaVersion: 'latest',
-                    extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
+                    extraFileExtensions: componentExts.map((ext) => `.${ext}`),
                     jsxPragma: undefined,
                     sourceType: 'module',
                     warnOnUnsupportedTypeScriptVersion: true,
@@ -394,7 +397,7 @@ export const typescript = async (
                     parserOptions: {
                         ecmaFeatures: { jsx: true },
                         ecmaVersion: 'latest',
-                        extraFileExtensions: componentExts.map((ext) => `**/*.${ext}`),
+                        extraFileExtensions: componentExts.map((ext) => `.${ext}`),
                         jsxPragma: undefined,
                         projectService: true,
                         sourceType: 'module',
@@ -410,7 +413,7 @@ export const typescript = async (
 
                     // JS off
                     'no-implied-eval': 'off',
-                    'only-throw-error': 'off',
+                    'no-throw-literal': 'off',
                     'prefer-destructuring': 'off',
                     'prefer-promise-reject-errors': 'off',
                     'require-await': 'off',

@@ -1,7 +1,5 @@
-import { GLOB_ASTRO, GLOB_SRC, GLOB_VUE } from '../globs';
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
     OptionsHasTypeScript,
@@ -15,7 +13,7 @@ export const promise = async (
         OptionsHasTypeScript &
         OptionsLessOpinionated &
         OptionsOverrides
-    > = {},
+    >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
         lessOpinionated,
@@ -23,12 +21,11 @@ export const promise = async (
         typescript,
     } = options;
 
-    const [promisePlugin] = (await loadPackages(['eslint-plugin-promise'])) as [ESLint.Plugin];
+    const [promisePlugin] = await loadPackages(['eslint-plugin-promise']);
 
     return [
         {
             name: 'moso/promise',
-            files: [GLOB_SRC, GLOB_ASTRO, GLOB_VUE],
             plugins: {
                 'promise': memoize(promisePlugin, 'eslint-plugin-promise'),
             },

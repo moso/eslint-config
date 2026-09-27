@@ -43,6 +43,22 @@ const ruleNoTopLevelAwait: createRuleType = createRule({
                     });
                 }
             },
+            'ForOfStatement': (node: TSESTree.ForOfStatement) => {
+                if (mut_functionDepth === 0 && node.await) {
+                    context.report({
+                        node,
+                        messageId: 'noTopLevelAwait',
+                    });
+                }
+            },
+            'VariableDeclaration': (node: TSESTree.VariableDeclaration) => {
+                if (mut_functionDepth === 0 && node.kind === 'await using') {
+                    context.report({
+                        node,
+                        messageId: 'noTopLevelAwait',
+                    });
+                }
+            },
         };
     },
 });

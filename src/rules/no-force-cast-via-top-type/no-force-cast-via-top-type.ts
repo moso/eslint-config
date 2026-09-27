@@ -9,8 +9,8 @@ import type { createRuleType } from '../utils';
 const isTopType = (node: TSESTree.Node) =>
     node.type === AST_NODE_TYPES.TSAnyKeyword || node.type === AST_NODE_TYPES.TSUnknownKeyword;
 
-const isTypeReference = (node: TSESTree.Node | undefined) =>
-    node?.type === AST_NODE_TYPES.TSAsExpression && node.typeAnnotation.type === AST_NODE_TYPES.TSTypeReference;
+const isCastToAnotherType = (node: TSESTree.Node | undefined) =>
+    node?.type === AST_NODE_TYPES.TSAsExpression && !isTopType(node.typeAnnotation);
 
 const ruleNoForceCastViaTopType: createRuleType = createRule({
     name: 'no-force-cast-via-top-type',
@@ -28,8 +28,7 @@ const ruleNoForceCastViaTopType: createRuleType = createRule({
     },
     create: (context) => ({
         TSAsExpression: (node: TSESTree.TSAsExpression) => {
-            if (!isTopType(node.typeAnnotation)) return;
-            if (!isTypeReference(node.parent)) return;
+            if (!isTopType(node.typeAnnotation) || !isCastToAnotherType(node.parent)) return;
 
             const type = node.typeAnnotation.type === AST_NODE_TYPES.TSAnyKeyword ? 'any' : 'unknown';
 

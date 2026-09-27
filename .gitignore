@@ -52,6 +52,7 @@ auth.json
 .vscode/CLAUDE.md
 .vscode/settings.json
 .vscode/mcp.json
+tasks/
 /.mcp.json
 /CLAUDE.md
 /PROJECT.md

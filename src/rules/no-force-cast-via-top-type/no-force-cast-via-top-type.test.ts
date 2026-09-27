@@ -4,6 +4,7 @@ import module from './no-force-cast-via-top-type';
 const valids = [
     'const foo = bar as any',
     'const foo = bar as unknown',
+    'const foo = bar as any as unknown',
 ];
 
 runTest({
@@ -12,21 +13,31 @@ runTest({
     invalid: [
         {
             code: 'const foo = bar as any as Baz',
-            errors: [
-                {
-                    messageId: 'noForceCast',
-                    data: { type: 'any' },
-                },
-            ],
+            errors: [{
+                messageId: 'noForceCast',
+                data: { type: 'any' },
+            }],
         },
         {
             code: 'const foo = bar as unknown as Baz',
-            errors: [
-                {
-                    messageId: 'noForceCast',
-                    data: { type: 'unknown' },
-                },
-            ],
+            errors: [{
+                messageId: 'noForceCast',
+                data: { type: 'unknown' },
+            }],
+        },
+        {
+            code: 'const foo = bar as any as string[]',
+            errors: [{
+                messageId: 'noForceCast',
+                data: { type: 'any' },
+            }],
+        },
+        {
+            code: 'const foo = bar as unknown as (() => void)',
+            errors: [{
+                messageId: 'noForceCast',
+                data: { type: 'unknown' },
+            }],
         },
     ],
 });

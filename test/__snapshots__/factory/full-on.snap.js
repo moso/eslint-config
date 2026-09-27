@@ -1,10 +1,5 @@
 [
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/eslint-comments",
     "plugins": [
       "@eslint-community/eslint-comments",
@@ -21,41 +16,43 @@
     "ignores": [
       "**/node_modules",
       "**/dist",
-      "**/lib",
       "**/package-lock.json",
-      "**/yarn.lock",
+      "**/bun.lock?(b)",
       "**/pnpm-lock.yaml",
-      "**/bun.lockb",
-      "**/bun.lock",
+      "**/yarn.lock",
+      "**/fixtures",
+      "**/lib",
       "**/output",
       "**/coverage",
       "**/temp",
-      "**/.temp",
       "**/tmp",
-      "**/.tmp",
-      "**/.history",
-      "**/.vitepress/cache",
-      "**/.nuxt",
-      "**/.next",
-      "**/.vercel",
-      "**/.changeset",
-      "**/.idea",
       "**/.cache",
+      "**/.changeset",
+      "**/.history",
+      "**/.idea",
+      "**/.next",
+      "**/.nitro",
+      "**/.nuxt",
       "**/.output",
+      "**/.temp",
+      "**/.tmp",
+      "**/.vercel",
       "**/.vite-inspect",
+      "**/.vitepress/cache",
       "**/.yarn",
-      "**/vite.config.*.timestamp-*",
       "**/CHANGELOG*.md",
-      "**/*.min.*",
+      "**/?(.)*.min.*",
       "**/LICENSE*",
       "**/__snapshots__",
-      "**/auto-import?(s).ts",
-      "**/auto-import?(s).d.ts",
-      "**/components.ts",
-      "**/components.d.ts",
-      "**/typegen.ts",
-      "**/typegen.d.ts",
-      "**/*.css.ts",
+      "**/auto-import?(s)?(.d).ts",
+      "**/components?(.d).ts",
+      "**/typegen?(.d).ts",
+      "**/vite.config.*.timestamp-*",
+      "**/*.css.{j,t}s",
+      "**/.agents",
+      "**/.claude",
+      "**/.context",
+      "**/.*/skills",
     ],
     "name": "moso/ignores/globals",
   },
@@ -96,6 +93,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
       "PROJECT.md",
@@ -153,7 +151,6 @@
     },
     "name": "moso/javascript",
     "plugins": [
-      "@eslint/js",
       "unused-imports",
     ],
     "rules": [
@@ -333,16 +330,23 @@
       "@moso/prefer-early-return",
       "@moso/prefer-fetch",
       "@moso/prefer-reduce-over-chaining",
+      "@moso/prefer-strict-number-guards",
       "de-morgan/no-negated-conjunction",
       "de-morgan/no-negated-disjunction",
     ],
   },
   {
-    "languageOptions": {},
-    "name": "moso/node",
+    "name": "moso/node/setup",
     "plugins": [
       "node",
     ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "languageOptions": {},
+    "name": "moso/node/rules",
     "rules": [
       "node/no-deprecated-api",
       "node/no-exports-assign",
@@ -379,42 +383,11 @@
     ],
     "settings": {
       "node": {
-        "version": "^22.22.2 || >=24",
+        "version": "^22.22.3 || >=24",
       },
     },
   },
   {
-    "files": [
-      "**/?(.)*.d.?([cm])ts",
-      "**/*.mjs",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-    ],
-    "rules": [
-      "- node/no-unsupported-features/es-syntax",
-    ],
-  },
-  {
-    "files": [
-      "**/*.astro",
-      "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-      "**/*.vue",
-    ],
-    "rules": [
-      "- node/no-extraneous-import",
-      "- node/no-missing-import",
-      "- node/no-restricted-import",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/promise",
     "plugins": [
       "promise",
@@ -435,11 +408,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/regexp",
     "plugins": [
       "regexp",
@@ -515,15 +483,16 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
-    "name": "moso/unicorn",
+    "name": "moso/unicorn/setup",
     "plugins": [
       "unicorn",
     ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/unicorn/rules",
     "rules": [
       "- no-negated-condition",
       "- no-process-exit",
@@ -531,6 +500,7 @@
       "unicorn/catch-error-name",
       "unicorn/class-reference-in-static-methods",
       "- unicorn/comment-content",
+      "- unicorn/consistent-arrow-return-style",
       "unicorn/consistent-assert",
       "- unicorn/consistent-boolean-name",
       "unicorn/consistent-class-member-order",
@@ -560,6 +530,7 @@
       "- unicorn/id-match",
       "- unicorn/import-style",
       "- unicorn/isolated-functions",
+      "unicorn/iteration-fallback-style",
       "- unicorn/logical-assignment-operators",
       "- unicorn/max-nested-calls",
       "- unicorn/name-replacements",
@@ -580,9 +551,11 @@
       "- unicorn/no-array-sort-for-min-max",
       "- unicorn/no-array-splice",
       "- unicorn/no-asterisk-prefix-in-documentation-comments",
+      "unicorn/no-async-iterator-callback",
       "- unicorn/no-async-promise-finally",
       "unicorn/no-await-expression-member",
       "unicorn/no-await-in-promise-methods",
+      "- unicorn/no-barrel-files",
       "unicorn/no-blob-to-file",
       "unicorn/no-boolean-sort-comparator",
       "- unicorn/no-break-in-nested-loop",
@@ -595,8 +568,11 @@
       "unicorn/no-console-spaces",
       "unicorn/no-constant-zero-expression",
       "unicorn/no-declarations-before-early-exit",
+      "- unicorn/no-deprecated-css-features",
       "unicorn/no-document-cookie",
       "unicorn/no-double-comparison",
+      "- unicorn/no-duplicate-css-selectors",
+      "- unicorn/no-duplicate-font-family-names",
       "unicorn/no-duplicate-if-branches",
       "unicorn/no-duplicate-logical-operands",
       "unicorn/no-duplicate-loops",
@@ -616,6 +592,7 @@
       "unicorn/no-invalid-character-comparison",
       "unicorn/no-invalid-fetch-options",
       "- unicorn/no-invalid-file-input-accept",
+      "- unicorn/no-invalid-media-features",
       "unicorn/no-invalid-remove-event-listener",
       "- unicorn/no-invalid-well-known-symbol-methods",
       "- unicorn/no-keyword-prefix",
@@ -635,6 +612,7 @@
       "unicorn/no-negated-condition",
       "unicorn/no-negation-in-equality-check",
       "- unicorn/no-nested-ternary",
+      "- unicorn/no-nesting-with-mixed-specificity",
       "unicorn/no-new-array",
       "unicorn/no-new-buffer",
       "- unicorn/no-non-function-verb-prefix",
@@ -645,6 +623,7 @@
       "unicorn/no-optional-chaining-on-undeclared-variable",
       "- unicorn/no-process-exit",
       "unicorn/no-redundant-comparison",
+      "- unicorn/no-redundant-nested-style-rules",
       "unicorn/no-return-array-push",
       "unicorn/no-selector-as-dom-name",
       "- unicorn/no-shorthand-property-overrides",
@@ -660,6 +639,8 @@
       "unicorn/no-typeof-undefined",
       "unicorn/no-uncalled-method",
       "unicorn/no-undeclared-class-members",
+      "- unicorn/no-unknown-css-annotations",
+      "- unicorn/no-unknown-pseudo-selectors",
       "unicorn/no-unnecessary-array-flat-depth",
       "- unicorn/no-unnecessary-array-flat-map",
       "unicorn/no-unnecessary-array-splice-count",
@@ -681,8 +662,11 @@
       "unicorn/no-unsafe-dom-html",
       "unicorn/no-unsafe-promise-all-settled-values",
       "unicorn/no-unsafe-property-key",
+      "unicorn/no-unsafe-sqlite-interpolation",
       "- unicorn/no-unsafe-string-replacement",
-      "unicorn/no-unused-array-method-return",
+      "- unicorn/no-unscoped-css-nesting-selector",
+      "unicorn/no-unused-builtin-method-return",
+      "unicorn/no-unused-iterator-helper",
       "- unicorn/no-unused-properties",
       "- unicorn/no-useless-boolean-cast",
       "unicorn/no-useless-coercion",
@@ -701,10 +685,12 @@
       "unicorn/no-useless-promise-resolve-reject",
       "unicorn/no-useless-re-export",
       "unicorn/no-useless-recursion",
+      "unicorn/no-useless-set-construction",
       "unicorn/no-useless-spread",
       "unicorn/no-useless-switch-case",
       "unicorn/no-useless-template-literals",
       "- unicorn/no-useless-undefined",
+      "unicorn/no-using-resource-escape",
       "unicorn/no-xor-as-exponentiation",
       "unicorn/no-zero-fractions",
       "unicorn/number-literal-case",
@@ -735,6 +721,7 @@
       "unicorn/prefer-class-fields",
       "unicorn/prefer-classlist-toggle",
       "unicorn/prefer-code-point",
+      "unicorn/prefer-combined-guards",
       "unicorn/prefer-continue",
       "unicorn/prefer-date-now",
       "unicorn/prefer-default-parameters",
@@ -768,6 +755,8 @@
       "unicorn/prefer-iterator-helpers",
       "unicorn/prefer-iterator-to-array",
       "unicorn/prefer-iterator-to-array-at-end",
+      "unicorn/prefer-iterator-zip",
+      "- unicorn/prefer-json-import",
       "unicorn/prefer-keyboard-event-key",
       "- unicorn/prefer-location-assign",
       "unicorn/prefer-logical-operator-over-ternary",
@@ -776,6 +765,7 @@
       "unicorn/prefer-math-constants",
       "unicorn/prefer-math-min-max",
       "unicorn/prefer-math-trunc",
+      "- unicorn/prefer-media-feature-range-syntax",
       "unicorn/prefer-minimal-ternary",
       "unicorn/prefer-modern-dom-apis",
       "unicorn/prefer-modern-math-apis",
@@ -829,6 +819,7 @@
       "unicorn/prefer-structured-clone",
       "unicorn/prefer-switch",
       "- unicorn/prefer-temporal",
+      "unicorn/prefer-temporal-conversion",
       "unicorn/prefer-ternary",
       "unicorn/prefer-then-catch",
       "- unicorn/prefer-toggle-attribute",
@@ -836,6 +827,7 @@
       "unicorn/prefer-type-error",
       "- unicorn/prefer-type-literal-last",
       "- unicorn/prefer-uint8array-base64",
+      "- unicorn/prefer-uint8array-hex",
       "unicorn/prefer-unary-minus",
       "unicorn/prefer-unicode-code-point-escapes",
       "unicorn/prefer-url-can-parse",
@@ -853,6 +845,7 @@
       "unicorn/require-passive-events",
       "- unicorn/require-post-message-target-origin",
       "unicorn/require-proxy-trap-boolean-return",
+      "- unicorn/single-line-block-comment-style",
       "- unicorn/string-content",
       "unicorn/switch-case-braces",
       "unicorn/switch-case-break-position",
@@ -947,6 +940,41 @@
     ],
   },
   {
+    "name": "moso/baseline/setup",
+    "plugins": [
+      "baseline-js",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])js",
+      "**/*.?([cm])jsx",
+      "**/*.astro",
+    ],
+    "name": "moso/baseline/rules",
+    "rules": [
+      "baseline-js/use-baseline",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+    ],
+    "ignores": [],
+    "name": "moso/baseline/type-aware-rules",
+    "rules": [
+      "baseline-js/use-baseline",
+    ],
+  },
+  {
+    "name": "moso/astro/setup",
+    "plugins": [
+      "astro",
+      "jsx-a11y",
+    ],
+  },
+  {
     "files": [
       "**/*.astro",
     ],
@@ -960,17 +988,8 @@
       },
       "sourceType": "module",
     },
-    "name": "moso/astro/setup",
-    "plugins": [
-      "astro",
-    ],
-    "processor": "astro/client-side-ts",
-  },
-  {
-    "files": [
-      "**/*.astro",
-    ],
     "name": "moso/astro/rules",
+    "processor": "astro/client-side-ts",
     "rules": [
       "- @moso/no-top-level-await",
       "- node/no-top-level-await",
@@ -997,14 +1016,42 @@
       "- @stylistic/jsx-one-expression-per-line",
       "- @stylistic/no-multiple-empty-lines",
       "astro/semi",
+      "astro/jsx-a11y/alt-text",
+      "astro/jsx-a11y/anchor-has-content",
+      "astro/jsx-a11y/anchor-is-valid",
+      "astro/jsx-a11y/aria-activedescendant-has-tabindex",
+      "astro/jsx-a11y/aria-props",
+      "astro/jsx-a11y/aria-proptypes",
+      "astro/jsx-a11y/aria-role",
+      "astro/jsx-a11y/aria-unsupported-elements",
+      "astro/jsx-a11y/autocomplete-valid",
+      "astro/jsx-a11y/click-events-have-key-events",
+      "astro/jsx-a11y/control-has-associated-label",
+      "astro/jsx-a11y/heading-has-content",
+      "astro/jsx-a11y/html-has-lang",
+      "astro/jsx-a11y/iframe-has-title",
+      "astro/jsx-a11y/img-redundant-alt",
+      "astro/jsx-a11y/interactive-supports-focus",
+      "- astro/jsx-a11y/label-has-for",
+      "astro/jsx-a11y/label-has-associated-control",
+      "astro/jsx-a11y/media-has-caption",
+      "astro/jsx-a11y/mouse-events-have-key-events",
+      "astro/jsx-a11y/no-access-key",
+      "astro/jsx-a11y/no-autofocus",
+      "astro/jsx-a11y/no-distracting-elements",
+      "astro/jsx-a11y/no-interactive-element-to-noninteractive-role",
+      "astro/jsx-a11y/no-noninteractive-element-interactions",
+      "astro/jsx-a11y/no-noninteractive-element-to-interactive-role",
+      "astro/jsx-a11y/no-noninteractive-tabindex",
+      "astro/jsx-a11y/no-redundant-roles",
+      "astro/jsx-a11y/no-static-element-interactions",
+      "astro/jsx-a11y/role-has-required-aria-props",
+      "astro/jsx-a11y/role-supports-aria-props",
+      "astro/jsx-a11y/scope",
+      "astro/jsx-a11y/tabindex-no-positive",
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/e18e/rules",
     "plugins": [
       "e18e",
@@ -1030,22 +1077,6 @@
     ],
   },
   {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
-    "name": "moso/e18e/library-disables",
-    "rules": [
-      "- e18e/prefer-static-regex",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-      "**/*.astro",
-      "**/*.vue",
-    ],
     "name": "moso/functional",
     "plugins": [
       "functional",
@@ -1093,10 +1124,40 @@
     },
   },
   {
-    "name": "moso/jsdoc",
+    "ignores": [
+      "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/functional/disable-type-aware",
+    "rules": [
+      "- functional/functional-parameters",
+      "- functional/immutable-data",
+      "- functional/no-conditional-statements",
+      "- functional/no-expression-statements",
+      "- functional/no-mixed-types",
+      "- functional/no-return-void",
+      "- functional/no-throw-statements",
+      "- functional/prefer-immutable-types",
+      "- functional/prefer-property-signatures",
+      "- functional/prefer-readonly-type",
+      "- functional/prefer-tacit",
+      "- functional/readonly-type",
+      "- functional/type-declaration-immutability",
+      "functional/no-let",
+    ],
+  },
+  {
+    "name": "moso/jsdoc/setup",
     "plugins": [
       "jsdoc",
     ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/jsdoc/rules",
     "rules": [
       "jsdoc/check-access",
       "jsdoc/check-alignment",
@@ -1110,7 +1171,6 @@
       "jsdoc/multiline-blocks",
       "jsdoc/no-defaults",
       "jsdoc/no-multi-asterisks",
-      "jsdoc/no-undefined-types",
       "jsdoc/reject-any-type",
       "jsdoc/reject-function-type",
       "jsdoc/require-jsdoc",
@@ -1131,9 +1191,8 @@
       "jsdoc/tag-lines",
       "jsdoc/valid-types",
       "jsdoc/check-indentation",
-      "jsdoc/check-line-alignment",
       "jsdoc/no-bad-blocks",
-      "jsdoc/no-types",
+      "- jsdoc/no-types",
       "jsdoc/require-asterisk-prefix",
       "jsdoc/require-description",
       "jsdoc/require-hyphen-before-param-description",
@@ -1141,6 +1200,12 @@
       "jsdoc/require-throws-description",
       "jsdoc/require-yields-description",
       "- jsdoc/sort-tags",
+    ],
+  },
+  {
+    "name": "moso/jsonc/setup",
+    "plugins": [
+      "jsonc",
     ],
   },
   {
@@ -1152,10 +1217,7 @@
     "languageOptions": {
       "parser": "jsonc-eslint-parser",
     },
-    "name": "moso/jsonc",
-    "plugins": [
-      "jsonc",
-    ],
+    "name": "moso/jsonc/rules",
     "rules": [
       "jsonc/no-bigint-literals",
       "jsonc/no-binary-expression",
@@ -1216,6 +1278,12 @@
     ],
   },
   {
+    "name": "moso/jsx/setup",
+    "plugins": [
+      "jsx-a11y",
+    ],
+  },
+  {
     "files": [
       "**/*.?([cm])jsx",
       "**/*.?([cm])tsx",
@@ -1227,29 +1295,10 @@
         },
       },
     },
-    "name": "moso/jsx/setup",
-  },
-  {
-    "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])tsx",
-    ],
     "name": "moso/jsx/rules",
     "rules": [
       "@stylistic/jsx-curly-spacing",
       "- @stylistic/jsx-one-expression-per-line",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])tsx",
-    ],
-    "name": "moso/jsx/a11y",
-    "plugins": [
-      "jsx-a11y",
-    ],
-    "rules": [
       "jsx-a11y/alt-text",
       "jsx-a11y/aria-props",
       "jsx-a11y/aria-proptypes",
@@ -1268,6 +1317,15 @@
     ],
   },
   {
+    "name": "moso/nextjs/setup",
+    "plugins": [
+      "@next/next",
+    ],
+  },
+  {
+    "files": [
+      "**/*.?([cm])[jt]s?(x)",
+    ],
     "languageOptions": {
       "parserOptions": {
         "ecmaFeatures": {
@@ -1276,20 +1334,6 @@
       },
       "sourceType": "module",
     },
-    "name": "moso/nextjs/setup",
-    "plugins": [
-      "@next/next",
-    ],
-    "settings": {
-      "react": {
-        "version": "detect",
-      },
-    },
-  },
-  {
-    "files": [
-      "**/*.?([cm])[jt]s?(x)",
-    ],
     "name": "moso/nextjs/rules",
     "rules": [
       "@next/next/google-font-display",
@@ -1301,6 +1345,7 @@
       "@next/next/no-head-element",
       "@next/next/no-html-link-for-pages",
       "@next/next/no-img-element",
+      "@next/next/no-location-assign-relative-destination",
       "@next/next/no-page-custom-font",
       "@next/next/no-styled-jsx-in-document",
       "@next/next/no-sync-scripts",
@@ -1314,6 +1359,11 @@
       "@next/next/no-head-import-in-document",
       "@next/next/no-script-component-in-head",
     ],
+    "settings": {
+      "react": {
+        "version": "detect",
+      },
+    },
   },
   {
     "name": "moso/perfectionist",
@@ -1346,10 +1396,18 @@
     ],
   },
   {
+    "name": "moso/react/setup",
+    "plugins": [
+      "@eslint-react",
+      "react-hooks",
+      "react-refresh",
+      "react-you-might-not-need-an-effect",
+      "jsx-a11y",
+    ],
+  },
+  {
     "files": [
-      "**/*.?([cm])jsx",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
+      "**/*.?([cm])[jt]s?(x)",
     ],
     "languageOptions": {
       "parser": "typescript-eslint/parser",
@@ -1360,13 +1418,7 @@
       },
       "sourceType": "module",
     },
-    "name": "moso/react",
-    "plugins": [
-      "@eslint-react",
-      "react-hooks",
-      "react-refresh",
-      "react-you-might-not-need-an-effect",
-    ],
+    "name": "moso/react/rules",
     "rules": [
       "@eslint-react/error-boundaries",
       "@eslint-react/exhaustive-deps",
@@ -1470,6 +1522,21 @@
       "react-hooks/exhaustive-deps",
       "react-hooks/rules-of-hooks",
       "react-refresh/only-export-components",
+      "jsx-a11y/alt-text",
+      "jsx-a11y/aria-props",
+      "jsx-a11y/aria-proptypes",
+      "jsx-a11y/aria-role",
+      "jsx-a11y/aria-unsupported-elements",
+      "jsx-a11y/iframe-has-title",
+      "jsx-a11y/no-access-key",
+      "jsx-a11y/no-static-element-interactions",
+      "jsx-a11y/role-has-required-aria-props",
+      "jsx-a11y/role-supports-aria-props",
+      "jsx-a11y/tabindex-no-positive",
+      "- jsx-a11y/anchor-ambiguous-text",
+      "jsx-a11y/interactive-supports-focus",
+      "- jsx-a11y/label-has-for",
+      "jsx-a11y/no-noninteractive-element-interactions",
     ],
     "settings": {
       "@eslint-react": {
@@ -1480,7 +1547,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1493,7 +1559,6 @@
   {
     "files": [
       "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])jsx",
       "**/*.?([cm])ts",
       "**/*.?([cm])tsx",
     ],
@@ -1625,22 +1690,6 @@
       "- functional/prefer-tacit",
       "- functional/readonly-type",
       "- functional/type-declaration-immutability",
-      "- @moso/no-top-level-await",
-      "- jsdoc/require-jsdoc",
-      "- node/no-sync",
-      "- node/prefer-global/process",
-      "- regexp/no-super-linear-backtracking",
-      "- unicorn/consistent-function-scoping",
-      "- unicorn/prefer-module",
-      "- @typescript-eslint/consistent-type-definitions",
-      "- @typescript-eslint/no-unsafe-argument",
-      "- @typescript-eslint/no-unsafe-assignment",
-      "- @typescript-eslint/no-unsafe-call",
-      "- @typescript-eslint/no-unsafe-member-access",
-      "- @typescript-eslint/no-unsafe-return",
-      "- @typescript-eslint/no-unused-expressions",
-      "- @typescript-eslint/no-unused-vars",
-      "- @typescript-eslint/strict-boolean-expressions",
       "no-only-tests/no-only-tests",
       "vitest/expect-expect",
       "vitest/no-commented-out-tests",
@@ -1714,7 +1763,7 @@
         },
         "ecmaVersion": "latest",
         "extraFileExtensions": [
-          "**/*.vue",
+          ".vue",
         ],
         "jsxPragma": undefined,
         "sourceType": "module",
@@ -1835,6 +1884,7 @@
     ],
     "rules": [
       "erasable-syntax-only/enums",
+      "erasable-syntax-only/export-aliases",
       "erasable-syntax-only/import-aliases",
       "erasable-syntax-only/namespaces",
       "erasable-syntax-only/parameter-properties",
@@ -1854,7 +1904,7 @@
         },
         "ecmaVersion": "latest",
         "extraFileExtensions": [
-          "**/*.vue",
+          ".vue",
         ],
         "jsxPragma": undefined,
         "sourceType": "module",
@@ -1890,7 +1940,6 @@
       "@typescript-eslint/restrict-plus-operands",
       "@typescript-eslint/restrict-template-expressions",
       "@typescript-eslint/unbound-method",
-      "- only-throw-error",
       "- prefer-destructuring",
       "@typescript-eslint/consistent-return",
       "@typescript-eslint/consistent-type-exports",
@@ -1902,6 +1951,7 @@
       "@typescript-eslint/return-await",
       "@typescript-eslint/no-confusing-void-expression",
       "@typescript-eslint/no-deprecated",
+      "@typescript-eslint/no-generated-empty-object-type",
       "@typescript-eslint/no-meaningless-void-operator",
       "@typescript-eslint/no-misused-spread",
       "@typescript-eslint/no-mixed-enums",
@@ -1978,6 +2028,7 @@
     "name": "moso/vue/setup",
     "plugins": [
       "vue",
+      "vuejs-accessibility",
     ],
   },
   {
@@ -2156,46 +2207,6 @@
       "vue/quote-props",
       "vue/space-in-parens",
       "vue/template-curly-spacing",
-      "- no-undef",
-      "- no-dupe-class-members",
-      "- no-redeclare",
-      "- no-unused-vars",
-      "- no-array-constructor",
-      "@typescript-eslint/no-array-constructor",
-      "- no-unused-expressions",
-      "@typescript-eslint/no-unused-expressions",
-      "- no-useless-constructor",
-      "@typescript-eslint/no-useless-constructor",
-      "- camelcase",
-      "- vue/camelcase",
-      "@typescript-eslint/naming-convention",
-      "- no-use-before-define",
-      "@typescript-eslint/no-use-before-define",
-    ],
-  },
-  {
-    "files": [
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-      "**/*.vue",
-    ],
-    "name": "moso/vue/rules-type-aware",
-    "rules": [
-      "- no-implied-eval",
-      "@typescript-eslint/no-implied-eval",
-      "- no-unused-vars",
-      "- vue/no-unused-vars",
-      "@typescript-eslint/no-unused-vars",
-      "- prefer-promise-reject-errors",
-      "@typescript-eslint/prefer-promise-reject-errors",
-    ],
-  },
-  {
-    "name": "moso/vue/a11y",
-    "plugins": [
-      "vue-a11y",
-    ],
-    "rules": [
       "vuejs-accessibility/alt-text",
       "vuejs-accessibility/anchor-has-content",
       "vuejs-accessibility/aria-props",
@@ -2217,6 +2228,31 @@
       "vuejs-accessibility/role-has-required-aria-props",
       "vuejs-accessibility/tabindex-no-positive",
     ],
+  },
+  {
+    "name": "moso/tailwind",
+    "plugins": [
+      "tailwind-better",
+    ],
+    "rules": [
+      "tailwind-better/no-conflicting-classes",
+      "tailwind-better/no-restricted-classes",
+      "tailwind-better/no-unknown-classes",
+      "tailwind-better/enforce-consistent-line-wrapping",
+      "tailwind-better/enforce-consistent-class-order",
+      "tailwind-better/enforce-consistent-variable-syntax",
+      "- tailwind-better/enforce-consistent-important-position",
+      "- tailwind-better/enforce-shorthand-classes",
+      "tailwind-better/enforce-canonical-classes",
+      "tailwind-better/no-duplicate-classes",
+      "tailwind-better/no-deprecated-classes",
+      "tailwind-better/no-unnecessary-whitespace",
+    ],
+    "settings": {
+      "better-tailwindcss": {
+        "entryPoint": "src/styles/app.css",
+      },
+    },
   },
   {
     "name": "moso/yaml/setup",
@@ -2257,6 +2293,20 @@
   },
   {
     "files": [
+      "**/config*.?([cm])[jt]s?(x)",
+      "**/{api,helpers,middleware,modules,pages,plugins,routes,views}/**/*.?([cm])[jt]s?(x)",
+      "**/{esbuild,farm,index,next,nuxt,rolldown,rollup,rspack,vite,webpack}.?([cm])[jt]s?(x)",
+      "**/*.md/**",
+      "**/*.d.ts",
+      "**/.prettierrc",
+    ],
+    "name": "moso/disables/allow-default-export",
+    "rules": [
+      "- import-lite/no-default-export",
+    ],
+  },
+  {
+    "files": [
       "**/bin/**/*",
       "**/bin.?([cm])[jt]s?(x)",
     ],
@@ -2284,13 +2334,24 @@
     "name": "moso/disables/cli",
     "rules": [
       "- @moso/no-top-level-await",
+      "- baseline-js/use-baseline",
       "- no-console",
     ],
   },
   {
     "files": [
+      "**/*.?([cm])jsx",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/disables/components",
+    "rules": [
+      "- unicorn/no-anonymous-default-export",
+    ],
+  },
+  {
+    "files": [
       "**/*.config.?([cm])[jt]s?(x)",
-      "**/*.config.*.?([cm])[jt]s?(x)",
+      "**/{esbuild,farm,index,next,nuxt,rolldown,rollup,rspack,vite,webpack}.?([cm])[jt]s?(x)",
     ],
     "name": "moso/disables/config-files",
     "rules": [
@@ -2305,10 +2366,48 @@
     ],
     "name": "moso/disables/dts",
     "rules": [
+      "- no-restricted-syntax",
       "- @eslint-community/eslint-comments/no-unlimited-disable",
       "- import-lite/no-duplicates",
       "- unused-imports/no-unused-vars",
-      "- no-restricted-syntax",
+    ],
+  },
+  {
+    "files": [
+      "**/ISSUE_TEMPLATE/**",
+    ],
+    "name": "moso/disables/github",
+    "rules": [
+      "- unicorn/filename-case",
+    ],
+  },
+  {
+    "files": [
+      "**/*.astro",
+      "**/*.astro/*.ts",
+      "**/?(.)*.d.?([cm])ts",
+      "**/*.?([cm])jsx",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+      "**/*.vue",
+    ],
+    "name": "moso/disables/node-frameworks",
+    "rules": [
+      "- node/no-extraneous-import",
+      "- node/no-missing-import",
+      "- node/no-restricted-import",
+    ],
+  },
+  {
+    "files": [
+      "**/?(.)*.d.?([cm])ts",
+      "**/*.mjs",
+      "**/*.?([cm])ts",
+      "**/*.?([cm])tsx",
+    ],
+    "name": "moso/disables/node-typescript",
+    "rules": [
+      "- node/no-unsupported-features/es-syntax",
     ],
   },
   {
@@ -2318,6 +2417,8 @@
     "name": "moso/disables/scripts",
     "rules": [
       "- @moso/no-top-level-await",
+      "- baseline-js/use-baseline",
+      "- no-console",
       "- @typescript-eslint/explicit-function-return-type",
       "- functional/no-conditional-statements",
       "- functional/no-expression-statements",
@@ -2326,7 +2427,38 @@
       "- functional/no-throw-statements",
       "- node/no-sync",
       "- node/no-unpublished-import",
-      "- no-console",
+    ],
+  },
+  {
+    "files": [
+      "**/__tests__/**/?(.)*.?([cm])[jt]s?(x)",
+      "**/?(.)*.spec.?([cm])[jt]s?(x)",
+      "**/?(.)*.test.?([cm])[jt]s?(x)",
+      "**/?(.)*.bench.?([cm])[jt]s?(x)",
+      "**/?(.)*.benchmark.?([cm])[jt]s?(x)",
+    ],
+    "name": "moso/disables/tests",
+    "rules": [
+      "- @moso/no-top-level-await",
+      "- baseline-js/use-baseline",
+      "- e18e/prefer-static-regex",
+      "- no-unused-expressions",
+      "- jsdoc/require-jsdoc",
+      "- node/no-sync",
+      "- node/prefer-global/process",
+      "- regexp/no-super-linear-backtracking",
+      "- unicorn/consistent-function-scoping",
+      "- unicorn/prefer-module",
+      "- @typescript-eslint/consistent-type-definitions",
+      "- @typescript-eslint/explicit-function-return-type",
+      "- @typescript-eslint/no-unsafe-argument",
+      "- @typescript-eslint/no-unsafe-assignment",
+      "- @typescript-eslint/no-unsafe-call",
+      "- @typescript-eslint/no-unsafe-member-access",
+      "- @typescript-eslint/no-unsafe-return",
+      "- @typescript-eslint/no-unused-expressions",
+      "- @typescript-eslint/no-unused-vars",
+      "- @typescript-eslint/strict-boolean-expressions",
     ],
   },
   {

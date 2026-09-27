@@ -1,8 +1,8 @@
-import { loadPackages, memoize } from '../utils';
-
-import type { ESLint } from 'eslint';
+import { loadPackages } from '../tools';
+import { memoize } from '../utils';
 
 import type {
+    OptionsFiles,
     OptionsJSDoc,
     OptionsLessOpinionated,
     RequiredOptionsStylistic,
@@ -13,25 +13,31 @@ export const jsdoc = async (
     options: Readonly<
         OptionsJSDoc &
         OptionsLessOpinionated &
-        Required<RequiredOptionsStylistic>
+        Required<OptionsFiles & RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
+        files,
         lessOpinionated,
         overrides,
         stylistic,
+        typescript,
     } = options;
 
-    const [jsdocPlugin] = (await loadPackages(['eslint-plugin-jsdoc'])) as [ESLint.Plugin];
+    const [jsdocPlugin] = await loadPackages(['eslint-plugin-jsdoc']);
 
     const stylisticEnabled = stylistic === false ? 'off' : 'error';
 
     return [
         {
-            name: 'moso/jsdoc',
+            name: 'moso/jsdoc/setup',
             plugins: {
                 'jsdoc': memoize(jsdocPlugin, 'eslint-plugin-jsdoc'),
             },
+        },
+        {
+            name: 'moso/jsdoc/rules',
+            files,
             rules: {
                 'jsdoc/check-access': 'warn',
                 'jsdoc/check-alignment': stylisticEnabled,
@@ -45,7 +51,6 @@ export const jsdoc = async (
                 'jsdoc/multiline-blocks': stylisticEnabled,
                 'jsdoc/no-defaults': 'warn',
                 'jsdoc/no-multi-asterisks': 'error',
-                'jsdoc/no-undefined-types': ['error', { disableReporting: true }],
                 'jsdoc/reject-any-type': 'error',
                 'jsdoc/reject-function-type': 'error',
                 'jsdoc/require-jsdoc': [
@@ -76,7 +81,7 @@ export const jsdoc = async (
                 'jsdoc/require-yields-check': 'error',
                 'jsdoc/require-yields-type': 'error',
                 'jsdoc/tag-lines': [
-                    'warn',
+                    stylisticEnabled,
                     'never',
                     {
                         applyToEndTag: false,
@@ -88,7 +93,6 @@ export const jsdoc = async (
 
                 ...(!lessOpinionated && {
                     'jsdoc/check-indentation': 'warn',
-                    'jsdoc/check-line-alignment': 'error',
                     'jsdoc/no-bad-blocks': [
                         'warn',
                         {
@@ -101,8 +105,7 @@ export const jsdoc = async (
                             ],
                         },
                     ],
-                    // 'jsdoc/no-types': typescriptEnabled ? 'off' : 'warn',
-                    'jsdoc/no-types': 'warn',
+                    'jsdoc/no-types': typescript ? 'off' : 'warn',
                     'jsdoc/require-asterisk-prefix': 'warn',
                     'jsdoc/require-description': 'warn',
                     'jsdoc/require-hyphen-before-param-description': 'warn',

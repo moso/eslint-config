@@ -4,19 +4,14 @@ import globals from 'globals';
 import { afterAll, describe, it } from 'vitest';
 
 import type { InvalidTestCase, ValidTestCase } from '@typescript-eslint/rule-tester';
-import type { TSESLint } from '@typescript-eslint/utils';
 
 import type { ExportedRuleModule } from './utils';
 
-type TestCaseGenerator<T, R = T> = (ReadonlyArray<R>) | ((cast: (input: T) => T) => Generator<R>);
-
 type TestOptions<TOptions extends ReadonlyArray<unknown>, TMessageIds extends string> = {
-    invalid?: TestCaseGenerator<InvalidTestCase<TMessageIds, TOptions>>;
+    invalid: ReadonlyArray<InvalidTestCase<TMessageIds, TOptions>>;
     module: ExportedRuleModule<TOptions, TMessageIds>;
-    valid?: TestCaseGenerator<ValidTestCase<TOptions>, string | ValidTestCase<TOptions>>;
+    valid: ReadonlyArray<string | ValidTestCase<TOptions>>;
 };
-
-const identity = <T>(input: T): T => input;
 
 RuleTester.afterAll = afterAll;
 RuleTester.it = it;
@@ -46,43 +41,9 @@ const ruleTest = new RuleTester({
 
 export function runTest<TOptions extends ReadonlyArray<unknown>, TMessageIds extends string>(
     { invalid, module, valid }: Readonly<TestOptions<TOptions, TMessageIds>>,
-    extraRules?: Record<string, TSESLint.AnyRuleModule>,
 ): void {
-    const $invalid = typeof invalid === 'function'
-        ? [...invalid(identity)]
-        : (invalid);
-    const $valid = typeof valid === 'function'
-        ? [...valid(identity)]
-        : (valid);
-
-    const tester = extraRules
-        ? (() => {
-            const extraRulesTester = new RuleTester({
-                languageOptions: {
-                    globals: {
-                        ...globals.browser,
-                        ...globals.node,
-                    },
-                    parser: tsEslintParser,
-                    parserOptions: {
-                        ecmaFeatures: { jsx: true },
-                        warnOnUnsupportedTypeScriptVersion: false,
-                    },
-                    sourceType: 'module',
-                },
-                linterOptions: {
-                    reportUnusedDisableDirectives: false,
-                },
-            });
-
-            for (const [name, rule] of Object.entries(extraRules)) extraRulesTester.defineRule(name, rule);
-
-            return extraRulesTester;
-        })()
-        : ruleTest;
-
-    tester.run(module.name, module, {
-        valid: ($valid?.flat() ?? []).map((item, index) => {
+    ruleTest.run(module.name, module, {
+        valid: valid.map((item, index) => {
             if (typeof item === 'string') return item;
 
             return {
@@ -91,7 +52,7 @@ export function runTest<TOptions extends ReadonlyArray<unknown>, TMessageIds ext
             };
         }),
 
-        invalid: ($invalid?.flat() ?? []).map((item, index) => ({
+        invalid: invalid.map((item, index) => ({
             ...item,
             name: `${item.name ?? 'invalid'} #${index}`,
         })),
