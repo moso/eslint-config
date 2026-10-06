@@ -19,6 +19,7 @@ import {
     promise,
     react,
     regexp,
+    security,
     sortPackageJson,
     sortTsconfig,
     stylistic,
@@ -206,6 +207,14 @@ export async function moso(
         ? options.perfectionist
         : options.lessOpinionated !== true;
 
+    const securityOptions = typeof options.security === 'string'
+        ? options.security
+        : typeof options.security === 'object'
+            ? (options.security.severity ?? 'moderate')
+            : options.security === false
+                ? 'none'
+                : 'moderate';
+
     const stylisticOptions = options.stylistic !== false && {
         ...StylisticConfigDefaults,
         jsx: jsxOptions !== false,
@@ -217,7 +226,7 @@ export async function moso(
         ignoresTypeAware,
         parserOptions,
         projectRoot: typescriptProjectRoot,
-        unsafe: typescriptUnsafe,
+        unsafe: typescriptUnsafe = 'warn',
         useDefaultDefaultProject,
         ...typescriptSubOptions
     } = resolveSubOptions(options, 'typescript') as
@@ -297,6 +306,16 @@ export async function moso(
                 overrides: getOverrides(options, 'imports'),
                 stylistic: stylisticOptions,
                 typescript: hasTypeScript,
+            }),
+        );
+    }
+
+    if (securityOptions !== 'none') {
+        mut_configs.push(
+            security({
+                ...resolveSubOptions(options, 'security'),
+                overrides: getOverrides(options, 'security'),
+                severity: securityOptions,
             }),
         );
     }
@@ -528,7 +547,7 @@ export async function moso(
                 overrides: getOverrides(options, 'typescript'),
                 projectRoot: projectRootOptions,
                 stylistic: stylisticOptions,
-                unsafe: typescriptUnsafe ?? 'warn',
+                unsafe: typescriptUnsafe,
             }),
         );
     }
