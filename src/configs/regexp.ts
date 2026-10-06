@@ -24,6 +24,8 @@ export const regexp = async (options: Readonly<OptionsOverrides>): Promise<Typed
                 ...(assert.ok(!Array.isArray(regexpPlugin.configs['flat/recommended'])),
                 regexpPlugin.configs['flat/recommended'].rules),
 
+                'regexp/no-super-linear-backtracking': 'error',
+
                 // Accept Annex B
                 'regexp/strict': 'off',
 
