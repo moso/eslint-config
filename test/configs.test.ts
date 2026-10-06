@@ -37,7 +37,18 @@ vi.mock('eslint-plugin-n', async (importOriginal) => {
     };
 });
 
-const { node, react, vue } = await import('../src/configs');
+vi.mock('eslint-plugin-security', async (importOriginal) => {
+    const actual = await importOriginal<{ default: typeof import('eslint-plugin-security') }>();
+
+    return { default: { ...actual.default, configs: undefined } };
+});
+
+const {
+    node,
+    react,
+    security,
+    vue,
+} = await import('../src/configs');
 
 describe('framework detection through local-pkg', () => {
     beforeEach(() => {
@@ -51,6 +62,7 @@ describe('framework detection through local-pkg', () => {
 
     afterAll(() => {
         globalThis.__ESLINT_PLUGIN_MEMO__?.delete('eslint-plugin-n');
+        globalThis.__ESLINT_PLUGIN_MEMO__?.delete('eslint-plugin-security');
     });
 
     it('react allows the Remix export names when a Remix package is installed', async () => {
@@ -107,5 +119,12 @@ describe('framework detection through local-pkg', () => {
         const rules = configs.find((config) => config.name === 'moso/node/rules')?.rules ?? {};
 
         expect(rules['node/no-unpublished-import']).toBe('warn');
+    });
+
+    it.for(['lite', 'moderate'] as const)('security tolerates a plugin without presets at %s', async (severity) => {
+        const [config] = await security({ severity });
+
+        expect(config.rules).not.toHaveProperty('security/detect-eval-with-expression');
+        expect(config.rules?.['security/detect-unsafe-regex']).toBe('off');
     });
 });

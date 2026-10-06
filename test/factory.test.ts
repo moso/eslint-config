@@ -364,6 +364,18 @@ it('disables the project service when `parserOptions.projectService` is false', 
     expect(services.every((service) => service === false)).toBe(true);
 });
 
+it.concurrent.for<[OptionsConfig['security'], string, string]>([
+    ['lite', 'warn', 'off'],
+    [{}, 'error', 'off'],
+    [{ severity: 'strict' }, 'error', 'error'],
+])('resolves security %o', async ([security, evalSeverity, injectionSeverity], { expect }) => {
+    const configs = await moso({ security });
+    const rules = configs.find((config) => config.name === 'moso/security')?.rules;
+
+    expect(rules?.['security/detect-eval-with-expression']).toBe(evalSeverity);
+    expect(rules?.['security/detect-object-injection']).toBe(injectionSeverity);
+});
+
 it('baseline tolerates omitted type-aware globs in both modes', async ({ expect }) => {
     const untyped = await baseline({
         files: ['**/*.js'],
