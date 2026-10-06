@@ -16,6 +16,7 @@ export * from './perfectionist';
 export * from './promise';
 export * from './react';
 export * from './regexp';
+export * from './security';
 export * from './sort';
 export * from './stylistic';
 export * from './tailwind';
