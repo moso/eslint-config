@@ -12,6 +12,7 @@ const config: Promise<Linter.Config[]> = moso(
         mode: 'library',
         nextjs: true,
         react: true,
+        security: true,
         stylistic: {
             experimental: true,
             indent: 4,

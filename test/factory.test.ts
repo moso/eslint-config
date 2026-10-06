@@ -75,6 +75,7 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
             jsonc: true,
             nextjs: false,
             react: true,
+            security: true,
             stylistic: {
                 indent: 'tab',
                 quotes: 'backtick',

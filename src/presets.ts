@@ -32,6 +32,7 @@ export const full: OptionsConfig = {
         },
     },
     regexp: true,
+    security: true,
     stylistic: true,
     tailwind: {
         entryPoint: 'src/styles/app.css',
@@ -68,6 +69,7 @@ export const off: OptionsConfig = {
     promise: false,
     react: false,
     regexp: false,
+    security: false,
     stylistic: false,
     tailwind: false,
     test: false,
