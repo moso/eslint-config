@@ -1018,11 +1018,6 @@
     },
   },
   {
-    "ignores": [
-      "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-    ],
     "name": "moso/functional/disable-type-aware",
     "rules": [
       "- functional/functional-parameters",
