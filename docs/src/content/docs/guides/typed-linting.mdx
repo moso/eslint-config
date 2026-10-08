@@ -15,8 +15,8 @@ Enabling these rules will come with a slight performance cost, [explained here](
 To make things even more complicated, if you have enabled typed linting but disabled [`@stylistic`](https://eslint.style), it will also disable the type-aware rules [considered stylistic](https://typescript-eslint.io/rules/?=stylistic-typeInformation).
 :::
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso(
@@ -41,8 +41,8 @@ TypeScript will still be auto-detected if you have the `typescript`-package inst
 
 You can disable the type-aware layer entirely, or exclude certain globs or specific files from it:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -71,8 +71,8 @@ Some rules are deemed as 'non-fixable' when inside your editor with ESLint integ
 
 Before v1.0.0, they used to be hard disabled. But with a [helper](https://github.com/antfu/eslint-flat-config-utils#composerdisablerulesfix), they are now just marked as 'non-fixable'. They are re-applied when you're linting through a terminal, or by using [Lint Staged](#lint-staged).
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso({

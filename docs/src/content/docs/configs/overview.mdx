@@ -1,6 +1,8 @@
 ---
 title: Configs
 description: 'Plugins used by each @moso/eslint-config config, and the custom @moso rule set.'
+sidebar:
+  order: 0
 ---
 
 ## Plugins by config
@@ -15,48 +17,60 @@ This section contains a list of the plugins used in the named configs that ship 
 - 💭 Type-aware rules available by setting the path to your `tsconfig.json`
 - ℹ️ Accessibility rules available with `a11y: true`
 
+{/* sync-configs:start (generated, do not edit) */}
+
 | Config | Plugins | Enabled | Stylistic | Type-aware |
 | --- | --- | --- | --- | --- |
-| Astro | [`eslint-plugin-astro`](https://ota-meshi.github.io/eslint-plugin-astro), [`astro-eslint-parser`](https://github.com/ota-meshi/astro-eslint-parser), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ☑️ℹ️ | 🎨 | |
+| Astro | [`astro-eslint-parser`](https://github.com/ota-meshi/astro-eslint-parser), [`eslint-plugin-astro`](https://ota-meshi.github.io/eslint-plugin-astro/), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ☑️ℹ️ | 🎨 | |
+| Baseline | [`eslint-plugin-baseline-js`](https://baselinejs.vercel.app/) | ✅ | | 💭 |
 | e18e | [`@e18e/eslint-plugin`](https://github.com/e18e/eslint-plugin) | 🌟 | | |
-| ESLint Comments | [`eslint-plugin-eslint-comments`](https://eslint-community.github.io/eslint-plugin-eslint-comments) | ✅ | | |
-| Functional | [`eslint-plugin-functional`](https://github.com/eslint-functional/eslint-plugin-functional) | 🌟 | 🎨 | |
-| Import Lite | [`eslint-plugin-import-lite`](https://github.com/9romise/eslint-plugin-import-lite) | ✅ | 🎨 | |
-| JavaScript | [`@eslint/js`](https://eslint.org), [`eslint-plugin-de-morgan`](https://github.com/azat-io/eslint-plugin-de-morgan), [`eslint-plugin-unused-imports`](https://github.com/sweepline/eslint-plugin-unused-imports) | ✅ | | |
+| ESLint Comments | [`@eslint-community/eslint-plugin-eslint-comments`](https://github.com/eslint-community/eslint-plugin-eslint-comments) | ✅ | | |
+| Functional | [`eslint-plugin-functional`](https://github.com/eslint-functional/eslint-plugin-functional) | 🌟 | 🎨 | 💭 |
+| Ignores | [`eslint-config-flat-gitignore`](https://github.com/antfu/eslint-config-flat-gitignore) | ✅ | | |
+| Imports | [`eslint-plugin-import-lite`](https://github.com/9romise/eslint-plugin-import-lite) | ✅ | 🎨 | |
+| JavaScript | [`eslint-plugin-de-morgan`](https://github.com/azat-io/eslint-plugin-de-morgan), [`@eslint/js`](https://eslint.org), [`eslint-plugin-unused-imports`](https://github.com/sweepline/eslint-plugin-unused-imports) | ✅ | | |
 | JSDoc | [`eslint-plugin-jsdoc`](https://github.com/gajus/eslint-plugin-jsdoc) | 🟨 | 🎨 | |
-| JSONC | [`eslint-plugin-jsonc`](https://ota-meshi.github.io/eslint-plugin-jsonc) | 🟨 | 🎨 | |
-| JSX | [`@stylistic/eslint-plugin`](https://eslint.style), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ✅ℹ️ | 🎨 | |
-| Next.js | [`@next/eslint-plugin-next`](https://nextjs.org/docs/app/api-reference/config/eslint) | ☑️ | | |
-| Node | [`eslint-plugin-n`](https://github.com/eslint-community/eslint-plugin-n) | ✅ | | |
+| JSONC | [`eslint-plugin-jsonc`](https://ota-meshi.github.io/eslint-plugin-jsonc/), [`jsonc-eslint-parser`](https://github.com/ota-meshi/jsonc-eslint-parser) | 🟨 | 🎨 | |
+| JSX | [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ✅ℹ️ | 🎨 | |
+| Next.js | [`@next/eslint-plugin-next`](https://github.com/vercel/next.js/tree/HEAD/packages/eslint-plugin-next) | ☑️ | | |
+| Node.js | [`eslint-plugin-n`](https://github.com/eslint-community/eslint-plugin-n) | ✅ | | |
 | Perfectionist | [`eslint-plugin-perfectionist`](https://perfectionist.dev) | 🌟 | | |
-| Promises | [`eslint-plugin-promise`](https://github.com/eslint-community/eslint-plugin-promise) | ✅ | | |
-| React | [`@eslint-react`](https://eslint-react.xyz), [`@eslint-react/dom`](https://eslint-react.xyz), [`@eslint-react/hooks-extra`](https://eslint-react.xyz), [`@eslint-react/naming-convention`](https://eslint-react.xyz), [`@eslint-react/web-api`](https://eslint-react.xyz), [`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks), [`eslint-plugin-react-you-might-not-need-an-effect`](https://github.com/NickvanDyke/eslint-plugin-react-you-might-not-need-an-effect), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ☑️ℹ️ | 🎨 | 💭 |
-| RegExp | [`eslint-plugin-regexp`](https://ota-meshi.github.io/eslint-plugin-regexp) | ✅ | | |
-| Stylistic | [`@stylistic/eslint-plugin`](https://eslint.style) | ✅ | 🎨 | |
-| Test | [`@vitest/eslint-plugin`](https://github.com/vitest-dev/eslint-plugin-vitest), [`eslint-plugin-no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests) | ✅ | | |
-| TOML | [`eslint-plugin-toml`](https://ota-meshi.github.io/eslint-plugin-toml) | ✅ | 🎨 | |
-| TypeScript | [`@typescript-eslint`](https://typescript-eslint.io), [`eslint-plugin-erasable-syntax-only`](https://github.com/JoshuaKGoldberg/eslint-plugin-erasable-syntax-only) | ☑️ | 🎨 | 💭 |
+| Promise | [`eslint-plugin-promise`](https://github.com/eslint-community/eslint-plugin-promise) | ✅ | | |
+| React | [`@eslint-react/eslint-plugin`](https://github.com/Rel1cx/eslint-react), [`eslint-plugin-react-hooks`](https://react.dev/), [`eslint-plugin-react-refresh`](https://github.com/ArnaudBarre/eslint-plugin-react-refresh), [`eslint-plugin-react-you-might-not-need-an-effect`](https://github.com/nickjvandyke/eslint-plugin-react-you-might-not-need-an-effect), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | ☑️ℹ️ | 🎨 | 💭 |
+| RegExp | [`eslint-plugin-regexp`](https://github.com/ota-meshi/eslint-plugin-regexp) | ✅ | | |
+| Stylistic | [`@stylistic/eslint-plugin`](https://github.com/eslint-stylistic/eslint-stylistic) | ✅ | 🎨 | |
+| Tailwind | [`eslint-plugin-better-tailwindcss`](https://github.com/schoero/eslint-plugin-better-tailwindcss) | ☑️ | 🎨 | |
+| Test | [`eslint-plugin-no-only-tests`](https://github.com/levibuzolic/eslint-plugin-no-only-tests), [`@vitest/eslint-plugin`](https://github.com/vitest-dev/eslint-plugin-vitest) | ✅ | | |
+| TOML | [`toml-eslint-parser`](https://github.com/ota-meshi/toml-eslint-parser), [`eslint-plugin-toml`](https://ota-meshi.github.io/eslint-plugin-toml/) | ✅ | 🎨 | |
+| TypeScript | [`@typescript-eslint/eslint-plugin`](https://typescript-eslint.io/packages/eslint-plugin), [`@typescript-eslint/parser`](https://typescript-eslint.io/packages/parser), [`eslint-plugin-erasable-syntax-only`](https://github.com/JoshuaKGoldberg/eslint-plugin-erasable-syntax-only) | ☑️ | 🎨 | 💭 |
 | Unicorn | [`eslint-plugin-unicorn`](https://github.com/sindresorhus/eslint-plugin-unicorn) | ✅ | | |
-| Vue | [`eslint-plugin-vue`](https://eslint.vuejs.org), [`eslint-plugin-vuejs-accessibility`](https://vue-a11y.github.io/eslint-plugin-vuejs-accessibility) | ☑️ℹ️ | 🎨 | 💭 |
-| YAML | [`eslint-plugin-yml`](https://ota-meshi.github.io/eslint-plugin-yml) | ✅ | 🎨 | |
+| Vue | [`eslint-plugin-vue`](https://eslint.vuejs.org), [`vue-eslint-parser`](https://github.com/vuejs/vue-eslint-parser), [`eslint-processor-vue-blocks`](https://github.com/antfu/eslint-processor-vue-blocks), [`eslint-merge-processors`](https://github.com/antfu/eslint-merge-processors), [`eslint-plugin-vuejs-accessibility`](https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility) | ☑️ℹ️ | 🎨 | 💭 |
+| YAML | [`eslint-plugin-yml`](https://ota-meshi.github.io/eslint-plugin-yml/), [`yaml-eslint-parser`](https://github.com/ota-meshi/yaml-eslint-parser) | ✅ | 🎨 | |
+
+{/* sync-configs:end */}
 
 ## Custom rules
 
 This config ships its own small plugin, registered as `@moso`. Each rule has full documentation on its own page.
 
+{/* sync-rules:start (generated, do not edit) */}
+
 | Rule | Description | Default | Fixable |
 | --- | --- | --- | --- |
-| [`avoid-barrel-files`](/rules/avoid-barrel-files/) | Disallow *authoring* barrel files | ✅ | |
+| [`avoid-barrel-files`](/rules/avoid-barrel-files/) | Disallow *authoring* barrel files in your project | ✅ | |
 | [`no-bidi`](/rules/no-bidi/) | Detect and stop trojan source attacks | ✅ | 🔧 |
-| [`no-force-cast-via-top-type`](/rules/no-force-cast-via-top-type/) | Disallow `T as any as Q` casts | ✅ | |
-| [`no-import-duplicates`](/rules/no-import-duplicates/) | Fix duplicate specifiers within an import | ✅ | 🔧 |
-| [`no-import-from-dist`](/rules/no-import-from-dist/) | Prevent importing from `dist` folders | ✅ | |
-| [`no-import-node-modules-by-path`](/rules/no-import-node-modules-by-path/) | Prevent importing `node_modules` by path | ✅ | |
+| [`no-force-cast-via-top-type`](/rules/no-force-cast-via-top-type/) | Disallow casting a type `T` to unrelated or incompatible type `Q` via `T as any as Q` | ✅ | |
+| [`no-import-duplicates`](/rules/no-import-duplicates/) | Fix duplicates of imports | ✅ | 🔧 |
+| [`no-import-from-dist`](/rules/no-import-from-dist/) | Prevent importing modules located in the `dist` folder | ✅ | |
+| [`no-import-node-modules-by-path`](/rules/no-import-node-modules-by-path/) | Prevent importing modules from the `node_modules` folder by relative or absolute path | ✅ | |
 | [`no-invisible-characters`](/rules/no-invisible-characters/) | Disallow invisible characters | ✅ | 🔧 |
-| [`no-redundant-variable`](/rules/no-redundant-variable/) | Disallow variables that are immediately returned | | 🔧 |
-| [`no-string-interpolation`](/rules/no-string-interpolation/) | Disallow multiline expressions in template literals | | |
-| [`no-top-level-await`](/rules/no-top-level-await/) | Prevent top-level `await` | ✅ | |
-| [`no-unneeded-array-flat-map`](/rules/no-unneeded-array-flat-map/) | Disallow `flatMap` with identity callbacks | | 🔧 |
-| [`prefer-early-return`](/rules/prefer-early-return/) | Prefer guard clauses over wrapped function bodies | | 🔧 |
-| [`prefer-fetch`](/rules/prefer-fetch/) | Enforce `fetch` over legacy HTTP clients | | |
-| [`prefer-reduce-over-chaining`](/rules/prefer-reduce-over-chaining/) | Prefer one `.reduce()` pass over `.map().filter()` chains | ✅ | |
+| [`no-redundant-variable`](/rules/no-redundant-variable/) | Disallow redundant variables | | 🔧 |
+| [`no-string-interpolation`](/rules/no-string-interpolation/) | Disallow multiline expressions in string interpolation | | |
+| [`no-top-level-await`](/rules/no-top-level-await/) | Prevent using top-level await | ✅ | |
+| [`no-unneeded-array-flat-map`](/rules/no-unneeded-array-flat-map/) | Disallow `Array#flatMap((x) => x)` when simpler alternatives exist | | 🔧 |
+| [`prefer-early-return`](/rules/prefer-early-return/) | Prefer early returns over full-body conditional wrapping in function declarations | | 🔧 |
+| [`prefer-fetch`](/rules/prefer-fetch/) | Enforce `fetch()` over legacy HTTP request APIs and libraries | | |
+| [`prefer-reduce-over-chaining`](/rules/prefer-reduce-over-chaining/) | Prefer `.reduce()` over chaining `.map()` and `.filter()` methods | ✅ | |
+| [`prefer-strict-number-guards`](/rules/prefer-strict-number-guards/) | Enforce the syntactic patterns that keep numeric code analyzable | | |
+
+{/* sync-rules:end */}

@@ -7,8 +7,8 @@ Since v1.0.0, this config has been migrated to [ESLint Flat config](https://esli
 
 Normally you only need to import the `moso` preset:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso();
@@ -16,15 +16,15 @@ export default moso();
 
 ## Configuration Options
 
-Configure integrations by passing options to the main function:
+Configure integrations by passing options to the main method.
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso({
-    // Stylistic rules (enabled by default)
-    stylistic: false, // disable entirely
+    stylistic: false, // Disable @stylistic entirely
+
     stylistic: {
         indent: 4, // 2, or 'tab'
         jsx: true, // or false to disable JSX support
@@ -45,7 +45,7 @@ export default moso({
     jsonc: false,
     yaml: false,
 
-    // Replaces .eslintignore (no longer supported)
+    // Replaces .eslintignore (no longer supported) on top of your .gitignore
     ignores: [
         '**/dist',
         '**/node_modules',
@@ -57,13 +57,12 @@ export default moso({
 
 Pass additional flat config objects as arguments. Rules are scoped to specific file types:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso(
     {
-        // First argument: moso config options
         vue: true,
         typescript: true,
     },
@@ -84,12 +83,42 @@ export default moso(
 );
 ```
 
+Every config has an `overrides` option that you can use as well. And configs with `a11y` enabled have an `overridesA11y` option too.
+
+```ts
+import moso from '@moso/eslint-config';
+
+export default moso(
+    {
+        astro: {
+            overrides: {
+                'astro/no-deprecated-astro-resolve': 'off',
+            },
+        },
+
+        vue: {
+            overridesA11y: {
+                'vuejs-accessibility/anchor-has-content': [
+                    'warn',
+                    {
+                        'components': ['Anchor'],
+                        'accessibleChildren': ['MyAccessibleText'],
+                        'accessibleDirectives': ['myAccessibleDirective']
+                    },
+                ],
+            },
+        },
+    },
+);
+```
+
+
 ## Advanced Composition
 
 The config returns a `FlatConfigComposer` object from [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils#composer), enabling chainable methods:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso()
@@ -111,7 +140,7 @@ export default moso()
 
 You can import and compose individual configs directly. Only use this if you need granular control:
 
-```js
+```ts
 import {
     combine,
     comments,
@@ -154,8 +183,8 @@ Disabled by default, will have to be enabled manually.
 
 There are many ways JSDoc support can be configured. However, the most simple way is just enabling it which will use very reasonable defaults:
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -165,9 +194,9 @@ export default moso({
 
 This will enable the preset `recommended`, which is recommended starting rules for enforcing proper tag values, common tags exists, and tags are formatted and styled consistently.
 
-Individual rules can be tweaked with the `overrides` property:
+As with all other configs, individual rules can be tweaked with the `overrides` option:
 
-```js
+```ts
 {
     jsdoc: {
         overrides: {

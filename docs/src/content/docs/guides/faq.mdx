@@ -52,8 +52,8 @@ With the alias in place, this config works unchanged. Without it, the config det
 
 No problem. I've extracted the things that I've deemed *very opinionated* in each integration, and made a setting that helps you disable all of it in one go.
 
-```js
-// eslint.config.js
+```ts
+// eslint.config.ts
 import moso from '@moso/eslint-config';
 
 export default moso({
@@ -65,7 +65,7 @@ export default moso({
 The above will also disable `functional` and `perfectionist` completely. If you want to keep these enabled, you'll have to re-enable them explicitly, as demonstrated below.
 :::
 
-```js
+```ts
 {
     // Disable opinionated rules
     lessOpinionated: true,
