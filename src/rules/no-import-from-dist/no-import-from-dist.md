@@ -10,7 +10,7 @@ Imports that reach into your own `dist/` directory couple your code to build art
 
 ### ❌ Incorrect
 
-```js
+```ts
 import a from '../dist/a';
 import b from 'dist';
 const c = require('../dist/c');
@@ -18,7 +18,7 @@ const c = require('../dist/c');
 
 ### ✅ Correct
 
-```js
+```ts
 import a from '../src/a';
 import b from 'some-pkg';
 import c from 'some-pkg/dist/helpers';

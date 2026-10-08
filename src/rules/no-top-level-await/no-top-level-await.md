@@ -10,13 +10,13 @@ Top-level `await` blocks the whole module graph while it resolves: every importe
 
 ### ❌ Incorrect
 
-```js
+```ts
 const data = await fetchData();
 ```
 
 ### ✅ Correct
 
-```js
+```ts
 const main = async () => {
     const data = await fetchData();
 };

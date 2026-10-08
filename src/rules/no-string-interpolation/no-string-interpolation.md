@@ -10,7 +10,7 @@ Template-literal expressions that span multiple lines bury logic inside a string
 
 ### ❌ Incorrect
 
-```js
+```ts
 const message = `result: ${items
     .map((item) => item.name)
     .join(', ')}`;
@@ -18,7 +18,7 @@ const message = `result: ${items
 
 ### ✅ Correct
 
-```js
+```ts
 const names = items.map((item) => item.name).join(', ');
 const message = `result: ${names}`;
 

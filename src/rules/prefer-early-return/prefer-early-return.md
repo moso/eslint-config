@@ -10,7 +10,7 @@ A function whose entire body is wrapped in one `if` hides its guard condition an
 
 ### ❌ Incorrect
 
-```js
+```ts
 const handle = (event) => {
     if (event.isValid) {
         prepare();
@@ -21,7 +21,7 @@ const handle = (event) => {
 
 ### ✅ Correct
 
-```js
+```ts
 const handle = (event) => {
     if (!event.isValid) return;
 

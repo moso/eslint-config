@@ -10,14 +10,14 @@ Reaching into `node_modules` by path (`../node_modules/foo`) sidesteps the modul
 
 ### ❌ Incorrect
 
-```js
+```ts
 import a from '../node_modules/a';
 const c = require('../node_modules/c');
 ```
 
 ### ✅ Correct
 
-```js
+```ts
 import a from 'a';
 const c = require('c');
 ```

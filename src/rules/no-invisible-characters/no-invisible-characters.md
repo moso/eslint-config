@@ -10,7 +10,7 @@ Zero-width and other invisible Unicode characters (zero-width space, soft hyphen
 
 ### ❌ Incorrect
 
-```js
+```ts
 // The string contains a RAW U+200B (ZERO WIDTH SPACE) - invisible in the
 // editor, but 'a<U+200B>b' !== 'ab' at runtime
 const label = 'a<U+200B>b';
@@ -18,7 +18,7 @@ const label = 'a<U+200B>b';
 
 ### ✅ Correct
 
-```js
+```ts
 // The fixer output: the invisible character is a visible escape sequence
 const label = 'a\u200Bb';
 ```

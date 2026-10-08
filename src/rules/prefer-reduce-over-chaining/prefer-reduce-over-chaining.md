@@ -10,7 +10,7 @@ Every link in a `.map().filter()` chain allocates a fresh intermediate array and
 
 ### ❌ Incorrect
 
-```js
+```ts
 const names = users
     .filter((user) => user.active)
     .map((user) => user.name);
@@ -18,7 +18,7 @@ const names = users
 
 ### ✅ Correct
 
-```js
+```ts
 const names = users.reduce((acc, user) => {
     if (user.active) acc.push(user.name);
     return acc;

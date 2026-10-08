@@ -10,7 +10,7 @@ Disallow `Array#flatMap((x) => x)` when simpler alternatives exist.
 
 ### ❌ Incorrect
 
-```js
+```ts
 [].flatMap((x) => x);
 [].flatMap((x) => { return x });
 [].flatMap(function (x) { return x });
@@ -18,7 +18,7 @@ Disallow `Array#flatMap((x) => x)` when simpler alternatives exist.
 
 ### ✅ Correct
 
-```js
+```ts
 [].flat();
 
 // Non-identity callbacks are what flatMap is for

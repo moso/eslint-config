@@ -10,7 +10,7 @@ Barrel files (modules that mostly re-export other modules) force the module load
 
 ### ❌ Incorrect
 
-```js
+```ts
 // index.js - 3+ re-exports make this a barrel
 export { a } from './a';
 export { b } from './b';
@@ -19,7 +19,7 @@ export { c } from './c';
 
 ### ✅ Correct
 
-```js
+```ts
 // Import directly from the source module instead
 import { a } from './a';
 import { b } from './b';

@@ -10,7 +10,7 @@ Unicode bidirectional (bidi) control characters (`U+061C`, `U+202A`–`U+202E`, 
 
 ### ❌ Incorrect
 
-```js
+```ts
 // The string contains a RAW U+202E (RIGHT-TO-LEFT OVERRIDE) character -
 // invisible here, but it reorders how the code renders in an editor
 const greeting = 'Hello<U+202E>World';
@@ -18,7 +18,7 @@ const greeting = 'Hello<U+202E>World';
 
 ### ✅ Correct
 
-```js
+```ts
 // The fixer output: the bidi character is a visible escape sequence
 const greeting = 'Hello\u202EWorld';
 ```

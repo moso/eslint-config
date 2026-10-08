@@ -10,14 +10,14 @@ Reports import specifiers that appear more than once inside the same import decl
 
 ### ❌ Incorrect
 
-```js
+```ts
 import { a, b, a } from 'foo';
 import { a, a } from 'foo';
 ```
 
 ### ✅ Correct
 
-```js
+```ts
 import { a, b } from 'foo';
 ```
 

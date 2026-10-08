@@ -10,7 +10,7 @@ The platform-native `fetch` API (stable in Node >18 and every modern browser) re
 
 ### ❌ Incorrect
 
-```js
+```ts
 import 'axios';
 require('request');
 
@@ -24,7 +24,7 @@ $(element).load('/fragment');
 
 ### ✅ Correct
 
-```js
+```ts
 const response = await fetch('/api');
 const data = await response.json();
 ```
