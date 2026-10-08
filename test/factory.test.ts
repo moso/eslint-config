@@ -283,6 +283,13 @@ it.concurrent.for(configPresets)('eslint accepts factory $name', async ({ config
     await expect(eslint.calculateConfigForFile('scratch.ts')).resolves.not.toThrow();
 });
 
+it('lints TypeScript without type information when no `projectRoot` is set', async ({ expect }) => {
+    const eslint = new ESLint({ overrideConfig: await moso({ typescript: true }), overrideConfigFile: true });
+    const code = 'type Gate = { enabled: boolean; toggle: () => void };\nconst state = { count: 0 };\nstate.count += 1;\nexport type { Gate };\n';
+
+    await expect(eslint.lintText(code, { filePath: 'scratch.ts' })).resolves.toBeDefined();
+});
+
 it('builds a config when called with no arguments', async ({ expect }) => {
     await expect(moso()).resolves.toSatisfy((configs: Linter.Config[]) => configs.length > 0);
 });
