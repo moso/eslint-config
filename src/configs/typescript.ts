@@ -207,57 +207,58 @@ export const typescript = async (
                 '@typescript-eslint/parameter-properties': 'off',
 
                 ...(functionalEnforcement !== 'none' && mode !== 'library' && {
-                    // Opinionated TypeScript-related Functional
-                    'functional/no-mixed-types': 'error',
-                    'functional/prefer-property-signatures': 'error',
-                    'functional/readonly-type': 'error',
-                    'functional/type-declaration-immutability': [
-                        'error',
-                        {
-                            rules: [
-                                {
-                                    identifiers: 'I?Immutable.+',
-                                    immutability: 'Immutable',
-                                    comparator: 'AtLeast',
-                                },
-                                {
-                                    identifiers: 'I?ReadonlyDeep.+',
-                                    immutability: 'ReadonlyDeep',
-                                    comparator: 'AtLeast',
-                                },
-                                {
-                                    identifiers: 'I?Readonly.+',
-                                    immutability: 'ReadonlyShallow',
-                                    comparator: 'AtLeast',
-                                    fixer: [
-                                        {
-                                            pattern: '^(Array|Map|Set)<(.+)>$',
-                                            replace: 'Readonly$1<$2>',
-                                        },
-                                        {
-                                            pattern: '^(.+)$',
-                                            replace: 'Readonly<$1>',
-                                        },
-                                    ],
-                                },
-                                {
-                                    identifiers: 'I?Mutable.+',
-                                    immutability: 'Mutable',
-                                    comparator: 'AtMost',
-                                    fixer: [
-                                        {
-                                            pattern: '^Readonly(Array|Map|Set)<(.+)>$',
-                                            replace: '$1<$2>',
-                                        },
-                                        {
-                                            pattern: '^Readonly<(.+)>$',
-                                            replace: '$1',
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
+                    ...(isTypeAware && {
+                        'functional/no-mixed-types': 'error',
+                        'functional/prefer-property-signatures': 'error',
+                        'functional/readonly-type': 'error',
+                        'functional/type-declaration-immutability': [
+                            'error',
+                            {
+                                rules: [
+                                    {
+                                        identifiers: 'I?Immutable.+',
+                                        immutability: 'Immutable',
+                                        comparator: 'AtLeast',
+                                    },
+                                    {
+                                        identifiers: 'I?ReadonlyDeep.+',
+                                        immutability: 'ReadonlyDeep',
+                                        comparator: 'AtLeast',
+                                    },
+                                    {
+                                        identifiers: 'I?Readonly.+',
+                                        immutability: 'ReadonlyShallow',
+                                        comparator: 'AtLeast',
+                                        fixer: [
+                                            {
+                                                pattern: '^(Array|Map|Set)<(.+)>$',
+                                                replace: 'Readonly$1<$2>',
+                                            },
+                                            {
+                                                pattern: '^(.+)$',
+                                                replace: 'Readonly<$1>',
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        identifiers: 'I?Mutable.+',
+                                        immutability: 'Mutable',
+                                        comparator: 'AtMost',
+                                        fixer: [
+                                            {
+                                                pattern: '^Readonly(Array|Map|Set)<(.+)>$',
+                                                replace: '$1<$2>',
+                                            },
+                                            {
+                                                pattern: '^Readonly<(.+)>$',
+                                                replace: '$1',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    }),
 
                     // Matching naming-convention rules
                     '@typescript-eslint/naming-convention': [

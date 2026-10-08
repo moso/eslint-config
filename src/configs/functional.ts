@@ -29,8 +29,11 @@ export const functional = async (
         ignoreNamePattern,
         mode,
         overrides,
+        parserOptions,
         stylistic,
     } = options;
+
+    const isTypeAware = parserOptions.projectService !== false;
 
     const [functionalPlugin] = await loadPackages(['eslint-plugin-functional']);
 
@@ -178,7 +181,7 @@ export const functional = async (
         },
         {
             name: 'moso/functional/disable-type-aware',
-            ignores: filesTypeAware,
+            ...(isTypeAware && { ignores: filesTypeAware }),
             rules: {
                 ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
                 functionalPlugin.configs.disableTypeChecked.rules),
