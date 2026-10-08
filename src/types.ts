@@ -197,7 +197,7 @@ export type LanguageOptions = {
     /**
      * Enable JSON/JSON5/JSONC support.
      *
-     * @default true
+     * @default false
      */
     jsonc?: boolean | OptionsOverrides;
 
