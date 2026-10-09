@@ -1072,11 +1072,6 @@
     },
   },
   {
-    "ignores": [
-      "**/?(.)*.d.?([cm])ts",
-      "**/*.?([cm])ts",
-      "**/*.?([cm])tsx",
-    ],
     "name": "moso/functional/disable-type-aware",
     "rules": [
       "- functional/functional-parameters",
@@ -1366,10 +1361,6 @@
       "- @typescript-eslint/no-invalid-this",
       "@typescript-eslint/no-use-before-define",
       "- @typescript-eslint/parameter-properties",
-      "functional/no-mixed-types",
-      "functional/prefer-property-signatures",
-      "functional/readonly-type",
-      "functional/type-declaration-immutability",
       "@typescript-eslint/naming-convention",
     ],
   },
