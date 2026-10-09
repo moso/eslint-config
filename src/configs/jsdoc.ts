@@ -92,7 +92,7 @@ export const jsdoc = async (
                 'jsdoc/valid-types': 'error',
 
                 ...(!lessOpinionated && {
-                    'jsdoc/check-indentation': 'warn',
+                    'jsdoc/check-indentation': ['warn', { allowNoSpaceAfterAsterisk: true }],
                     'jsdoc/no-bad-blocks': [
                         'warn',
                         {

@@ -23,7 +23,7 @@ export const baseline = async (
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
-        baseline,
+        baseline = 'widely',
         files,
         filesTypeAware,
         hasDOM,
@@ -45,7 +45,7 @@ export const baseline = async (
         'baseline-js/use-baseline': [
             'warn',
             {
-                available: baseline ?? 'widely',
+                available: baseline,
                 ignoreFeatures: [...defaultIgnoreFeatures, ...(ignoreFeatures ?? [])],
                 ignoreNodeTypes,
                 includeJsBuiltins: { preset: typeAware ? 'type-aware' : 'auto' },

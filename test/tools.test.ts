@@ -32,8 +32,8 @@ const { loadPackages } = await import('../src/tools');
 
 const ttyDescriptor = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
 
-const setTTY = (value: boolean): void => {
-    Object.defineProperty(process.stdout, 'isTTY', { configurable: true, value });
+const setTTY = (): void => {
+    Object.defineProperty(process.stdout, 'isTTY', { configurable: true, value: true });
 };
 
 const restoreTTY = (): void => {
@@ -52,7 +52,7 @@ describe('loadPackages', () => {
 
     it('imports without prompting when non-interactive', async () => {
         vi.stubEnv('CI', '1');
-        setTTY(true);
+        setTTY();
 
         const [globalsModule] = await loadPackages(['globals']);
 
@@ -64,7 +64,7 @@ describe('loadPackages', () => {
 
     it('imports without prompting when interactive and nothing is missing', async () => {
         vi.stubEnv('CI', '');
-        setTTY(true);
+        setTTY();
         mocks.isPackageExists.mockReturnValue(true);
 
         const [astroPlugin] = await loadPackages(['eslint-plugin-astro']);
@@ -77,7 +77,7 @@ describe('loadPackages', () => {
 
     it('skips the existence check entirely for hard dependencies', async () => {
         vi.stubEnv('CI', '');
-        setTTY(true);
+        setTTY();
         mocks.isPackageExists.mockReturnValue(false);
 
         const [globalsModule] = await loadPackages(['globals']);
@@ -90,7 +90,7 @@ describe('loadPackages', () => {
 
     it('installs a single missing package after a confirmed prompt', async () => {
         vi.stubEnv('CI', '');
-        setTTY(true);
+        setTTY();
         mocks.isPackageExists.mockReturnValue(false);
         mocks.confirm.mockResolvedValue(true);
 
@@ -110,7 +110,7 @@ describe('loadPackages', () => {
 
     it('prompts with the plural message for several missing packages', async () => {
         vi.stubEnv('CI', '');
-        setTTY(true);
+        setTTY();
         mocks.isPackageExists.mockReturnValue(false);
         mocks.confirm.mockResolvedValue(true);
 
@@ -129,7 +129,7 @@ describe('loadPackages', () => {
 
     it('does not install when the prompt is declined', async () => {
         vi.stubEnv('CI', '');
-        setTTY(true);
+        setTTY();
         mocks.isPackageExists.mockReturnValue(false);
         mocks.confirm.mockResolvedValue(false);
 
@@ -141,7 +141,7 @@ describe('loadPackages', () => {
 
     it('skips the prompt when the package is present in scope', async () => {
         vi.stubEnv('CI', '');
-        setTTY(true);
+        setTTY();
         mocks.isPackageExists
         .mockImplementation((_name: string, options?: object) =>
             options !== undefined,);

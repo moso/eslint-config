@@ -67,6 +67,15 @@ export type ConfigOptions = {
     regexp?: boolean | OptionsOverrides;
 
     /**
+     * Enable security rules.
+     *
+     * @see https://https://github.com/eslint-community/eslint-plugin-security
+     *
+     * @default true
+     */
+    security?: boolean | OptionsSecurity['severity'] | (OptionsOverrides & OptionsSecurity);
+
+    /**
      * Enable test support.
      *
      * @default true
@@ -188,7 +197,7 @@ export type LanguageOptions = {
     /**
      * Enable JSON/JSON5/JSONC support.
      *
-     * @default true
+     * @default false
      */
     jsonc?: boolean | OptionsOverrides;
 
@@ -559,6 +568,19 @@ export type OptionsReact = OptionsOverrides & {
     reactRefresh?: {
         allowConstantExport?: boolean;
     };
+};
+
+export type OptionsSecurity = OptionsOverrides & {
+    /**
+     * Security rule enforcement options.
+     *
+     * - `none`: no security rules
+     * - `lite`: basic rules set to 'warn' (detect-object-injection, detect-non-literal-fs-filename, and detect-non-literal-regexp off)
+     * - `moderate`: standard rules set to 'error' (detect-object-injection, detect-non-literal-fs-filename, and detect-non-literal-regexp off)
+     * - `recommended`: alias for `moderate`
+     * - `strict`: all security rules set to 'error' (including detect-object-injection, detect-non-literal-fs-filename, and detect-non-literal-regexp)
+     */
+    severity?: 'lite' | 'moderate' | 'none' | 'recommended' | 'strict';
 };
 
 export type OptionsStylistic = {

@@ -88,6 +88,7 @@ export const unicorn = async (
                     // Opinionated disables
                     'unicorn/consistent-boolean-name': 'off',
                     'unicorn/consistent-compound-words': 'off',
+                    'unicorn/consistent-conditional-object-spread': 'off',
                     'unicorn/consistent-export-decorator-position': 'off',
                     'unicorn/default-export-style': 'off',
                     'unicorn/empty-brace-spaces': 'off',
@@ -100,6 +101,7 @@ export const unicorn = async (
                     'unicorn/logical-assignment-operators': 'off',
                     'unicorn/max-nested-calls': 'off',
                     'unicorn/name-replacements': 'off',
+                    'unicorn/no-asterisk-prefix-in-documentation-comments': 'off',
                     'unicorn/no-array-concat-in-loop': 'off',
                     'unicorn/no-array-fill-with-reference-type': 'off',
                     'unicorn/no-array-reduce': 'off', // Clashes with @moso/prefer-reduce-over-chaining
@@ -116,6 +118,7 @@ export const unicorn = async (
                     'unicorn/no-invalid-well-known-symbol-methods': 'off',
                     'unicorn/no-late-current-target-access': 'off',
                     'unicorn/no-late-event-control': 'off',
+                    'unicorn/no-leading-empty-lines': 'off',
                     'unicorn/no-lonely-if': 'off',
                     'unicorn/no-mismatched-map-key': 'off',
                     'unicorn/no-named-default': 'off',
@@ -150,6 +153,7 @@ export const unicorn = async (
                     'unicorn/prefer-promise-try': 'off',
                     'unicorn/prefer-promise-with-resolvers': 'off',
                     'unicorn/prefer-prototype-methods': 'off',
+                    'unicorn/prefer-short-escape-sequences': 'off',
                     'unicorn/prefer-single-replace': 'off',
                     'unicorn/prefer-split-limit': 'off',
                     'unicorn/prefer-string-raw': 'off',
