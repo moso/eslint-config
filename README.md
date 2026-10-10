@@ -564,25 +564,25 @@ export default moso(
 
 ### Advanced Composition
 
-The config returns a `FlatConfigComposer` object from [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils#composer), enabling chainable methods:
+`moso()` resolves to a plain `Linter.Config[]`. Every extra argument is appended after the generated configs, and flat config composition is last-wins, so appending a config item is how you override or disable a generated rule:
 
 ```ts
 // eslint.config.*
 import moso from '@moso/eslint-config';
 
-export default moso()
-    .prepend({
-        // Configs before the main config
-    })
-    .override('moso/javascript/rules', {
+export default moso(
+    {
+        // Options
+    },
+    {
+        // Appended after the generated configs: the last item wins
         rules: {
             'no-var': 'off',
+            'no-console': 'off',
+            'no-debugger': 'off',
         },
-    })
-    .removeRules(
-        'no-console',
-        'no-debugger',
-    );
+    },
+);
 ```
 
 <details>
