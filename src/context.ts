@@ -12,7 +12,7 @@ import { checkFilePath, resolveSubOptions } from './utils';
 import type { OptionsConfig, ResolveTypeScriptEnvironment, TypeScriptContext } from './types';
 
 /**
- * Resolve whether TypeScript and type-aware linting are on, once, for every config.
+ * Resolve whether TypeScript and type-aware linting is enabled.
  *
  * @param options - The full factory options object.
  * @param environment - The factory's `isInEditor` value and cached package probe.
