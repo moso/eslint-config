@@ -4,10 +4,9 @@ import { flattenRules, memoize } from '../utils';
 import type {
     OptionsAstro,
     OptionsFiles,
-    OptionsHasTypeScript,
     OptionsLessOpinionated,
     OptionsOverrides,
-    OptionsTypeScriptParserOptions,
+    OptionsTypeScriptContext,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
@@ -17,10 +16,9 @@ export const astro = async (
         OptionsAstro &
         OptionsLessOpinionated &
         OptionsOverrides &
-        OptionsTypeScriptParserOptions &
+        OptionsTypeScriptContext &
         Required<
             OptionsFiles &
-            OptionsHasTypeScript &
             RequiredOptionsStylistic
         >
     >,
@@ -31,7 +29,6 @@ export const astro = async (
         lessOpinionated,
         overrides,
         overridesA11y,
-        parserOptions,
         stylistic,
         typescript,
     } = options;
@@ -44,11 +41,11 @@ export const astro = async (
         ? await loadPackages(['eslint-plugin-jsx-a11y'])
         : [undefined];
 
-    const [typescriptParser] = typescript
+    const [typescriptParser] = typescript.enabled
         ? await loadPackages(['@typescript-eslint/parser'])
         : [undefined];
 
-    const { projectService, ...typeAwareParserOptions } = parserOptions ?? {};
+    const { projectService, ...typeAwareParserOptions } = typescript.parserOptions;
 
     return [
         {
@@ -68,8 +65,8 @@ export const astro = async (
                 parser: memoize(astroParser, 'astro-eslint-parser'),
                 parserOptions: {
                     extraFileExtensions: ['.astro'],
-                    parser: typescript ? typescriptParser : undefined,
-                    ...(typescript && {
+                    parser: typescript.enabled ? typescriptParser : undefined,
+                    ...(typescript.enabled && {
                         ...typeAwareParserOptions,
                         ...(Boolean(projectService) && { project: true }),
                     }),

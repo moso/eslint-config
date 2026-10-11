@@ -6,10 +6,8 @@ import { flattenRules, memoize, vueInlineElements } from '../utils';
 
 import type {
     OptionsFiles,
-    OptionsHasTypeScript,
     OptionsOverrides,
-    OptionsTypeScriptParserOptions,
-    OptionsTypeScriptWithTypes,
+    OptionsTypeScriptContext,
     OptionsVue,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
@@ -20,12 +18,10 @@ const NuxtPackages = ['nuxt'];
 export const vue = async (
     options: Readonly<
         OptionsOverrides &
-        OptionsTypeScriptWithTypes &
+        OptionsTypeScriptContext &
         OptionsVue &
         Required<
             OptionsFiles &
-            OptionsHasTypeScript &
-            OptionsTypeScriptParserOptions &
             RequiredOptionsStylistic
         >
     >,
@@ -35,7 +31,6 @@ export const vue = async (
         files,
         overrides,
         overridesA11y,
-        parserOptions,
         stylistic,
         typescript,
     } = options;
@@ -60,7 +55,7 @@ export const vue = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const [typescriptParser] = typescript
+    const [typescriptParser] = typescript.enabled
         ? await loadPackages(['@typescript-eslint/parser'])
         : [undefined];
 
@@ -102,8 +97,8 @@ export const vue = async (
                 parserOptions: {
                     ecmaFeatures: { jsx: true },
                     extraFileExtensions: ['.vue'],
-                    parser: typescript ? typescriptParser : null,
-                    ...(typescript && parserOptions),
+                    parser: typescript.enabled ? typescriptParser : null,
+                    ...(typescript.enabled && typescript.parserOptions),
                     sourceType: 'module',
                 },
             },

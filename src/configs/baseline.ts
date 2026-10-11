@@ -5,9 +5,7 @@ import type {
     OptionsBaseline,
     OptionsFiles,
     OptionsHasDOM,
-    OptionsHasTypeScript,
-    OptionsTypeScriptParserOptions,
-    OptionsTypeScriptWithTypes,
+    OptionsTypeScriptContext,
     TypedFlatConfigItem,
 } from '../types';
 
@@ -17,27 +15,21 @@ export const baseline = async (
     options: Readonly<
         OptionsBaseline &
         OptionsHasDOM &
-        OptionsTypeScriptParserOptions &
-        OptionsTypeScriptWithTypes &
-        Required<OptionsFiles & OptionsHasTypeScript>
+        OptionsTypeScriptContext &
+        Required<OptionsFiles>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
         baseline = 'widely',
         files,
-        filesTypeAware,
         hasDOM,
         ignoreFeatures,
         ignoreNodeTypes,
-        ignoresTypeAware,
         overrides,
-        overridesTypeAware,
-        parserOptions,
-        projectRoot,
         typescript,
     } = options;
 
-    const isTypeAware = typescript && typeof projectRoot === 'string' && parserOptions?.projectService !== false;
+    const isTypeAware = typescript.typeAware;
 
     const [baselinePlugin] = await loadPackages(['eslint-plugin-baseline-js']);
 
@@ -63,7 +55,7 @@ export const baseline = async (
         },
         {
             name: 'moso/baseline/rules',
-            files: isTypeAware ? files : [...files, ...(filesTypeAware ?? [])],
+            files: isTypeAware ? files : [...files, ...typescript.filesTypeAware],
             rules: {
                 ...baselineRule(false),
                 ...overrides,
@@ -72,11 +64,11 @@ export const baseline = async (
         ...(isTypeAware
             ? [{
                 name: 'moso/baseline/type-aware-rules',
-                files: filesTypeAware,
-                ignores: ignoresTypeAware ?? [],
+                files: typescript.filesTypeAware,
+                ignores: typescript.ignoresTypeAware,
                 rules: {
                     ...baselineRule(true),
-                    ...overridesTypeAware,
+                    ...typescript.overridesTypeAware,
                 },
             } satisfies TypedFlatConfigItem]
             : []),

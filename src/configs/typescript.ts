@@ -19,8 +19,8 @@ import type {
     OptionsMode,
     OptionsOverrides,
     OptionsStylistic,
+    OptionsTypeScriptContext,
     OptionsTypeScriptErasableOnly,
-    OptionsTypeScriptParserOptions,
     OptionsTypeScriptWithTypes,
     TypedFlatConfigItem,
 } from '../types';
@@ -30,14 +30,14 @@ export const typescript = async (
         OptionsLessOpinionated &
         OptionsOverrides &
         OptionsStylistic &
+        OptionsTypeScriptContext &
         OptionsTypeScriptErasableOnly &
-        OptionsTypeScriptWithTypes &
+        Pick<OptionsTypeScriptWithTypes, 'disableTypeAwareRules' | 'unsafe'> &
         Required<
             OptionsComponentExts &
             OptionsFiles &
             OptionsFunctional &
-            OptionsMode &
-            OptionsTypeScriptParserOptions
+            OptionsMode
         >
     >,
 ): Promise<TypedFlatConfigItem[]> => {
@@ -46,15 +46,12 @@ export const typescript = async (
         disableTypeAwareRules,
         erasableOnly,
         files,
-        filesTypeAware,
         functionalEnforcement,
         lessOpinionated,
         mode,
         overrides,
-        overridesTypeAware,
-        parserOptions,
-        projectRoot,
         stylistic,
+        typescript,
         unsafe,
     } = options;
 
@@ -67,7 +64,7 @@ export const typescript = async (
         ? await loadPackages(['eslint-plugin-erasable-syntax-only'])
         : [undefined];
 
-    const isTypeAware = typeof projectRoot === 'string' && parserOptions.projectService !== false;
+    const isTypeAware = typescript.typeAware;
 
     const stylisticEnabled = stylistic !== false;
 
@@ -84,7 +81,7 @@ export const typescript = async (
                     jsxPragma: undefined,
                     sourceType: 'module',
                     warnOnUnsupportedTypeScriptVersion: true,
-                    ...(parserOptions as Linter.ParserOptions),
+                    ...(typescript.parserOptions as Linter.ParserOptions),
                 },
             },
             plugins: {
@@ -392,7 +389,7 @@ export const typescript = async (
         ...((isTypeAware
             ? [{
                 name: 'moso/typescript/rules-type-aware',
-                files: filesTypeAware,
+                files: typescript.filesTypeAware,
                 languageOptions: {
                     parser: tsEslintParser,
                     parserOptions: {
@@ -400,11 +397,9 @@ export const typescript = async (
                         ecmaVersion: 'latest',
                         extraFileExtensions: componentExts.map((ext) => `.${ext}`),
                         jsxPragma: undefined,
-                        projectService: true,
                         sourceType: 'module',
-                        tsconfigRootDir: projectRoot,
                         warnOnUnsupportedTypeScriptVersion: true,
-                        ...(parserOptions as Linter.ParserOptions),
+                        ...(typescript.parserOptions as Linter.ParserOptions),
                     },
                 },
                 rules: {
@@ -615,7 +610,7 @@ export const typescript = async (
                         ],
                     }),
 
-                    ...overridesTypeAware,
+                    ...typescript.overridesTypeAware,
                 },
             }]
             : []) satisfies TypedFlatConfigItem[]
@@ -624,7 +619,7 @@ export const typescript = async (
             ? [{
                 name: 'moso/typescript/rules-disable-type-aware',
                 files,
-                ignores: filesTypeAware,
+                ignores: typescript.filesTypeAware,
                 rules: {
                     ...(assert.ok(!Array.isArray(tsEslintPlugin.configs?.['disable-type-checked'])),
                     tsEslintPlugin.configs?.['disable-type-checked']?.rules),

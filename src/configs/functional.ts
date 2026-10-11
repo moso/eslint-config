@@ -7,7 +7,7 @@ import type {
     OptionsFunctional,
     OptionsMode,
     OptionsOverrides,
-    OptionsTypeScriptParserOptions,
+    OptionsTypeScriptContext,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
@@ -15,25 +15,24 @@ import type {
 export const functional = async (
     options: Readonly<
         OptionsOverrides &
+        OptionsTypeScriptContext &
         Required<
             OptionsFunctional &
             OptionsMode &
-            OptionsTypeScriptParserOptions &
             RequiredOptionsStylistic
         >
     >,
 ): Promise<TypedFlatConfigItem[]> => {
     const {
-        filesTypeAware,
         functionalEnforcement,
         ignoreNamePattern,
         mode,
         overrides,
-        parserOptions,
         stylistic,
+        typescript,
     } = options;
 
-    const isTypeAware = parserOptions.projectService !== false;
+    const isTypeAware = typescript.typeAware;
 
     const [functionalPlugin] = await loadPackages(['eslint-plugin-functional']);
 
@@ -181,7 +180,7 @@ export const functional = async (
         },
         {
             name: 'moso/functional/disable-type-aware',
-            ...(isTypeAware && { ignores: filesTypeAware }),
+            ...(isTypeAware && { ignores: typescript.filesTypeAware }),
             rules: {
                 ...(assert.ok(!Array.isArray(functionalPlugin.configs.disableTypeChecked)),
                 functionalPlugin.configs.disableTypeChecked.rules),

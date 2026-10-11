@@ -7,11 +7,9 @@ import { memoize } from '../utils';
 
 import type {
     OptionsFiles,
-    OptionsHasTypeScript,
     OptionsLessOpinionated,
     OptionsReact,
-    OptionsTypeScriptParserOptions,
-    OptionsTypeScriptWithTypes,
+    OptionsTypeScriptContext,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
@@ -34,11 +32,9 @@ export const react = async (
     options: Readonly<
         OptionsLessOpinionated &
         OptionsReact &
-        OptionsTypeScriptParserOptions &
-        OptionsTypeScriptWithTypes &
+        OptionsTypeScriptContext &
         Required<
             OptionsFiles &
-            OptionsHasTypeScript &
             RequiredOptionsStylistic
         >
     >,
@@ -47,15 +43,10 @@ export const react = async (
         a11y,
         additionalHooks = 'useIsomorphicLayoutEffect',
         files,
-        filesTypeAware,
-        ignoresTypeAware,
         lessOpinionated,
         nextjs,
         overrides,
         overridesA11y,
-        overridesTypeAware,
-        parserOptions,
-        projectRoot,
         reactRefresh,
         stylistic,
         typescript,
@@ -73,7 +64,7 @@ export const react = async (
         'eslint-plugin-react-you-might-not-need-an-effect',
     ]);
 
-    const isTypeAware = typescript && typeof projectRoot === 'string' && parserOptions?.projectService !== false;
+    const isTypeAware = typescript.typeAware;
 
     const isAllowConstantExport = reactRefresh?.allowConstantExport ??
         ReactRefreshAllowConstantExportPackages.some((x) => isPackageExists(x));
@@ -89,7 +80,7 @@ export const react = async (
 
     const stylisticEnabled = stylistic !== false;
 
-    const [typescriptParser] = typescript
+    const [typescriptParser] = typescript.enabled
         ? await loadPackages(['@typescript-eslint/parser'])
         : [undefined];
 
@@ -108,10 +99,10 @@ export const react = async (
             name: 'moso/react/rules',
             files,
             languageOptions: {
-                parser: typescript ? typescriptParser : undefined,
+                parser: typescript.enabled ? typescriptParser : undefined,
                 parserOptions: {
                     ecmaFeatures: { jsx: true },
-                    ...(typescript && parserOptions),
+                    ...(typescript.enabled && typescript.parserOptions),
                 },
                 sourceType: 'module',
             },
@@ -287,7 +278,7 @@ export const react = async (
         },
         {
             name: 'moso/react/typescript',
-            files: filesTypeAware,
+            files: typescript.filesTypeAware,
             rules: {
                 // Disable rules that are already handled by @typescript-eslint
                 '@eslint-react/dom-no-string-style-prop': 'off',
@@ -297,8 +288,8 @@ export const react = async (
         ...((isTypeAware
             ? [{
                 name: 'moso/react/typescript/type-aware-rules',
-                files: filesTypeAware,
-                ignores: ignoresTypeAware,
+                files: typescript.filesTypeAware,
+                ignores: typescript.ignoresTypeAware,
                 rules: {
                     ...(lessOpinionated
                         ? {
@@ -345,7 +336,7 @@ export const react = async (
                         },
                     ],
 
-                    ...overridesTypeAware,
+                    ...typescript.overridesTypeAware,
                 },
             }]
             : []) satisfies TypedFlatConfigItem[]
