@@ -1,4 +1,5 @@
 export * from './configs';
+export * from './context';
 export * from './factory';
 export * from './globs';
 export * from './presets';
