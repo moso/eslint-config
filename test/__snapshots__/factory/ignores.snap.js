@@ -95,6 +95,7 @@
       ".vscode/CLAUDE.md",
       ".vscode/settings.json",
       ".vscode/mcp.json",
+      "docs/adr/",
       "**/tasks/",
       ".mcp.json",
       "CLAUDE.md",
