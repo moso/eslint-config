@@ -8,6 +8,8 @@ import {
     vi,
 } from 'vitest';
 
+import type { TypeScriptContext } from '../src/types';
+
 const mocks = vi.hoisted(() => ({
     isPackageExists: vi.fn(),
     nodeRecommended: { rules: undefined as Record<string, unknown> | undefined },
@@ -50,6 +52,15 @@ const {
     vue,
 } = await import('../src/configs');
 
+const typescriptDisabled: TypeScriptContext = {
+    enabled: false,
+    filesTypeAware: [],
+    ignoresTypeAware: [],
+    overridesTypeAware: {},
+    parserOptions: {},
+    typeAware: false,
+};
+
 describe('framework detection through local-pkg', () => {
     beforeEach(() => {
         vi.stubEnv('CI', '1');
@@ -72,7 +83,7 @@ describe('framework detection through local-pkg', () => {
             files: ['**/*.jsx'],
             nextjs: false,
             stylistic: false,
-            typescript: false,
+            typescript: typescriptDisabled,
         });
 
         const rules = configs.find((config) => config.name === 'moso/react/rules')?.rules;
@@ -87,12 +98,9 @@ describe('framework detection through local-pkg', () => {
 
         const configs = await vue({
             files: ['**/*.vue'],
-            filesTypeAware: [],
-            ignoresTypeAware: [],
-            parserOptions: {},
             sfcBlocks: false,
             stylistic: false,
-            typescript: false,
+            typescript: typescriptDisabled,
         });
 
         const names = configs.map((config) => config.name);

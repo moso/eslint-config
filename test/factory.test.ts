@@ -1,16 +1,22 @@
 import path from 'node:path';
 
 import { ESLint } from 'eslint';
-import { it, vi } from 'vitest';
+import { it } from 'vitest';
 
 import { astro, baseline } from '../src/configs';
 import { StylisticConfigDefaults } from '../src/configs/stylistic';
+import { resolveTypeScript } from '../src/context';
 import { moso } from '../src/factory';
 import { full, off } from '../src/presets';
 
 import type { Linter } from 'eslint';
 
-import type { OptionsConfig, OptionsIgnores, TypedFlatConfigItem } from '../src/types';
+import type {
+    OptionsConfig,
+    OptionsIgnores,
+    TypedFlatConfigItem,
+    TypeScriptContext,
+} from '../src/types';
 
 type ConfigPreset = {
     configs: OptionsConfig;
@@ -262,16 +268,19 @@ const serializeConfigPresets = (configs: TypedFlatConfigItem[]): unknown[] => co
     };
 });
 
-const collectParserOption = (configs: ReadonlyArray<Linter.Config>, key: string): unknown[] =>
+const collectProjectServices = (configs: ReadonlyArray<Linter.Config>): unknown[] =>
     configs.reduce<unknown[]>((mut_values, config) => {
         const parserOptions: unknown = config.languageOptions?.parserOptions;
         if (typeof parserOptions !== 'object' || parserOptions === null) return mut_values;
 
         for (const [name, value] of Object.entries(parserOptions as Record<string, unknown>))
-            if (name === key) mut_values.push(value);
+            if (name === 'projectService') mut_values.push(value);
 
         return mut_values;
     }, []);
+
+const resolveContext = async (typescript: OptionsConfig['typescript']): Promise<TypeScriptContext> =>
+    resolveTypeScript({ typescript }, { isInEditor: false, packageExists: () => true });
 
 it.concurrent.for(configPresets)('factory $name', async ({ configs, name }, { expect }) => {
     const config = await moso(configs);
@@ -295,42 +304,9 @@ it('builds a config when called with no arguments', async ({ expect }) => {
     await expect(moso()).resolves.toSatisfy((configs: Linter.Config[]) => configs.length > 0);
 });
 
-it('prefers `typescript.projectRoot` over the deprecated top-level `projectRoot` and warns', async ({ expect, onTestFinished }) => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    onTestFinished(() => warn.mockRestore());
-
-    const configs = await moso({
-        projectRoot: 'deprecated-root',
-        typescript: { projectRoot: import.meta.dirname },
-    });
-
-    expect(warn).toHaveBeenCalledOnce();
-    expect(warn.mock.calls[0][0]).toContain('`projectRoot` option is deprecated');
-
-    const rootDirs = collectParserOption(configs, 'tsconfigRootDir');
-
-    expect(rootDirs.length).toBeGreaterThan(0);
-    expect(new Set(rootDirs)).toEqual(new Set([import.meta.dirname]));
-});
-
 it('throws when the global options contain `files`', async ({ expect }) => {
     await expect(moso({ files: ['**/*.ts'] } as never))
         .rejects.toThrow('should not contain the "files" property');
-});
-
-it('warns and uses the deprecated top-level `projectRoot` when `typescript.projectRoot` is absent', async ({ expect, onTestFinished }) => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    onTestFinished(() => warn.mockRestore());
-
-    const configs = await moso({ projectRoot: import.meta.dirname });
-
-    expect(warn).toHaveBeenCalledOnce();
-    expect(warn.mock.calls[0][0]).toContain('`projectRoot` option is deprecated');
-
-    const rootDirs = collectParserOption(configs, 'tsconfigRootDir');
-
-    expect(rootDirs.length).toBeGreaterThan(0);
-    expect(new Set(rootDirs)).toEqual(new Set([import.meta.dirname]));
 });
 
 it('merges user `projectService` options when `useDefaultDefaultProject` is false', async ({ expect }) => {
@@ -343,7 +319,7 @@ it('merges user `projectService` options when `useDefaultDefaultProject` is fals
         },
     });
 
-    const services = collectParserOption(configs, 'projectService')
+    const services = collectProjectServices(configs)
         .filter((service) => typeof service === 'object' && service !== null);
 
     expect(services.length).toBeGreaterThan(0);
@@ -365,7 +341,7 @@ it('disables the project service when `parserOptions.projectService` is false', 
         },
     });
 
-    const services = collectParserOption(configs, 'projectService');
+    const services = collectProjectServices(configs);
 
     expect(services.length).toBeGreaterThan(0);
     expect(services.every((service) => service === false)).toBe(true);
@@ -383,23 +359,23 @@ it.concurrent.for<[OptionsConfig['security'], string, string]>([
     expect(rules?.['security/detect-object-injection']).toBe(injectionSeverity);
 });
 
-it('baseline tolerates omitted type-aware globs in both modes', async ({ expect }) => {
+it('baseline folds the type-aware globs into its rules unless type-aware', async ({ expect }) => {
     const untyped = await baseline({
         files: ['**/*.js'],
-        typescript: true,
+        typescript: await resolveContext({ filesTypeAware: ['**/*.ts'] }),
     });
 
     expect(untyped).toHaveLength(2);
-    expect(untyped[1].files).toEqual(['**/*.js']);
+    expect(untyped[1].files).toEqual(['**/*.js', '**/*.ts']);
 
     const typed = await baseline({
         files: ['**/*.js'],
-        filesTypeAware: ['**/*.ts'],
-        projectRoot: import.meta.dirname,
-        typescript: true,
+        typescript: await resolveContext({ filesTypeAware: ['**/*.ts'], projectRoot: import.meta.dirname }),
     });
 
     expect(typed).toHaveLength(3);
+    expect(typed[1].files).toEqual(['**/*.js']);
+    expect(typed[2].files).toEqual(['**/*.ts']);
     expect(typed[2].ignores).toEqual([]);
 });
 
@@ -409,15 +385,17 @@ it('baseline skips Web API checks only when `hasDOM` is false', async ({ expect 
         return Array.isArray(entry) ? (entry[1] as { includeWebApis: unknown }).includeWebApis : undefined;
     };
 
+    const typescript = await resolveContext(true);
+
     const [node, browser] = await Promise.all([
         baseline({
             files: ['**/*.js'],
             hasDOM: false,
-            typescript: true,
+            typescript,
         }),
         baseline({
             files: ['**/*.js'],
-            typescript: true,
+            typescript,
         }),
     ]);
 
@@ -426,20 +404,22 @@ it('baseline skips Web API checks only when `hasDOM` is false', async ({ expect 
 });
 
 it('astro enables the JSX accessibility plugin when `a11y` is set', async ({ expect }) => {
+    const [typed, untyped] = await Promise.all([resolveContext(true), resolveContext(false)]);
+
     const [strict, recommended] = await Promise.all([
         astro({
             a11y: true,
             files: ['**/*.astro'],
             overridesA11y: { 'jsx-a11y/alt-text': 'off' },
             stylistic: StylisticConfigDefaults,
-            typescript: true,
+            typescript: typed,
         }),
         astro({
             a11y: true,
             files: ['**/*.astro'],
             lessOpinionated: true,
             stylistic: false,
-            typescript: false,
+            typescript: untyped,
         }),
     ]);
 
