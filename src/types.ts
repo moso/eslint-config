@@ -121,16 +121,6 @@ export type CoreOptions = {
      * What are we linting?
      */
     mode?: ProjectMode;
-
-    /**
-     * Root of the project directory.
-     *
-     * @deprecated Move this inside the `typescript` options instead. It only serves type-aware linting, which implies TypeScript.
-     * `typescript.projectRoot` takes precedence when both are set.
-     *
-     * @example 'import.meta.dirname'
-     */
-    projectRoot?: OptionsProjectRoot['projectRoot'];
 };
 
 export type FrameworkOptions = {
@@ -525,10 +515,6 @@ export type OptionsPerfectionist = OptionsOverrides & {
     perfectionist?: boolean;
 };
 
-export type OptionsProjectRoot = {
-    projectRoot?: Readonly<string>;
-};
-
 export type OptionsReact = OptionsOverrides & {
     /**
      * Enable accessibility support via JSX accessibility plugin.
@@ -610,6 +596,10 @@ export type OptionsTailwind = OptionsOverrides & (
 
 export type OptionsTypeScript = OptionsOverrides & OptionsTypeScriptErasableOnly & OptionsTypeScriptParserOptions & OptionsTypeScriptWithTypes;
 
+export type OptionsTypeScriptContext = {
+    typescript: TypeScriptContext;
+};
+
 export type OptionsTypeScriptErasableOnly = {
     /**
      * Enable erasable syntax only rules.
@@ -662,7 +652,7 @@ export type OptionsTypeScriptWithTypes = {
      *
      * @example 'import.meta.dirname'
      */
-    projectRoot?: OptionsProjectRoot['projectRoot'];
+    projectRoot?: string;
 
     /**
      * Unsafe severity options.
@@ -719,6 +709,11 @@ export type ResolvedOptions<T> = T extends boolean
     : T extends number | string
         ? never
         : NonNullable<T>;
+
+export type ResolveTypeScriptEnvironment = {
+    isInEditor: boolean;
+    packageExists: (name: string) => boolean;
+};
 
 export type StyleOptions = {
     /**
@@ -788,6 +783,47 @@ export type TypedFlatConfigItem = Omit<(ConfigWithExtends | Linter.Config), 'ign
      * An object containing name-value mapping of rules to use.
      */
     rules?: (Rules & TSESLint.FlatConfig.Config['rules']);
+};
+
+export type TypeScriptContext = {
+    /**
+     * TypeScript linting is enabled.
+     */
+    enabled: boolean;
+
+    /**
+     * Globs for the type-aware items.
+     *
+     * @default [GLOB_DTS, GLOB_TS, GLOB_TSX]
+     */
+    filesTypeAware: string[];
+
+    /**
+     * Globs excluded from the type-aware items.
+     *
+     * @default []
+     */
+    ignoresTypeAware: string[];
+
+    /**
+     * `typescript.overridesTypeAware` is carried explicitly for `baseline()` and `react()`'s type-aware items.
+     *
+     * @default {}
+     */
+    overridesTypeAware: NonNullable<TypedFlatConfigItem['rules']>;
+
+    /**
+     * Resolved parser options.
+     * Consists of `parserOptions` with `tsconfigRootDir` and the resolved `projectService` (`false` or an object).
+     */
+    parserOptions: Partial<ParserOptions>;
+
+    /**
+     * Type-aware linting.
+     *
+     * Enabling this requires a valid `projectRoot` and `parserOptions.projectService` not set to `false`.
+     */
+    typeAware: boolean;
 };
 
 export { type ConfigNames, type RuleOptions as Rules } from './typegen.d';
