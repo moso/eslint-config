@@ -6,7 +6,6 @@ import type {
     OptionsFiles,
     OptionsHasTypeScript,
     OptionsOverrides,
-    OptionsTypeScriptParserOptions,
     RequiredOptionsStylistic,
     TypedFlatConfigItem,
 } from '../types';
@@ -16,7 +15,6 @@ export const imports = async (
         OptionsFiles &
         OptionsHasTypeScript &
         OptionsOverrides &
-        OptionsTypeScriptParserOptions &
         Required<RequiredOptionsStylistic>
     >,
 ): Promise<TypedFlatConfigItem[]> => {
