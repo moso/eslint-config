@@ -4,6 +4,7 @@ import {
     GLOB_DTS,
     GLOB_JS,
     GLOB_JSX,
+    GLOB_SVELTE_MODULE,
     GLOB_TESTS,
 } from '../globs';
 import { loadPackages } from '../tools';
@@ -15,6 +16,7 @@ import type {
     OptionsComponentExts,
     OptionsFiles,
     OptionsFunctional,
+    OptionsHasSvelte,
     OptionsLessOpinionated,
     OptionsMode,
     OptionsOverrides,
@@ -27,6 +29,7 @@ import type {
 
 export const typescript = async (
     options: Readonly<
+        OptionsHasSvelte &
         OptionsLessOpinionated &
         OptionsOverrides &
         OptionsStylistic &
@@ -48,6 +51,7 @@ export const typescript = async (
         files,
         filesTypeAware,
         functionalEnforcement,
+        hasSvelte,
         lessOpinionated,
         mode,
         overrides,
@@ -63,13 +67,92 @@ export const typescript = async (
     );
 
     // Enforcing Erasable Syntax Only unless explicitly disabled or `lessOpinionated`
-    const [erasableSyntaxPlugin] = erasableOnly !== false && !lessOpinionated
-        ? await loadPackages(['eslint-plugin-erasable-syntax-only'])
-        : [undefined];
+    const [erasableSyntaxPlugin] = erasableOnly === false || lessOpinionated
+        ? [undefined]
+        : await loadPackages(['eslint-plugin-erasable-syntax-only']);
 
     const isTypeAware = typeof projectRoot === 'string' && parserOptions.projectService !== false;
 
     const stylisticEnabled = stylistic !== false;
+
+    const namingConventionRules = {
+        '@typescript-eslint/naming-convention': [
+            'error',
+            {
+                selector: 'default',
+                format: ['camelCase', 'PascalCase'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: 'variableLike',
+                format: ['camelCase', 'PascalCase'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: 'variable',
+                filter: { regex: '^[A-Z0-9_]+$', match: true },
+                format: ['UPPER_CASE'],
+                modifiers: ['const'],
+                leadingUnderscore: 'forbid',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: 'variable',
+                format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+                modifiers: ['const'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: 'variable',
+                format: null,
+                modifiers: ['destructured'],
+            },
+            {
+                selector: ['autoAccessor', 'parameterProperty', 'property'],
+                filter: { regex: '^[A-Z0-9_]+$', match: true },
+                format: ['UPPER_CASE'],
+                leadingUnderscore: 'forbid',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: ['autoAccessor', 'parameterProperty', 'property'],
+                format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+                modifiers: ['readonly'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: [
+                    'accessor',
+                    'classMethod',
+                    'typeMethod',
+                    'typeProperty',
+                ],
+                format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: 'enumMember',
+                format: ['PascalCase', 'UPPER_CASE'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: 'typeLike',
+                format: ['PascalCase'],
+                leadingUnderscore: 'allow',
+                trailingUnderscore: 'forbid',
+            },
+            {
+                selector: ['objectLiteralProperty', 'objectLiteralMethod'],
+                format: null,
+            },
+        ],
+    } satisfies TypedFlatConfigItem['rules'];
 
     return [
         {
@@ -424,82 +507,7 @@ export const typescript = async (
 
                     // Enforcing somewhat proper naming convention if Functional is disabled
                     ...(functionalEnforcement === 'none' && {
-                        '@typescript-eslint/naming-convention': [
-                            'error',
-                            {
-                                selector: 'default',
-                                format: ['camelCase', 'PascalCase'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: 'variableLike',
-                                format: ['camelCase', 'PascalCase'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: 'variable',
-                                filter: { regex: '^[A-Z0-9_]+$', match: true },
-                                format: ['UPPER_CASE'],
-                                modifiers: ['const'],
-                                leadingUnderscore: 'forbid',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: 'variable',
-                                format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-                                modifiers: ['const'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: 'variable',
-                                format: null,
-                                modifiers: ['destructured'],
-                            },
-                            {
-                                selector: ['autoAccessor', 'parameterProperty', 'property'],
-                                filter: { regex: '^[A-Z0-9_]+$', match: true },
-                                format: ['UPPER_CASE'],
-                                leadingUnderscore: 'forbid',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: ['autoAccessor', 'parameterProperty', 'property'],
-                                format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-                                modifiers: ['readonly'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: [
-                                    'accessor',
-                                    'classMethod',
-                                    'typeMethod',
-                                    'typeProperty',
-                                ],
-                                format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: 'enumMember',
-                                format: ['PascalCase', 'UPPER_CASE'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: 'typeLike',
-                                format: ['PascalCase'],
-                                leadingUnderscore: 'allow',
-                                trailingUnderscore: 'forbid',
-                            },
-                            {
-                                selector: ['objectLiteralProperty', 'objectLiteralMethod'],
-                                format: null,
-                            },
-                        ],
+                        ...namingConventionRules,
                     }),
 
                     '@typescript-eslint/no-unnecessary-qualifier': 'error',
@@ -637,6 +645,16 @@ export const typescript = async (
                 name: 'moso/typescript/application-mode',
                 rules: {
                     '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'with-single-extends' }],
+                },
+            }]
+            : []) satisfies TypedFlatConfigItem[]
+        ),
+        ...((hasSvelte && functionalEnforcement !== 'none' && mode !== 'library'
+            ? [{
+                name: 'moso/typescript/svelte-overrides',
+                files: [GLOB_SVELTE_MODULE],
+                rules: {
+                    ...namingConventionRules,
                 },
             }]
             : []) satisfies TypedFlatConfigItem[]
