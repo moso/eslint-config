@@ -34,6 +34,7 @@ export const full: OptionsConfig = {
     regexp: true,
     security: true,
     stylistic: true,
+    svelte: true,
     tailwind: {
         entryPoint: 'src/styles/app.css',
         version: 4,
@@ -71,6 +72,7 @@ export const off: OptionsConfig = {
     regexp: false,
     security: false,
     stylistic: false,
+    svelte: false,
     tailwind: false,
     test: false,
     toml: false,
