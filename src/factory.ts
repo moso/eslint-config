@@ -23,6 +23,7 @@ import {
     sortPackageJson,
     sortTsconfig,
     stylistic,
+    svelte,
     tailwind,
     test,
     toml,
@@ -45,6 +46,7 @@ import {
     GLOB_ROOT_JS,
     GLOB_ROOT_JSX,
     GLOB_SRC,
+    GLOB_SVELTE,
     GLOB_TESTS,
     GLOB_TOML,
     GLOB_TS,
@@ -94,6 +96,8 @@ const ReactPackages = [
     'react',
     'remix',
 ];
+
+const SveltePackages = ['@sveltejs/kit', 'svelte'];
 
 const VuePackages = [
     '@astrojs/vue',
@@ -158,6 +162,7 @@ export async function moso(
     const astroOptions = options.astro ?? anyPackageExists(AstroPackages);
     const nextjsOptions = options.nextjs ?? anyPackageExists(NextJSPackages);
     const reactOptions = options.react ?? anyPackageExists(ReactPackages);
+    const svelteOptions = options.svelte ?? anyPackageExists(SveltePackages);
     const tailwindOptions = options.tailwind ?? packageExists('tailwindcss');
     const vueOptions = options.vue ?? anyPackageExists(VuePackages);
 
@@ -193,6 +198,7 @@ export async function moso(
         Boolean(astroOptions) ||
         Boolean(nextjsOptions) ||
         Boolean(reactOptions) ||
+        Boolean(svelteOptions) ||
         Boolean(vueOptions);
 
     const ignoreOptions: OptionsIgnores = typeof options.ignores === 'object'
@@ -542,12 +548,27 @@ export async function moso(
                 ...typescriptConfigOptions,
                 componentExts,
                 files: [GLOB_SRC, ...componentExts.map((ext) => `**/*.${ext}`)],
+                hasSvelte: Boolean(svelteOptions),
                 lessOpinionated: options.lessOpinionated,
                 mode: modeOptions,
                 overrides: getOverrides(options, 'typescript'),
                 projectRoot: projectRootOptions,
                 stylistic: stylisticOptions,
                 unsafe: typescriptUnsafe,
+            }),
+        );
+    }
+
+    if (svelteOptions !== false) {
+        mut_configs.push(
+            svelte({
+                ...typescriptConfigOptions,
+                files: [GLOB_SVELTE],
+                lessOpinionated: options.lessOpinionated,
+                overrides: getOverrides(options, 'svelte'),
+                stylistic: stylisticOptions,
+                typescript: hasTypeScript,
+                ...resolveSubOptions(options, 'svelte'),
             }),
         );
     }
@@ -608,6 +629,7 @@ export async function moso(
             'unused-imports/no-unused-imports',
             'no-only-tests/no-only-tests',
             'prefer-const',
+            'svelte/prefer-const',
         ], {
             // eslint-disable-next-line @typescript-eslint/no-deprecated, unicorn/prefer-await -- ESLint 9+ deprecates builtinRules without offering a runtime replacement
             builtinRules: async () => import('eslint/use-at-your-own-risk').then((r) => r.builtinRules),
