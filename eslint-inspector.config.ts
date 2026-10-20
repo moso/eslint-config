@@ -20,6 +20,7 @@ const config: Promise<Linter.Config[]> = moso(
             quotes: 'single',
             semi: true,
         },
+        svelte: true,
         tailwind: true,
         toml: true,
         typescript: {
