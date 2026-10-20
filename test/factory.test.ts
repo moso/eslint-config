@@ -200,10 +200,33 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
             mode: 'library',
             nextjs: false,
             react: false,
+            svelte: false,
             unicorn: true,
             vue: false,
         },
         name: 'has-dom',
+    },
+    {
+        configs: {
+            isInEditor: false,
+            svelte: true,
+            typescript: true,
+        },
+        name: 'svelte',
+    },
+    {
+        configs: {
+            isInEditor: false,
+            lessOpinionated: true,
+            stylistic: false,
+            svelte: {
+                overrides: {
+                    'svelte/no-at-html-tags': 'off',
+                },
+            },
+            typescript: false,
+        },
+        name: 'svelte-js-less-opinionated',
     },
 ];
 
@@ -289,6 +312,55 @@ it('lints TypeScript without type information when no `projectRoot` is set', asy
     const code = 'type Gate = { enabled: boolean; toggle: () => void };\nconst state = { count: 0 };\nstate.count += 1;\nexport type { Gate };\n';
 
     await expect(eslint.lintText(code, { filePath: 'scratch.ts' })).resolves.toBeDefined();
+});
+
+it.concurrent.for([
+    ['TypeScript', true, '<script lang="ts">\n    let { label }: { label: string } = $props();\n\n    let count = $state(0);\n\n    const increment = (): void => {\n        count += 1;\n    };\n</script>\n\n<button type="button" onclick={increment}>{label}: {count}</button>\n'],
+    ['JavaScript', false, '<script>\n    export let label;\n\n    let count = 0;\n\n    const increment = () => {\n        count += 1;\n    };\n</script>\n\n<button type="button" on:click={increment}>{label}: {count}</button>\n'],
+] as const)('lints idiomatic Svelte components in $lib (%s)', async ([, typescript, code], { expect }) => {
+    const eslint = new ESLint({ overrideConfig: await moso({ isInEditor: false, svelte: true, typescript }), overrideConfigFile: true });
+
+    await expect(eslint.isPathIgnored('src/lib/Counter.svelte')).resolves.toBe(false);
+
+    const [result] = await eslint.lintText(code, { filePath: 'src/lib/Counter.svelte' });
+
+    expect(result.messages).toEqual([]);
+});
+
+it('parses Svelte rune modules with the Svelte parser when TypeScript is enabled', async ({ expect }) => {
+    const eslint = new ESLint({ overrideConfig: await moso({ svelte: true, typescript: true }), overrideConfigFile: true });
+
+    const configs = await Promise.all(['src/lib/counter.svelte.ts', 'src/lib/counter.svelte.js'].map(
+        async (filePath) => eslint.calculateConfigForFile(filePath) as Promise<Linter.Config>,
+    ));
+
+    for (const config of configs)
+        expect((config.languageOptions?.parser as Linter.Parser).meta?.name).toBe('svelte-eslint-parser');
+});
+
+it('lets Svelte rune modules use `let` without the `mut_` prefix, while `svelte/prefer-const` still applies', async ({ expect }) => {
+    const eslint = new ESLint({
+        overrideConfig: await moso({
+            functional: 'lite',
+            isInEditor: false,
+            svelte: true,
+            typescript: true,
+        }),
+        overrideConfigFile: true,
+    });
+
+    const counter = 'export const increment = (): number => {\n    let count = $state(0);\n    count += 1;\n    return count;\n};\n';
+    const neverReassigned = 'export const read = (): number => {\n    let count = $state(0);\n    return count;\n};\n';
+
+    const [[runes], [unused], [plain]] = await Promise.all([
+        eslint.lintText(counter, { filePath: 'src/lib/counter.svelte.ts' }),
+        eslint.lintText(neverReassigned, { filePath: 'src/lib/counter.svelte.ts' }),
+        eslint.lintText(counter.replace('$state(0)', '0'), { filePath: 'src/counter.ts' }),
+    ]);
+
+    expect(runes.messages).toEqual([]);
+    expect(unused.messages.map((message) => message.ruleId)).toContain('svelte/prefer-const');
+    expect(plain.messages.map((message) => message.ruleId)).toEqual(expect.arrayContaining(['@typescript-eslint/naming-convention', 'functional/no-let']));
 });
 
 it('builds a config when called with no arguments', async ({ expect }) => {
