@@ -11,7 +11,7 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) with reasonable but opinionated defaults
 - [Stylistic](https://eslint.style) with single quotes, semi enabled, sorted imports, and dangling commas
 - Aimed to be used without Prettier
-- Designed to work with JSX, TypeScript, Vue, React, Astro, Nuxt, and Next.js out of the box
+- Designed to work with JSX, TypeScript, Vue, React, Svelte, Astro, Nuxt, SvelteKit, and Next.js out of the box
 - Applies [Functional](https://github.com/eslint-functional/eslint-plugin-functional), [Perfectionist](https://perfectionist.dev), and [e18e](https://github.com/e18e/eslint-plugin) by default
 - Lints for JSDoc, JSON, RegEx, TOML, and YAML
 - Ships its own small [`@moso`](#custom-rules)-ruleset with security and hygiene rules
@@ -233,6 +233,17 @@ This section contains a list of the plugins used in the named configs that ship 
 <td valign="top">✅</td>
 <td valign="top">🎨</td>
 <td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>Svelte</strong></summary>
+
+[`eslint-plugin-svelte`](https://sveltejs.github.io/eslint-plugin-svelte), [`svelte-eslint-parser`](https://github.com/sveltejs/svelte-eslint-parser)
+
+</details></td>
+<td valign="top">☑️</td>
+<td valign="top">🎨</td>
+<td valign="top">💭</td>
 </tr>
 <tr>
 <td valign="top">
@@ -505,6 +516,7 @@ export default moso({
     // Auto-detected, or enable explicitly
     astro: true,
     react: true,
+    svelte: true,
     typescript: true,
     vue: true,
 
@@ -720,6 +732,39 @@ pnpm add -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-
 # Bun
 bun add -d @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-plugin-react-you-might-not-need-an-effect
 ```
+
+### Svelte
+
+Auto-detected if you have Svelte or SvelteKit installed. Enable explicitly:
+
+```ts
+// eslint.config.*
+import moso from '@moso/eslint-config';
+
+export default moso({
+    svelte: true,
+});
+```
+
+Install dependencies when prompted, or manually:
+
+```shell
+# npm
+npm install -D eslint-plugin-svelte svelte-eslint-parser
+
+# pnpm
+pnpm add -D eslint-plugin-svelte svelte-eslint-parser
+
+# Bun
+bun add -d eslint-plugin-svelte svelte-eslint-parser
+```
+
+Lints `.svelte` components as well as `.svelte.js` and `.svelte.ts` rune modules. A few things differ from the rest of the config:
+
+- `let` is how Svelte declares state and props (`$state`, `$props`, `export let`), so `functional/no-let` is disabled for Svelte files, and rune modules don't need the `mut_`-prefix. [`svelte/prefer-const`](https://sveltejs.github.io/eslint-plugin-svelte/rules/prefer-const) takes over from `prefer-const`, and ignores `$props` and `$derived`
+- Attributes in markup use double quotes, regardless of the `quotes` setting for JavaScript
+- With TypeScript enabled, `<script>`-blocks must use `lang="ts"` (unless `lessOpinionated: true`)
+- `src/lib` (SvelteKit's `$lib`) is linted, even though `**/lib` is ignored by default, and `.svelte-kit` is ignored
 
 ### Vue
 
