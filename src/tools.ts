@@ -43,11 +43,13 @@ type PackageTypes = {
     'eslint-plugin-n': typeof import('eslint-plugin-n');
     'eslint-plugin-react-you-might-not-need-an-effect': typeof import('eslint-plugin-react-you-might-not-need-an-effect');
     'eslint-plugin-regexp': typeof import('eslint-plugin-regexp');
+    'eslint-plugin-svelte': typeof import('eslint-plugin-svelte');
     'eslint-plugin-unicorn': typeof import('eslint-plugin-unicorn');
     'eslint-plugin-vue': VuePlugin;
     'eslint-plugin-vuejs-accessibility': typeof import('eslint-plugin-vuejs-accessibility');
     'eslint-processor-vue-blocks': typeof import('eslint-processor-vue-blocks');
     'jsonc-eslint-parser': Linter.Parser;
+    'svelte-eslint-parser': Linter.Parser;
     'toml-eslint-parser': Linter.Parser;
     'vue-eslint-parser': Linter.Parser;
     'yaml-eslint-parser': Linter.Parser;
