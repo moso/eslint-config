@@ -175,7 +175,7 @@ const functionLikeTypes: ReadonlySet<AST_NODE_TYPES> = new Set([
  */
 export const isFunctionLike = (
     node?: TSESTree.Node | null,
-): node is TSESTree.ArrowFunctionExpression | TSESTree.FunctionDeclaration | TSESTree.FunctionExpression => (node ? functionLikeTypes.has(node.type) : false);
+): node is TSESTree.ArrowFunctionExpression | TSESTree.FunctionDeclaration | TSESTree.FunctionExpression => node !== null && node !== undefined && functionLikeTypes.has(node.type);
 
 /**
  * Whether `node` is an identifier matching `name` given as an exact string,

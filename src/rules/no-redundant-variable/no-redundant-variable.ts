@@ -17,14 +17,10 @@ const isRedundantVariable = (
     node: TSESTree.Node | undefined,
     exit: TSESTree.ReturnStatement
 ): node is TSESTree.VariableDeclaration =>
-    node
-    ? (
-        node.type === AST_NODE_TYPES.VariableDeclaration &&
-        node.declarations.length === 1 &&
-        node.declarations[0].init !== null &&
-        isSameIdentifier(exit.argument, node.declarations[0].id)
-    )
-    : false;
+    node?.type === AST_NODE_TYPES.VariableDeclaration &&
+    node.declarations.length === 1 &&
+    node.declarations[0].init !== null &&
+    isSameIdentifier(exit.argument, node.declarations[0].id);
 
 const isRedundantVariableFixer = (
     source: Readonly<SourceCode>,
