@@ -19,6 +19,7 @@ export * from './regexp';
 export * from './security';
 export * from './sort';
 export * from './stylistic';
+export * from './svelte';
 export * from './tailwind';
 export * from './test';
 export * from './toml';
