@@ -163,6 +163,13 @@ export type FrameworkOptions = {
     react?: boolean | OptionsReact;
 
     /**
+     * Enable Svelte/SvelteKit support.
+     *
+     * @default auto-detect based on the dependencies
+     */
+    svelte?: boolean | OptionsSvelte;
+
+    /**
      * Enable TailwindCSS support.
      *
      * @default auto-detect based on dependencies
@@ -368,6 +375,19 @@ export type OptionsHasDOM = {
      * @default true
      */
     hasDOM?: boolean;
+};
+
+export type OptionsHasSvelte = {
+    /**
+     * Whether Svelte is enabled.
+     * Resolved by the factory.
+     *
+     * When `true`, `.svelte.{js,ts}`-files needs to skip the `mut_`-prefix
+     * that `functional`'s `no-let` relies on, as `let` is how Svelte declares reactive state.
+     *
+     * @default false
+     */
+    hasSvelte?: boolean;
 };
 
 export type OptionsHasTypeScript = {
@@ -586,6 +606,8 @@ export type OptionsSecurity = OptionsOverrides & {
 export type OptionsStylistic = {
     stylistic?: boolean | StylisticConfig;
 };
+
+export type OptionsSvelte = OptionsOverrides;
 
 export type OptionsTailwind = OptionsOverrides & (
     | {
