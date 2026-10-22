@@ -24,6 +24,7 @@ export const full: OptionsConfig = {
     nextjs: true,
     node: true,
     perfectionist: true,
+    preact: true,
     promise: true,
     react: {
         a11y: true,
@@ -67,6 +68,7 @@ export const off: OptionsConfig = {
     nextjs: false,
     node: false,
     perfectionist: false,
+    preact: false,
     promise: false,
     react: false,
     regexp: false,
