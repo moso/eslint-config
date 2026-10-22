@@ -13,6 +13,7 @@ const vitestConfig: UserConfig = defineConfig({
         include: ['src/rules/**/*.test.ts', 'test/**/*.test.ts'],
         isolate: false,
         reporters: 'dot',
+        setupFiles: ['test/setup.ts'],
         testTimeout: 60_000,
     },
 });
