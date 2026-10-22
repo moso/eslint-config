@@ -24,6 +24,9 @@ export const full: OptionsConfig = {
     nextjs: true,
     node: true,
     perfectionist: true,
+    preact: {
+        a11y: true,
+    },
     promise: true,
     react: {
         a11y: true,
@@ -34,6 +37,7 @@ export const full: OptionsConfig = {
     regexp: true,
     security: true,
     stylistic: true,
+    svelte: true,
     tailwind: {
         entryPoint: 'src/styles/app.css',
         version: 4,
@@ -66,11 +70,13 @@ export const off: OptionsConfig = {
     nextjs: false,
     node: false,
     perfectionist: false,
+    preact: false,
     promise: false,
     react: false,
     regexp: false,
     security: false,
     stylistic: false,
+    svelte: false,
     tailwind: false,
     test: false,
     toml: false,

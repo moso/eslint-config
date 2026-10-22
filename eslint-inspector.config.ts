@@ -11,6 +11,7 @@ const config: Promise<Linter.Config[]> = moso(
         jsonc: true,
         mode: 'library',
         nextjs: true,
+        preact: true,
         react: true,
         security: true,
         stylistic: {
@@ -20,6 +21,7 @@ const config: Promise<Linter.Config[]> = moso(
             quotes: 'single',
             semi: true,
         },
+        svelte: true,
         tailwind: true,
         toml: true,
         typescript: {

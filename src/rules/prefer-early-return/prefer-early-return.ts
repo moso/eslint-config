@@ -62,8 +62,8 @@ const rulePreferEarlyReturns: createRuleType = createRule({
         messages: {
             preferEarlyReturn: 'Prefer an early return to a conditionally-wrapped function body.',
         },
+        defaultOptions: [{ maximumStatements: 1 }] as [Options],
     },
-    defaultOptions: [{ maximumStatements: 1 }] as [Options],
     create: (context, [{ maximumStatements }]) => ({
         BlockStatement: ({ body, parent }: TSESTree.BlockStatement) => {
             if (!isFunctionLike(parent)) return;

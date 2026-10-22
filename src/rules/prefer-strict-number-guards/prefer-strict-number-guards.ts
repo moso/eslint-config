@@ -164,8 +164,8 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
             useDirectOperands: 'A nested division introduces a ratio that can round to zero. Use the direct operands instead - `a / (b / c)` is `(a * c) / b`.',
             writeExplicitCondition: '`0` is falsy, so a `||` fallback silently replaces a legitimate zero. Write `value === 0 ? fallback : value` instead.',
         },
+        defaultOptions: [{ guards: [...defaultGuards] }] as [Options],
     },
-    defaultOptions: [{ guards: [...defaultGuards] }] as [Options],
     create: (context, [{ guards }]) => {
         const enabled: ReadonlySet<Guard> = new Set(guards);
         const mut_scopes: FunctionScope[] = [];

@@ -156,11 +156,25 @@ export type FrameworkOptions = {
     node?: boolean | OptionsNode;
 
     /**
+     * Enable Preact support.
+     *
+     * @default auto-detect based on the dependencies
+     */
+    preact?: boolean | OptionsPreact;
+
+    /**
      * Enable React support.
      *
      * @default auto-detect based on the dependencies
      */
     react?: boolean | OptionsReact;
+
+    /**
+     * Enable Svelte/SvelteKit support.
+     *
+     * @default auto-detect based on the dependencies
+     */
+    svelte?: boolean | OptionsSvelte;
 
     /**
      * Enable TailwindCSS support.
@@ -370,6 +384,19 @@ export type OptionsHasDOM = {
     hasDOM?: boolean;
 };
 
+export type OptionsHasSvelte = {
+    /**
+     * Whether Svelte is enabled.
+     * Resolved by the factory.
+     *
+     * When `true`, `.svelte.{js,ts}`-files needs to skip the `mut_`-prefix
+     * that `functional`'s `no-let` relies on, as `let` is how Svelte declares reactive state.
+     *
+     * @default false
+     */
+    hasSvelte?: boolean;
+};
+
 export type OptionsHasTypeScript = {
     typescript?: boolean;
 };
@@ -525,6 +552,23 @@ export type OptionsPerfectionist = OptionsOverrides & {
     perfectionist?: boolean;
 };
 
+export type OptionsPreact = OptionsOverrides & {
+    /**
+     * Enable accessibility support via JSX accessibility plugin.
+     * Helps checking for a11y issues in `.jsx` and `.tsx`-files when enabled.
+     *
+     * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     *
+     * @default false
+     */
+    a11y?: boolean;
+
+    /**
+     * Overrides for accessibility rules.
+     */
+    overridesA11y?: TypedFlatConfigItem['rules'];
+};
+
 export type OptionsProjectRoot = {
     projectRoot?: Readonly<string>;
 };
@@ -586,6 +630,8 @@ export type OptionsSecurity = OptionsOverrides & {
 export type OptionsStylistic = {
     stylistic?: boolean | StylisticConfig;
 };
+
+export type OptionsSvelte = OptionsOverrides;
 
 export type OptionsTailwind = OptionsOverrides & (
     | {

@@ -10,6 +10,7 @@ import type { Linter } from 'eslint';
 const config: Promise<Linter.Config[]> = moso(
     {
         mode: 'library',
+        svelte: false,
         toml: true,
         typescript: {
             projectRoot: import.meta.dirname,
