@@ -24,7 +24,9 @@ export const full: OptionsConfig = {
     nextjs: true,
     node: true,
     perfectionist: true,
-    preact: true,
+    preact: {
+        a11y: true,
+    },
     promise: true,
     react: {
         a11y: true,
