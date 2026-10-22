@@ -11,7 +11,7 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - [ESLint Flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) with reasonable but opinionated defaults
 - [Stylistic](https://eslint.style) with single quotes, semi enabled, sorted imports, and dangling commas
 - Aimed to be used without Prettier
-- Designed to work with JSX, TypeScript, Vue, React, Svelte, Astro, Nuxt, SvelteKit, and Next.js out of the box
+- Designed to work with JSX, TypeScript, Vue, React, Preact, Svelte, Astro, Nuxt, SvelteKit, and Next.js out of the box
 - Applies [Functional](https://github.com/eslint-functional/eslint-plugin-functional), [Perfectionist](https://perfectionist.dev), and [e18e](https://github.com/e18e/eslint-plugin) by default
 - Lints for JSDoc, JSON, RegEx, TOML, and YAML
 - Ships its own small [`@moso`](#custom-rules)-ruleset with security and hygiene rules
@@ -200,6 +200,17 @@ This section contains a list of the plugins used in the named configs that ship 
 <td valign="top">✅</td>
 <td valign="top"></td>
 <td valign="top"></td>
+</tr>
+<tr>
+<td valign="top">
+<details><summary><strong>Preact</strong></summary>
+
+[`@eslint-react`](https://eslint-react.xyz), [`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks), [`eslint-plugin-react-refresh`](https://github.com/ArnaudBarre/eslint-plugin-react-refresh), [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)
+
+</details></td>
+<td valign="top">☑️ℹ️</td>
+<td valign="top">🎨</td>
+<td valign="top">💭</td>
 </tr>
 <tr>
 <td valign="top">
@@ -515,6 +526,7 @@ export default moso({
 
     // Auto-detected, or enable explicitly
     astro: true,
+    preact: true,
     react: true,
     svelte: true,
     typescript: true,
@@ -706,6 +718,34 @@ bun add -d eslint-plugin-astro astro-eslint-parser
 > [!NOTE]
 > Since Astro can be plugged with other frameworks as well, you'll be prompted to install the required packages for linting those as well. Example: If you have installed `@astrojs/react`, you'll be prompted to install the required packages to lint React.
 
+
+### Preact
+
+Auto-detected if you have Preact or the `@astrojs/preact` Astro framework integration installed. Enable explicitly:
+
+```ts
+// eslint.config.*
+import moso from '@moso/eslint-config';
+
+export default moso({
+    preact: true,
+});
+```
+
+Install dependencies when prompted, or manually:
+
+```shell
+# npm
+npm install -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh
+
+# pnpm
+pnpm add -D @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh
+
+# Bun
+bun add -d @eslint-react/eslint-plugin eslint-plugin-react-hooks eslint-plugin-react-refresh
+```
+
+Replaces [`eslint-config-preact`](https://github.com/preactjs/eslint-config-preact), which doesn't support ESLint v10. Based on [`@eslint-react`'s Preact example](https://github.com/Rel1cx/eslint-react/blob/main/examples/preact/eslint.config.js). `@eslint-react` assumes React 19 semantics (e.g. `ref` as a prop instead of `forwardRef`).
 
 ### React
 
