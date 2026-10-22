@@ -1224,11 +1224,6 @@
       "react-hooks/rules-of-hooks",
       "react-refresh/only-export-components",
     ],
-    "settings": {
-      "@eslint-react": {
-        "version": "detect",
-      },
-    },
   },
   {
     "files": [
