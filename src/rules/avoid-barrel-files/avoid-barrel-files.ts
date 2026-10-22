@@ -37,8 +37,8 @@ const ruleAvoidBarrelFiles: createRuleType = createRule({
         messages: {
             avoidBarrelFiles: 'Barrel file detected.',
         },
+        defaultOptions: [{ amountOfExportsToConsiderModuleAsBarrel: 3 }] as [Options],
     },
-    defaultOptions: [{ amountOfExportsToConsiderModuleAsBarrel: 3 }] as [Options],
     create: (context, [{ amountOfExportsToConsiderModuleAsBarrel }]) => ({
         Program(node: TSESTree.Program) {
             const { declarationCount, exportCount } = node.body.reduce(
