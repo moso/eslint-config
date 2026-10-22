@@ -16,6 +16,7 @@ import {
     nextjs,
     node,
     perfectionist,
+    preact,
     promise,
     react,
     regexp,
@@ -87,6 +88,8 @@ const AstroPackages = [
 ];
 
 const NextJSPackages = ['next'];
+
+const PreactPackages = ['@astrojs/preact', 'preact'];
 
 const ReactPackages = [
     '@astrojs/react',
@@ -161,6 +164,7 @@ export async function moso(
 
     const astroOptions = options.astro ?? anyPackageExists(AstroPackages);
     const nextjsOptions = options.nextjs ?? anyPackageExists(NextJSPackages);
+    const preactOptions = options.preact ?? anyPackageExists(PreactPackages);
     const reactOptions = options.react ?? anyPackageExists(ReactPackages);
     const svelteOptions = options.svelte ?? anyPackageExists(SveltePackages);
     const tailwindOptions = options.tailwind ?? packageExists('tailwindcss');
@@ -197,6 +201,7 @@ export async function moso(
     const hasDOM = options.mode !== 'library' ||
         Boolean(astroOptions) ||
         Boolean(nextjsOptions) ||
+        Boolean(preactOptions) ||
         Boolean(reactOptions) ||
         Boolean(svelteOptions) ||
         Boolean(vueOptions);
@@ -340,7 +345,7 @@ export async function moso(
         mut_configs.push(
             node({
                 files: [GLOB_SRC],
-                hasReact: Boolean(reactOptions),
+                hasReact: Boolean(reactOptions) || Boolean(preactOptions),
                 lessOpinionated: options.lessOpinionated,
                 overrides: getOverrides(options, 'node'),
                 typescript: hasTypeScript,
@@ -498,6 +503,23 @@ export async function moso(
         mut_configs.push(
             perfectionist({
                 overrides: getOverrides(options, 'perfectionist'),
+            }),
+        );
+    }
+
+    if (preactOptions !== false) {
+        mut_configs.push(
+            preact({
+                ...typescriptConfigOptions,
+                files: [GLOB_SRC],
+                filesTypeAware: defaultFilesTypesAware,
+                ignoresTypeAware: [GLOB_ASTRO_TS, `${GLOB_MARKDOWN}/**`],
+                lessOpinionated: options.lessOpinionated,
+                projectRoot: projectRootOptions,
+                overrides: getOverrides(options, 'preact'),
+                stylistic: stylisticOptions,
+                typescript: hasTypeScript,
+                ...resolveSubOptions(options, 'preact'),
             }),
         );
     }
