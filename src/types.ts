@@ -156,6 +156,13 @@ export type FrameworkOptions = {
     node?: boolean | OptionsNode;
 
     /**
+     * Enable Preact support.
+     *
+     * @default auto-detect based on the dependencies
+     */
+    preact?: boolean | OptionsPreact;
+
+    /**
      * Enable React support.
      *
      * @default auto-detect based on the dependencies
@@ -543,6 +550,23 @@ export type OptionsOverrides = {
 
 export type OptionsPerfectionist = OptionsOverrides & {
     perfectionist?: boolean;
+};
+
+export type OptionsPreact = OptionsOverrides & {
+    /**
+     * Enable accessibility support via JSX accessibility plugin.
+     * Helps checking for a11y issues in `.jsx` and `.tsx`-files when enabled.
+     *
+     * @see https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+     *
+     * @default false
+     */
+    a11y?: boolean;
+
+    /**
+     * Overrides for accessibility rules.
+     */
+    overridesA11y?: TypedFlatConfigItem['rules'];
 };
 
 export type OptionsProjectRoot = {

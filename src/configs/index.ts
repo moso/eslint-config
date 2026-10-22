@@ -13,6 +13,7 @@ export * from './jsx';
 export * from './nextjs';
 export * from './node';
 export * from './perfectionist';
+export * from './preact';
 export * from './promise';
 export * from './react';
 export * from './regexp';
