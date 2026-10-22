@@ -115,9 +115,6 @@ export const react = async (
                 },
                 sourceType: 'module',
             },
-            settings: {
-                '@eslint-react': { version: 'detect' },
-            },
             rules: {
                 ...(lessOpinionated
                     ? {
