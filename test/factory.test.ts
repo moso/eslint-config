@@ -162,6 +162,12 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
                 a11y: true,
             },
             lessOpinionated: true,
+            preact: {
+                a11y: true,
+                overridesA11y: {
+                    'jsx-a11y/no-access-key': 'off',
+                },
+            },
             react: {
                 additionalHooks: '',
             },
