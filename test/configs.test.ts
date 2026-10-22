@@ -49,6 +49,7 @@ const {
     security,
     vue,
 } = await import('../src/configs');
+const { moso } = await import('../src/factory');
 
 describe('framework detection through local-pkg', () => {
     beforeEach(() => {
@@ -80,6 +81,20 @@ describe('framework detection through local-pkg', () => {
 
         expect(options.allowExportNames).toEqual(expect.arrayContaining(['action', 'loader', 'ErrorBoundary']));
         expect(options.allowExportNames).not.toContain('generateMetadata');
+    });
+
+    it.for<[string, string[], string[]]>([
+        ['preact', ['moso/preact/rules'], ['moso/react/rules']],
+        ['@astrojs/preact', ['moso/astro/rules', 'moso/preact/rules'], ['moso/react/rules']],
+        ['react', ['moso/react/rules'], ['moso/preact/rules']],
+    ])('moso detects Preact through %s', async ([installed, included, excluded]) => {
+        mocks.isPackageExists.mockImplementation((name: string) => name === installed);
+
+        const configs = await moso({ isInEditor: false });
+        const names = configs.map((config) => config.name);
+
+        expect(names).toEqual(expect.arrayContaining(included));
+        expect(names).not.toEqual(expect.arrayContaining(excluded));
     });
 
     it('vue emits the Nuxt config items when nuxt is installed', async () => {
