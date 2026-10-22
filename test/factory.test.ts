@@ -228,6 +228,30 @@ const configPresets: ReadonlyArray<ConfigPreset> = [
         },
         name: 'svelte-js-less-opinionated',
     },
+    {
+        configs: {
+            isInEditor: false,
+            preact: true,
+            typescript: {
+                projectRoot: path.resolve(import.meta.dirname, '..'),
+            },
+        },
+        name: 'preact-type-aware',
+    },
+    {
+        configs: {
+            isInEditor: false,
+            lessOpinionated: true,
+            preact: {
+                overrides: {
+                    '@eslint-react/no-array-index-key': 'off',
+                },
+            },
+            stylistic: false,
+            typescript: false,
+        },
+        name: 'preact-js-less-opinionated',
+    },
 ];
 
 const ignoreConfigs: ReadonlySet<string> = new Set(['moso/ignores', 'moso/javascript/setup']);
@@ -361,6 +385,31 @@ it('lets Svelte rune modules use `let` without the `mut_` prefix, while `svelte/
     expect(runes.messages).toEqual([]);
     expect(unused.messages.map((message) => message.ruleId)).toContain('svelte/prefer-const');
     expect(plain.messages.map((message) => message.ruleId)).toEqual(expect.arrayContaining(['@typescript-eslint/naming-convention', 'functional/no-let']));
+});
+
+it('lints idiomatic Preact components, and reports hooks misuse', async ({ expect }) => {
+    const eslint = new ESLint({
+        overrideConfig: await moso({
+            isInEditor: false,
+            preact: true,
+            typescript: true,
+        }),
+        overrideConfigFile: true,
+    });
+
+    const counter = 'import { useState } from \'preact/hooks\';\n\ntype CounterProps = {\n    readonly label: string;\n};\n\nexport const Counter = ({ label }: CounterProps) => {\n    const [count, setCount] = useState(0);\n\n    return (\n        <button class="counter" style="font-weight: bold" type="button" onClick={ () => setCount(count + 1) }>\n            {label}: {count}\n        </button>\n    );\n};\n';
+    const main = 'import { render } from \'preact\';\n\nimport { Counter } from \'./counter\';\n\nrender(<Counter label="Clicks" />, document.body);\n';
+    const conditionalHook = counter.replace('    const [count, setCount] = useState(0);\n', '    if (label === \'\') return null;\n\n    const [count, setCount] = useState(0);\n');
+
+    const [[component], [entry], [broken]] = await Promise.all([
+        eslint.lintText(counter, { filePath: 'src/counter.tsx' }),
+        eslint.lintText(main, { filePath: 'src/main.tsx' }),
+        eslint.lintText(conditionalHook, { filePath: 'src/counter.tsx' }),
+    ]);
+
+    expect(component.messages).toEqual([]);
+    expect(entry.messages).toEqual([]);
+    expect(broken.messages.map((message) => message.ruleId)).toContain('react-hooks/rules-of-hooks');
 });
 
 it('builds a config when called with no arguments', async ({ expect }) => {
