@@ -3,7 +3,12 @@
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "bundler",
-        "types": ["eslint-plugin-jsx-a11y", "node", "vitest/config"],
+        "types": [
+            "bun",
+            "eslint-plugin-jsx-a11y",
+            "node",
+            "vitest/config",
+        ],
         "strict": true,
         "declaration": true,
         "esModuleInterop": true,
