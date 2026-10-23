@@ -17,7 +17,7 @@ Flat ESLint config for JavaScript, TypeScript, Vue, React, and more.
 - Ships its own small [`@moso`](#custom-rules)-ruleset with security and hygiene rules
 - Every config can be enabled/disabled
 - Respects `.gitignore` by default
-- Requires Node.js >= v22.22.3/v24.x, ESLint v10+
+- Requires Node.js >= v22.23.4/v24.22.1/v26.12.1, ESLint v10+
 - Enhanced security by [Socket's Bun Security Scanner](https://npmx.dev/package/@socketsecurity/bun-security-scanner)
 
 > [!NOTE]
@@ -952,7 +952,10 @@ bunx simple-git-hooks # bun
 
 ESLint v9 reached [EOL on August 6th, 2026](https://eslint.org/version-support). The world of development moves fast, and as with Vue v2.x, I don't intend to support versions that have reached EOL unless absolutely necessary. The same goes with older Node.js versions.
 
-Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this version has also reached EOL. The rest of their requirements mention `v22.13.0` and `>= 24`. However, the minimum requirements of some of the configs that this sharable config apply rules from have a minimum requirement of `v22.22.3`, this project will stay within this range.
+Even though ESLint v10 supports Node.js `v20.19.0` (as of current status), this version has also reached EOL. The rest of their requirements mention `v22.13.0` and `>= 24`.
+
+> [!WARN]
+> However, the **minimum requirements** has been raised in this project based on the [Node2Shell CVE](https://www.aikido.dev/blog/node2shell-nodejs-brotli-rce-cve-2026-111497) to match all patched versions of Node.js.
 
 ### TypeScript 7?
 
