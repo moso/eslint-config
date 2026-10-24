@@ -24,11 +24,6 @@ type FunctionNode =
     | TSESTree.FunctionDeclaration
     | TSESTree.FunctionExpression;
 
-type FunctionScope = {
-    asserted: ReadonlySet<string>;
-    numberParams: ReadonlySet<string>;
-};
-
 const allGuards: ReadonlyArray<Guard> = [
     'check-parse-result',
     'encode-input-rule',
@@ -167,6 +162,10 @@ const rulePreferStrictNumberGuards: createRuleType = createRule({
         defaultOptions: [{ guards: [...defaultGuards] }] as [Options],
     },
     create: (context, [{ guards }]) => {
+        type FunctionScope = {
+            asserted: ReadonlySet<string>;
+            numberParams: ReadonlySet<string>;
+        };
         const enabled: ReadonlySet<Guard> = new Set(guards);
         const mut_scopes: FunctionScope[] = [];
 
