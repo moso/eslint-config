@@ -622,7 +622,7 @@
       "unicorn/no-this-assignment",
       "- unicorn/no-this-outside-of-class",
       "- unicorn/no-top-level-assignment-in-function",
-      "unicorn/no-top-level-side-effects",
+      "- unicorn/no-top-level-side-effects",
       "unicorn/no-transition-all",
       "unicorn/no-typeof-undefined",
       "- unicorn/no-uncalled-method",
