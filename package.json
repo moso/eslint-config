@@ -62,6 +62,7 @@
         "prepare": "bun scripts/bun-version.ts && bun run simple-git-hooks",
         "release": "bumpp --recursive && bun publish",
         "test": "vitest run",
+        "test:coverage": "bun run test --coverage",
         "test:update-snapshots": "bun run test --update",
         "typecheck": "tsc --noEmit",
         "typegen": "tsx scripts/typegen.ts",
